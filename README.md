@@ -1,167 +1,173 @@
-# Authentication and Authorization with JWT
+# Spring Boot Authorization and Authentication Setup
 
-This document provides a summary of the implementation of authentication and authorization using JSON Web Tokens (JWT) and guidance on setting up the application locally and in production.
-
----
-
-## **Overview**
-
-This project implements authentication and authorization mechanisms to secure the application. It leverages:
-
-- **JWT (JSON Web Tokens)**: For generating, validating, and authenticating API tokens.
-- **Spring Security**: To secure endpoints and manage user roles and permissions.
+This README file outlines the steps to set up a Spring Boot project with authentication and authorization using an Oracle database and JWT.
 
 ---
 
-## **Features**
+## 1. Maven Dependencies
 
-- Login endpoint to generate JWT tokens.
-- Role-based access control (RBAC) for securing API endpoints.
-- Token validation for requests to protected routes.
-- Unit and integration tests for the authentication flow.
+Add the following dependencies to your `pom.xml` file:
 
----
-
-## **Getting Started**
-
-### **Prerequisites**
-
-Ensure the following are installed on your system:
-
-- Java 21 or higher
-- Maven 3.8+
-- Oracle (or your chosen database)
-
-### **Environment Setup**
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-repo-url.git
-   cd your-project-name
-   ```
-
-2. Create the necessary configuration files:
-
-   - Copy the provided template:
-     ```bash
-     cp src/main/resources/application.properties.template src/main/resources/application.properties
-     ```
-
-   - Open `src/main/resources/application.properties` and update the values:
-     ```properties
-     spring.datasource.url=YOUR_DB_URL
-     spring.datasource.username=YOUR_DB_USERNAME
-     spring.datasource.password=YOUR_DB_PASSWORD
-     jwt.private-key=YOUR_PRIVATE_KEY_PATH
-     jwt.public-key=YOUR_PUBLIC_KEY_PATH
-     ```
-
-3. Generate public and private keys for JWT:
-   ```bash
-   openssl genrsa -out private.pem 2048
-   openssl rsa -in private.pem -pubout -out public.pem
-   ```
-
-4. Place the `private.pem` and `public.pem` files in a secure directory and update the file paths in `application.properties`.
-
-5. Add sensitive files to `.gitignore`:
-   ```
-   # Ignore sensitive files
-   src/main/resources/application.properties
-   src/main/resources/application-test.properties
-   private.pem
-   public.pem
-   ```
-
----
-
-## **Running the Application**
-
-### **Development Mode**
-
-1. Start the database server.
-2. Run the application:
-   ```bash
-   mvn spring-boot:run
-   ```
-3. Access the application at `http://localhost:8080`.
-
-### **Testing**
-
-Run unit and integration tests:
-```bash
-mvn test
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.oracle.database.jdbc</groupId>
+        <artifactId>ojdbc11</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+</dependencies>
 ```
 
 ---
 
-## **Endpoints**
+## 2. Database Setup
 
-### **Login**
-- **URL**: `/api/login`
-- **Method**: `POST`
-- **Headers**: `Content-Type: application/json`
-- **Request Body**:
-  ```json
-  {
-      "username": "your_username",
-      "password": "your_password"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-      "token": "jwt-token"
-  }
-  ```
+### Tables Creation
 
-### **Secured Endpoints**
-All other endpoints require a valid JWT in the `Authorization` header:
+Use the following Oracle SQL script to create the necessary tables:
+
+```sql
+CREATE TABLE AUTHORITY_TYPE (
+    TYPE_DESCRIPTION NVARCHAR2(128) CONSTRAINT AUTHORITY_TYPE_UK UNIQUE
+);
+
+CREATE TABLE USERS (
+    USERNAME NVARCHAR2(128) CONSTRAINT USER_ID_PK PRIMARY KEY,
+    PASSWORD NVARCHAR2(128) NOT NULL,
+    ENABLED CHAR(1) CONSTRAINT USER_ENABLED_CK CHECK (ENABLED IN ('Y','N')) NOT NULL
+);
+
+CREATE TABLE AUTHORITIES (
+    USERNAME NVARCHAR2(128) NOT NULL,
+    AUTHORITY NVARCHAR2(128) NOT NULL
+);
+
+ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_UNIQUE UNIQUE (USERNAME, AUTHORITY);
+ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_USERNAME_FK FOREIGN KEY (USERNAME) REFERENCES USERS (USERNAME) ENABLE;
+ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_AUTHORITY_FK FOREIGN KEY (AUTHORITY) REFERENCES AUTHORITY_TYPE (TYPE_DESCRIPTION);
 ```
-Authorization: Bearer <jwt-token>
+
+### Dummy Data
+
+Insert the following dummy data for testing:
+
+```sql
+-- Delete existing records
+DELETE FROM AUTHORITIES;
+DELETE FROM USERS;
+DELETE FROM AUTHORITY_TYPE;
+
+-- Insert Authority Types
+INSERT INTO AUTHORITY_TYPE (TYPE_DESCRIPTION) VALUES ('ROLE_ADMIN');
+INSERT INTO AUTHORITY_TYPE (TYPE_DESCRIPTION) VALUES ('ROLE_STAFF');
+INSERT INTO AUTHORITY_TYPE (TYPE_DESCRIPTION) VALUES ('ROLE_MEMBER');
+
+-- Insert Users
+INSERT INTO USERS (USERNAME, PASSWORD, ENABLED) VALUES ('carlos', '{noop}testpassword', 'Y');
+INSERT INTO USERS (USERNAME, PASSWORD, ENABLED) VALUES ('mary', '{noop}testpassword', 'Y');
+INSERT INTO USERS (USERNAME, PASSWORD, ENABLED) VALUES ('susan', '{noop}testpassword', 'Y');
+
+-- Insert User Roles
+INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('carlos', 'ROLE_ADMIN');
+INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('carlos', 'ROLE_STAFF');
+INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('carlos', 'ROLE_MEMBER');
+INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('mary', 'ROLE_STAFF');
+INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('mary', 'ROLE_MEMBER');
+INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('susan', 'ROLE_MEMBER');
+
+-- Commit changes
+COMMIT;
+
+-- Verify data
+SELECT * FROM AUTHORITY_TYPE;
+SELECT * FROM USERS;
+SELECT * FROM AUTHORITIES;
 ```
 
 ---
 
-## **Production Setup**
+## 3. Configure Database Connection
 
-1. **Environment Variables:**
-   - Use environment variables to configure sensitive information.
+Add the following properties to `application.properties`:
 
-2. **Secure Key Management:**
-   - Use a secrets manager (e.g., AWS Secrets Manager, Azure Key Vault) for managing private/public keys and database credentials.
-
-3. **Deployment:**
-   - Package the application using Maven:
-     ```bash
-     mvn clean package
-     ```
-   - Deploy the generated JAR file.
+```properties
+spring.datasource.url=jdbc:oracle:thin:@//localhost:1521/YOUR_SERVICE
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
+```
 
 ---
 
-## **Known Issues and Limitations**
+## 4. Private and Public Key Setup
 
-- Ensure JWT expiration times are configured properly to balance security and usability.
-- Periodically rotate private/public keys to enhance security.
+### Generate RSA Keys
 
----
+Run the following commands in the `src/main/resources/certs` directory:
 
-## **Contributing**
-
-If you would like to contribute to this project:
-
-1. Fork the repository.
-2. Create a new feature branch:
+1. Generate a key pair:
    ```bash
-   git checkout -b feature/your-feature
+   openssl genrsa -out keypair.pem 2048
    ```
-3. Commit your changes and push to the branch.
-4. Create a pull request.
+2. Extract the public key:
+   ```bash
+   openssl rsa -in keypair.pem -pubout -out public.pem
+   ```
+3. Extract the private key:
+   ```bash
+   openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem
+   ```
+4. Remove the `keypair.pem` file as it is no longer needed:
+   ```bash
+   rm keypair.pem
+   ```
+
+### Configure Keys
+
+Add the following properties to `application.properties`:
+
+```properties
+rsa.private-key=classpath:certs/private.pem
+rsa.public-key=classpath:certs/public.pem
+```
 
 ---
 
-## **Contact**
+## 5. Maven Dependencies for Tests
 
-For any questions or issues, please contact the maintainer at [your-email@example.com].
+Add these dependencies to your `pom.xml` file for automated testing:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-test</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+---
+
+This completes the basic setup for authentication and authorization in your Spring Boot application. Follow these steps to configure your application for secure access and testing.
 
