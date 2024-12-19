@@ -4,35 +4,7 @@ This README file outlines the steps to set up a Spring Boot project with authent
 
 ---
 
-## 1. Maven Dependencies
-
-Add the following dependencies to your `pom.xml` file:
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.oracle.database.jdbc</groupId>
-        <artifactId>ojdbc11</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-</dependencies>
-```
-
----
-
-## 2. Database Setup
+## 1. Database Setup
 
 ### Tables Creation
 
@@ -98,7 +70,7 @@ SELECT * FROM AUTHORITIES;
 
 ---
 
-## 3. Configure Database Connection
+## 2. Configure Database Connection
 
 Add the following properties to `application.properties`:
 
@@ -110,7 +82,7 @@ spring.datasource.password=YOUR_PASSWORD
 
 ---
 
-## 4. Private and Public Key Setup
+## 3. Private and Public Key Setup
 
 ### Generate RSA Keys
 
@@ -140,31 +112,6 @@ Add the following properties to `application.properties`:
 ```properties
 rsa.private-key=classpath:certs/private.pem
 rsa.public-key=classpath:certs/public.pem
-```
-
----
-
-## 5. Maven Dependencies for Tests
-
-Add these dependencies to your `pom.xml` file for automated testing:
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-test</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
 ```
 
 ---
