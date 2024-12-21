@@ -50,11 +50,12 @@ public class LmsSecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/books").hasRole("STAFF")
                 .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN"));
 
+        http.httpBasic(Customizer.withDefaults());
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
         );
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.httpBasic(Customizer.withDefaults());
+
         // disable Cross Site Request Forgery (CSRF)
         // In general, not required for stateless REST APIs that use GET, POST, PUT, DELETE and/or PATCH
         http.csrf(csrf -> csrf.disable());
@@ -84,6 +85,4 @@ public class LmsSecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-
-
 }
