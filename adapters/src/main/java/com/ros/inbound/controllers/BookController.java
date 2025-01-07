@@ -1,7 +1,7 @@
 package com.ros.inbound.controllers;
 
 import com.ros.dtos.AddBookDTO;
-import com.ros.exceptions.BookAlreadyExistException;
+import com.ros.exceptions.BookAlreadyExistsException;
 import com.ros.ports_inbound.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +22,7 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public void saveBook(@RequestBody AddBookDTO addBookDTO) throws BookAlreadyExistException {
+    public void saveBook(@RequestBody AddBookDTO addBookDTO) throws BookAlreadyExistsException {
         bookService.save(addBookDTO);
     }
 }

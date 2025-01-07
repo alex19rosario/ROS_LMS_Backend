@@ -5,7 +5,7 @@ import com.ros.dtos.AuthorDTO;
 import com.ros.entities.Author;
 import com.ros.entities.Book;
 import com.ros.entities.Genre;
-import com.ros.exceptions.BookAlreadyExistException;
+import com.ros.exceptions.BookAlreadyExistsException;
 import com.ros.ports_inbound.serviceImpl.BookServiceImpl;
 import com.ros.ports_outbound.dao.AuthorDAO;
 import com.ros.ports_outbound.dao.BookDAO;
@@ -57,7 +57,7 @@ public class BookServiceTest {
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.of(new Book()));
 
         // Act & Assert
-        assertThrows(BookAlreadyExistException.class, () -> bookService.save(validBookDTO));
+        assertThrows(BookAlreadyExistsException.class, () -> bookService.save(validBookDTO));
 
         // Verify that no further interactions occur
         verify(bookDAO).findByISBN(validBookDTO.ISBN());
@@ -65,7 +65,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void save_shouldSaveBook_whenBookDoesNotExist() throws BookAlreadyExistException {
+    void save_shouldSaveBook_whenBookDoesNotExist() throws BookAlreadyExistsException {
         // Arrange
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Joshua", "", "Bloch")).thenReturn(Optional.empty());
@@ -82,7 +82,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void save_shouldAssociateExistingAuthor_whenAuthorExists() throws BookAlreadyExistException {
+    void save_shouldAssociateExistingAuthor_whenAuthorExists() throws BookAlreadyExistsException {
         // Arrange
         Author existingAuthor = new Author("Joshua", "", "Bloch");
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());

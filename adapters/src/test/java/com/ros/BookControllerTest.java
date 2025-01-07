@@ -3,7 +3,7 @@ package com.ros;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ros.dtos.AddBookDTO;
 import com.ros.dtos.AuthorDTO;
-import com.ros.exceptions.BookAlreadyExistException;
+import com.ros.exceptions.BookAlreadyExistsException;
 import com.ros.ports_inbound.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,8 +61,8 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles={"STAFF"})
-    void saveBook_shouldReturnBadRequest_whenBookAlreadyExists() throws Exception {
-        Mockito.doThrow(new BookAlreadyExistException("Book already exists in the database"))
+    void saveBook_shouldReturnConflict_whenBookAlreadyExists() throws Exception {
+        Mockito.doThrow(new BookAlreadyExistsException("Book already exists in the database"))
                 .when(bookService).save(Mockito.any(AddBookDTO.class));
 
         mockMvc.perform(post("/api/books")

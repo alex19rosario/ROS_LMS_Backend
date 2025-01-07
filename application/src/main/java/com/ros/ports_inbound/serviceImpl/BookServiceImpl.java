@@ -5,7 +5,7 @@ import com.ros.dtos.AuthorDTO;
 import com.ros.entities.Author;
 import com.ros.entities.Book;
 import com.ros.entities.Genre;
-import com.ros.exceptions.BookAlreadyExistException;
+import com.ros.exceptions.BookAlreadyExistsException;
 import com.ros.ports_inbound.service.BookService;
 import com.ros.ports_outbound.dao.AuthorDAO;
 import com.ros.ports_outbound.dao.BookDAO;
@@ -38,11 +38,11 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public void save(AddBookDTO dto) throws BookAlreadyExistException {
+    public void save(AddBookDTO dto) throws BookAlreadyExistsException {
         //Check if the book exist by ISBN
         Optional<Book> existingBook = bookDAO.findByISBN(dto.ISBN());
         if(existingBook.isPresent())
-            throw new BookAlreadyExistException("Book already exists in the database.");
+            throw new BookAlreadyExistsException("Book already exists in the database.");
 
         // Map the DTO to a Book entity
         Book book = bookMapper.apply(dto);
