@@ -11,11 +11,6 @@ public class DemoController {
         return "Hello World";
     }
 
-    @PostMapping("/books")
-    public String saveBook(){
-        return "Book has been successfully saved";
-    }
-
     @DeleteMapping("/books/{bookId}")
     public String deleteBook(@PathVariable long bookId){
         return "The book associated to the id " + bookId + " has been successfully deleted";
