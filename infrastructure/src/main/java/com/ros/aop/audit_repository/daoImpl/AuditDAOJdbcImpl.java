@@ -17,15 +17,11 @@ public class AuditDAOJdbcImpl implements AuditDAO {
 
     @Override
     public void createLog(CustomLog log) {
-        String procedureCall = "{call GENERATE_LOG(?, ?, ?, ?, ?, ?)}";
+        String procedureCall = "{call GENERATE_LOG(?, ?)}";
 
         jdbcTemplate.update(procedureCall,
-                log.getDescription(), // P_DESCRIPTION
-                log.getStaffId(),                      // P_STAFF_ID
-                log.getActionType(),                    // P_ACTION_TYPE
-                log.getMemberId(),                     // P_MEMBER_ID
-                log.getBookId(),                      // P_BOOK_ID
-                log.getLoanId()                      // P_LOAN_ID
+                log.description(),
+                log.actionType()
         );
         System.out.println(log);
     }

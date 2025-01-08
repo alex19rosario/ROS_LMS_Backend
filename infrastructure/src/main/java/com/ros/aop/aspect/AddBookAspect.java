@@ -23,15 +23,13 @@ public class AddBookAspect {
 
     @AfterReturning("forAddBookMethod()")
     public void afterReturningAddBookAdvice(){
-        CustomLog log = new CustomLog.Builder( "NEW BOOK WAS ADDED")
-                .build();
+        CustomLog log = new CustomLog( null, "NEW BOOK WAS ADDED");
         bookAuditService.logAddBookAfter(log);
     }
 
     @AfterThrowing("forAddBookMethod()")
     public void afterThrowingAddBookAdvice(){
-        CustomLog log = new CustomLog.Builder("ERROR")
-                .build();
+        CustomLog log = new CustomLog(null,"ERROR");
         bookAuditService.logAddBookAfter(log);
     }
 
