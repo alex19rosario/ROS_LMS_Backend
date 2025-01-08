@@ -22,7 +22,7 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public void saveBook(@RequestBody AddBookDTO addBookDTO) throws BookAlreadyExistsException {
-        bookService.save(addBookDTO);
+    public void addBook(@RequestBody AddBookDTO addBookDTO) throws BookAlreadyExistsException {
+        bookService.add(addBookDTO);
     }
 }

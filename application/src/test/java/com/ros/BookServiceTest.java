@@ -57,7 +57,7 @@ public class BookServiceTest {
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.of(new Book()));
 
         // Act & Assert
-        assertThrows(BookAlreadyExistsException.class, () -> bookService.save(validBookDTO));
+        assertThrows(BookAlreadyExistsException.class, () -> bookService.add(validBookDTO));
 
         // Verify that no further interactions occur
         verify(bookDAO).findByISBN(validBookDTO.ISBN());
@@ -72,7 +72,7 @@ public class BookServiceTest {
         when(genreDAO.findByDescription("SCIENCE")).thenReturn(Optional.of(new Genre("SCIENCE")));
 
         // Act
-        bookService.save(validBookDTO);
+        bookService.add(validBookDTO);
 
         // Assert
         verify(bookDAO).findByISBN(validBookDTO.ISBN());
@@ -90,7 +90,7 @@ public class BookServiceTest {
         when(genreDAO.findByDescription("SCIENCE")).thenReturn(Optional.of(new Genre("SCIENCE")));
 
         // Act
-        bookService.save(validBookDTO);
+        bookService.add(validBookDTO);
 
         // Assert
         verify(authorDAO).findByFullName("Joshua", "", "Bloch");

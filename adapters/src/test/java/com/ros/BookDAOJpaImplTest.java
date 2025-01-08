@@ -15,7 +15,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@Transactional
 public class BookDAOJpaImplTest {
     @Autowired
     private EntityManager entityManager;
@@ -27,6 +26,7 @@ public class BookDAOJpaImplTest {
         bookDAO = new BookDAOJpaImpl(entityManager);
     }
 
+    @Transactional
     @Test
     void create_shouldPersistBook() {
         // Arrange
@@ -46,6 +46,7 @@ public class BookDAOJpaImplTest {
         assertThat(persistedBook.getTitle()).isEqualTo("Effective Java");
     }
 
+    @Transactional
     @Test
     void findByISBN_shouldReturnBook_whenBookExists() {
         // Arrange

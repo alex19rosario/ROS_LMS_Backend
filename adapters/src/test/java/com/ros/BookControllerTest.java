@@ -56,21 +56,21 @@ public class BookControllerTest {
                         .content(objectMapper.writeValueAsString(validBookDTO)))
                 .andExpect(status().isOk());
 
-        verify(bookService).save(validBookDTO);
+        verify(bookService).add(validBookDTO);
     }
 
     @Test
     @WithMockUser(username = "admin", roles={"STAFF"})
     void saveBook_shouldReturnConflict_whenBookAlreadyExists() throws Exception {
         Mockito.doThrow(new BookAlreadyExistsException("Book already exists in the database"))
-                .when(bookService).save(Mockito.any(AddBookDTO.class));
+                .when(bookService).add(Mockito.any(AddBookDTO.class));
 
         mockMvc.perform(post("/api/books")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validBookDTO)))
                 .andExpect(status().isConflict());
 
-        verify(bookService).save(validBookDTO);
+        verify(bookService).add(validBookDTO);
     }
 
     @Test

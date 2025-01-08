@@ -4,5 +4,5 @@ import com.ros.dtos.AddBookDTO;
 import com.ros.exceptions.BookAlreadyExistsException;
 
 public interface BookService {
-    void save(AddBookDTO dto) throws BookAlreadyExistsException;
+    void add(AddBookDTO dto) throws BookAlreadyExistsException;
 }

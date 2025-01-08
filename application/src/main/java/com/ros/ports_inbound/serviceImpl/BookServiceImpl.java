@@ -38,7 +38,7 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public void save(AddBookDTO dto) throws BookAlreadyExistsException {
+    public void add(AddBookDTO dto) throws BookAlreadyExistsException {
         //Check if the book exist by ISBN
         Optional<Book> existingBook = bookDAO.findByISBN(dto.ISBN());
         if(existingBook.isPresent())
