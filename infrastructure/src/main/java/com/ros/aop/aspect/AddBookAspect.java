@@ -1,6 +1,7 @@
 package com.ros.aop.aspect;
 
-import com.ros.aop.audit_service.BookAuditService;
+import com.ros.aop.audit_entity.CustomLog;
+import com.ros.aop.audit_service.service.BookAuditService;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,12 +23,16 @@ public class AddBookAspect {
 
     @AfterReturning("forAddBookMethod()")
     public void afterReturningAddBookAdvice(){
-        bookAuditService.logAddBookAfterReturning();
+        CustomLog log = new CustomLog.Builder( "NEW BOOK WAS ADDED")
+                .build();
+        bookAuditService.logAddBookAfter(log);
     }
 
     @AfterThrowing("forAddBookMethod()")
     public void afterThrowingAddBookAdvice(){
-        bookAuditService.logAddBookAfterThrowing();
+        CustomLog log = new CustomLog.Builder("ERROR")
+                .build();
+        bookAuditService.logAddBookAfter(log);
     }
 
 }
