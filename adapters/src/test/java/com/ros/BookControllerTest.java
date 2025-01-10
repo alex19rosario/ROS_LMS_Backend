@@ -49,7 +49,7 @@ public class BookControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles={"STAFF"})
+    @WithMockUser(username = "staff", roles={"STAFF"})
     void saveBook_shouldReturnOk_whenBookIsSaved() throws Exception {
         mockMvc.perform(post("/api/books")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -60,7 +60,7 @@ public class BookControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles={"STAFF"})
+    @WithMockUser(username = "staff", roles={"STAFF"})
     void saveBook_shouldReturnConflict_whenBookAlreadyExists() throws Exception {
         Mockito.doThrow(new BookAlreadyExistsException("Book already exists in the database"))
                 .when(bookService).add(Mockito.any(AddBookDTO.class));

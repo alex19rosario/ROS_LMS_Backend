@@ -1,6 +1,6 @@
 package com.ros.inbound.controllers;
 
-import com.ros.outbound.services.TokenService;
+import com.ros.ports_inbound.serviceImpl.TokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

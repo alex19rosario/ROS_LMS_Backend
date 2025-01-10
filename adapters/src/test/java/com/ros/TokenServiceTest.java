@@ -1,6 +1,6 @@
 package com.ros;
 
-import com.ros.outbound.services.TokenService;
+import com.ros.ports_inbound.serviceImpl.TokenService;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
