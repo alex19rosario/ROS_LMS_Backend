@@ -48,7 +48,8 @@ public class LmsSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/books").hasRole("MEMBER")
                 .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole("MEMBER")
                 .requestMatchers(HttpMethod.POST, "/api/books").hasRole("STAFF")
-                .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN"));
+                .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/genres").hasRole("STAFF"));
 
         http.httpBasic(Customizer.withDefaults());
         http.oauth2ResourceServer(oauth2 -> oauth2

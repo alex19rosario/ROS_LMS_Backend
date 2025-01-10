@@ -1,7 +1,7 @@
 package com.ros;
 
 import com.ros.inbound.controllers.AuthController;
-import com.ros.outbound.services.TokenService;
+import com.ros.ports_inbound.serviceImpl.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
