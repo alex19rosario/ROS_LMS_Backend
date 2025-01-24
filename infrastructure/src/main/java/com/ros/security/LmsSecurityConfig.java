@@ -6,13 +6,22 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.ros.user_service.AppUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -30,28 +39,40 @@ import javax.sql.DataSource;
 public class LmsSecurityConfig {
 
     private final RsaKeyProperties rsaKeys;
+    private final AppUserService appUserService;
 
-    public LmsSecurityConfig(RsaKeyProperties rsaKeys) {
+    @Autowired
+    public LmsSecurityConfig(RsaKeyProperties rsaKeys, AppUserService appUserService) {
         this.rsaKeys = rsaKeys;
+        this.appUserService = appUserService;
     }
 
     @Bean
-    public UserDetailsManager userDetailsManager(DataSource dataSource){
-        return new JdbcUserDetailsManager(dataSource);
+    public UserDetailsService userDetailsService(){
+        return appUserService;
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(appUserService);
+        provider.setPasswordEncoder(this.passwordEncoder());
+        return provider;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(configurer -> configurer
-                .requestMatchers(HttpMethod.POST, "/api/login").hasRole("MEMBER")
-                .requestMatchers(HttpMethod.GET, "/api/books").hasRole("MEMBER")
+                .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole("MEMBER")
-                .requestMatchers(HttpMethod.POST, "/api/books").hasRole("STAFF")
+                .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole("STAFF")
                 .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/genres").hasRole("STAFF"));
+                .requestMatchers(HttpMethod.GET, "/api/genres/**").hasRole("STAFF")
+                .requestMatchers(HttpMethod.POST, "api/members/**").hasRole("MEMBER"));
 
         http.httpBasic(Customizer.withDefaults());
+        http.authenticationProvider(authenticationProvider());
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
         );
@@ -85,5 +106,10 @@ public class LmsSecurityConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

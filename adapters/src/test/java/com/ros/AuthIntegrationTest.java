@@ -33,10 +33,10 @@ public class AuthIntegrationTest {
 
     @Test
     @WithMockUser(roles = "USER")
-    void login_ShouldReturnForbidden_WhenUnauthorized() throws Exception {
+    void login_ShouldReturnToken_WhenUnauthorized() throws Exception {
         mockMvc.perform(post("/api/login")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
 }

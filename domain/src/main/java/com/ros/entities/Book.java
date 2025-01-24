@@ -106,4 +106,16 @@ public class Book {
         }
         this.genres.add(genre);
     }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", ISBN=" + ISBN +
+                ", title='" + title + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", authors=" + authors +
+                ", genres=" + genres +
+                '}';
+    }
 }
