@@ -39,7 +39,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public void add(AddBookDTO dto) throws BookAlreadyExistsException {
-        //Check if the book exist by ISBN
+        // Check if the book exist by ISBN
         Optional<Book> existingBook = bookDAO.findByISBN(dto.ISBN());
         if(existingBook.isPresent())
             throw new BookAlreadyExistsException("Book already exists in the database.");
@@ -49,9 +49,14 @@ public class BookServiceImpl implements BookService {
 
         // Iterate over authors to check if they exist
         for (AuthorDTO authorDTO : dto.authors()) {
+            // Split the firstName into first and middle names, if available
+            String[] nameParts = authorDTO.firstName().split(" ", 2);
+            String firstName = nameParts[0];
+            String middleName = nameParts.length > 1 ? nameParts[1] : null;
+
             Optional<Author> existingAuthor = authorDAO.findByFullName(
-                    authorDTO.firstName(),
-                    authorDTO.middleName(),
+                    firstName,
+                    middleName,
                     authorDTO.lastName()
             );
 
@@ -61,8 +66,8 @@ public class BookServiceImpl implements BookService {
             } else {
                 // Create a new author and associate it with the book
                 Author newAuthor = new Author(
-                        authorDTO.firstName(),
-                        authorDTO.middleName(),
+                        firstName,
+                        middleName,
                         authorDTO.lastName()
                 );
                 book.addAuthor(newAuthor);

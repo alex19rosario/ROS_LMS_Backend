@@ -39,7 +39,7 @@ public class BookControllerTest {
 
     @BeforeEach
     void setup() {
-        AuthorDTO author = new AuthorDTO("Joshua", "", "Bloch");
+        AuthorDTO author = new AuthorDTO("Joshua", "Bloch");
         validBookDTO = new AddBookDTO(
                 9783161484105L,
                 "Effective Java",

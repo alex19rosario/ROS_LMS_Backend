@@ -22,11 +22,4 @@ public class BookControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleGeneralException(RuntimeException ex, HttpServletRequest request){
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-        problemDetail.setTitle("Internal Error");
-        problemDetail.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
-    }
 }

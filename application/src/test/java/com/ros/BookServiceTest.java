@@ -42,7 +42,7 @@ public class BookServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Create a sample AddBookDTO
-        AuthorDTO author = new AuthorDTO("Joshua", "", "Bloch");
+        AuthorDTO author = new AuthorDTO("Joshua", "Bloch");
         validBookDTO = new AddBookDTO(
                 9783161484105L,
                 "Effective Java",
@@ -68,7 +68,7 @@ public class BookServiceTest {
     void save_shouldSaveBook_whenBookDoesNotExist() throws BookAlreadyExistsException {
         // Arrange
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());
-        when(authorDAO.findByFullName("Joshua", "", "Bloch")).thenReturn(Optional.empty());
+        when(authorDAO.findByFullName("Joshua", null, "Bloch")).thenReturn(Optional.empty());
         when(genreDAO.findByDescription("SCIENCE")).thenReturn(Optional.of(new Genre("SCIENCE")));
 
         // Act
@@ -76,7 +76,7 @@ public class BookServiceTest {
 
         // Assert
         verify(bookDAO).findByISBN(validBookDTO.ISBN());
-        verify(authorDAO).findByFullName("Joshua", "", "Bloch");
+        verify(authorDAO).findByFullName("Joshua", null, "Bloch");
         verify(genreDAO).findByDescription("SCIENCE");
         verify(bookDAO).create(any(Book.class));
     }
@@ -86,14 +86,14 @@ public class BookServiceTest {
         // Arrange
         Author existingAuthor = new Author("Joshua", "", "Bloch");
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());
-        when(authorDAO.findByFullName("Joshua", "", "Bloch")).thenReturn(Optional.of(existingAuthor));
+        when(authorDAO.findByFullName("Joshua", null, "Bloch")).thenReturn(Optional.of(existingAuthor));
         when(genreDAO.findByDescription("SCIENCE")).thenReturn(Optional.of(new Genre("SCIENCE")));
 
         // Act
         bookService.add(validBookDTO);
 
         // Assert
-        verify(authorDAO).findByFullName("Joshua", "", "Bloch");
+        verify(authorDAO).findByFullName("Joshua", null, "Bloch");
         verify(bookDAO).create(any(Book.class));
         verify(genreDAO).findByDescription("SCIENCE");
     }
