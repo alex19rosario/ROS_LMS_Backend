@@ -34,7 +34,7 @@ public class MemberControllerExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ProblemDetail> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex, HttpServletRequest request){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problemDetail.setTitle("Existing Book Error");
+        problemDetail.setTitle("Existing Email Error");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }

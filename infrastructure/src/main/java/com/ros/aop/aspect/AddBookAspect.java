@@ -27,7 +27,7 @@ public class AddBookAspect {
 
     @AfterThrowing("forAddBookMethod()")
     public void afterThrowingAddBookAdvice(){
-        bookAuditService.logAddBookAfterThrowing(null);
+        bookAuditService.logAddBookAfterThrowing("An error occurred while adding a book");
     }
 
 }
