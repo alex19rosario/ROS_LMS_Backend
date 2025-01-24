@@ -20,7 +20,6 @@ public class UserDAOJpaImpl implements UserDAO {
 
     @Override
     public void create(User user){
-        System.out.println(user);
         entityManager.persist(user);
     }
 

@@ -21,7 +21,6 @@ public class BookDAOJpaImpl implements BookDAO {
 
     @Override
     public void create(Book book) {
-        System.out.println(book);
         entityManager.persist(book);
     }
 
