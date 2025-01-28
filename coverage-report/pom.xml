@@ -9,9 +9,10 @@
   </parent>
 
   <groupId>com.ros</groupId>
-  <artifactId>application</artifactId>
+  <artifactId>coverage-report</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>application</name>
+  <name>coverage-report</name>
+
   <url/>
   <licenses>
     <license/>
@@ -33,7 +34,12 @@
   <dependencies>
     <dependency>
       <groupId>com.ros</groupId>
-      <artifactId>domain</artifactId>
+      <artifactId>application</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ros</groupId>
+      <artifactId>adapters</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -42,41 +48,41 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
+      <groupId>com.ros</groupId>
+      <artifactId>domain</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.12</version>
-        <executions>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.12</version>
+          <executions>
 
-          <execution>
-            <id>jacoco-prepare</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
+            <execution>
+              <id>jacoco-prepare</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
 
-          <execution>
-            <id>jacoco-report</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
+            <execution>
+              <id>jacoco-report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report-aggregate</goal>
+              </goals>
+            </execution>
 
-        </executions>
-      </plugin>
-    </plugins>
+          </executions>
+        </plugin>
+      </plugins>
   </build>
 </project>

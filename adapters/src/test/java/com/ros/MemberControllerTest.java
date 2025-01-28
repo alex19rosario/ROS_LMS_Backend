@@ -2,6 +2,7 @@ package com.ros;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ros.dtos.AddMemberDTO;
+import com.ros.exceptions.EmailAlreadyExistsException;
 import com.ros.exceptions.MemberAlreadyExistsException;
 import com.ros.exceptions.UsernameAlreadyExistsException;
 import com.ros.ports_inbound.service.MemberService;
@@ -92,7 +93,7 @@ public class MemberControllerTest {
     @Test
     @WithMockUser(username = "member", roles={"MEMBER"})
     void saveBook_shouldReturnConflict_whenEmailAlreadyExists() throws Exception{
-        Mockito.doThrow(new UsernameAlreadyExistsException("Username already exists in the database"))
+        Mockito.doThrow(new EmailAlreadyExistsException("Email already exists in the database"))
                 .when(memberService).add(Mockito.any(AddMemberDTO.class));
 
         mockMvc.perform(post("/api/members")
