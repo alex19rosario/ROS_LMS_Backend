@@ -24,12 +24,14 @@ public class Author {
     private List<Book> books;
 
     public Author(){}
+
     public Author(String firstName, String middleName, String lastName, List<Book> books) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.books = books;
     }
+
     public Author(String firstName, String middleName, String lastName) {
         this.firstName = firstName;
         this.middleName = middleName;
