@@ -1,83 +1,32 @@
-# Spring Boot Authorization and Authentication Setup
+# This is a Spring Boot Rest API for a Library Management System
 
-This README file outlines the steps to set up a Spring Boot project with authentication and authorization using an Oracle database and JWT.
+This README file outlines the steps to set up a Spring Boot project with authentication and authorization using an MySQL database and JWT.
 
 ---
 
 ## 1. Database Setup
 
-### Tables Creation
+This project uses a MySQL database running inside a Docker container. To create the database and corresponding tables, run the following command:
 
-Use the following Oracle SQL script to create the necessary tables:
-
-```sql
-CREATE TABLE AUTHORITY_TYPE (
-    TYPE_DESCRIPTION NVARCHAR2(128) CONSTRAINT AUTHORITY_TYPE_UK UNIQUE
-);
-
-CREATE TABLE USERS (
-    USERNAME NVARCHAR2(128) CONSTRAINT USER_ID_PK PRIMARY KEY,
-    PASSWORD NVARCHAR2(128) NOT NULL,
-    ENABLED CHAR(1) CONSTRAINT USER_ENABLED_CK CHECK (ENABLED IN ('Y','N')) NOT NULL
-);
-
-CREATE TABLE AUTHORITIES (
-    USERNAME NVARCHAR2(128) NOT NULL,
-    AUTHORITY NVARCHAR2(128) NOT NULL
-);
-
-ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_UNIQUE UNIQUE (USERNAME, AUTHORITY);
-ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_USERNAME_FK FOREIGN KEY (USERNAME) REFERENCES USERS (USERNAME) ENABLE;
-ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_AUTHORITY_FK FOREIGN KEY (AUTHORITY) REFERENCES AUTHORITY_TYPE (TYPE_DESCRIPTION);
+```
+docker compose up -d
 ```
 
-### Dummy Data
 
-Insert the following dummy data for testing:
-
-```sql
--- Delete existing records
-DELETE FROM AUTHORITIES;
-DELETE FROM USERS;
-DELETE FROM AUTHORITY_TYPE;
-
--- Insert Authority Types
-INSERT INTO AUTHORITY_TYPE (TYPE_DESCRIPTION) VALUES ('ROLE_ADMIN');
-INSERT INTO AUTHORITY_TYPE (TYPE_DESCRIPTION) VALUES ('ROLE_STAFF');
-INSERT INTO AUTHORITY_TYPE (TYPE_DESCRIPTION) VALUES ('ROLE_MEMBER');
-
--- Insert Users
-INSERT INTO USERS (USERNAME, PASSWORD, ENABLED) VALUES ('carlos', '{noop}testpassword', 'Y');
-INSERT INTO USERS (USERNAME, PASSWORD, ENABLED) VALUES ('mary', '{noop}testpassword', 'Y');
-INSERT INTO USERS (USERNAME, PASSWORD, ENABLED) VALUES ('susan', '{noop}testpassword', 'Y');
-
--- Insert User Roles
-INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('carlos', 'ROLE_ADMIN');
-INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('carlos', 'ROLE_STAFF');
-INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('carlos', 'ROLE_MEMBER');
-INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('mary', 'ROLE_STAFF');
-INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('mary', 'ROLE_MEMBER');
-INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES ('susan', 'ROLE_MEMBER');
-
--- Commit changes
-COMMIT;
-
--- Verify data
-SELECT * FROM AUTHORITY_TYPE;
-SELECT * FROM USERS;
-SELECT * FROM AUTHORITIES;
-```
-
----
 
 ## 2. Configure Database Connection
 
-Add the following properties to `application.properties`:
+Add the following properties to `application.properties` in `infrastructure/src/main/resources/`:
 
 ```properties
-spring.datasource.url=jdbc:oracle:thin:@//localhost:1521/YOUR_SERVICE
-spring.datasource.username=YOUR_USERNAME
-spring.datasource.password=YOUR_PASSWORD
+spring.datasource.url=jdbc:mysql://localhost:3306/ros-lms-db
+spring.datasource.username=root
+spring.datasource.password=test123
+
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+spring.jpa.properties.hibernate.connection.characterEncoding=utf-8
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.show-sql=true
 ```
 
 ---
@@ -86,7 +35,7 @@ spring.datasource.password=YOUR_PASSWORD
 
 ### Generate RSA Keys
 
-Run the following commands in the `src/main/resources/certs` directory:
+Run the following commands in the `infrastructure/src/main/resources/certs` directory:
 
 1. Generate a key pair:
    ```bash
