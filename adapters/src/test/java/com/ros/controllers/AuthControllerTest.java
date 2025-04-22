@@ -1,4 +1,4 @@
-package com.ros;
+package com.ros.controllers;
 
 import com.ros.inbound.controllers.AuthController;
 import com.ros.ports_inbound.serviceImpl.TokenService;

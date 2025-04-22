@@ -1,4 +1,4 @@
-package com.ros;
+package com.ros.repositories;
 
 import com.ros.entities.Author;
 import com.ros.outbound.repositories.AuthorDAOJpaImpl;

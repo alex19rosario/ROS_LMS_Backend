@@ -1,11 +1,9 @@
-package com.ros;
+package com.ros.repositories;
 
 import com.ros.entities.Authority;
 import com.ros.entities.AuthorityId;
 import com.ros.entities.User;
-import com.ros.outbound.repositories.AuthorDAOJpaImpl;
 import com.ros.outbound.repositories.UserDAOJpaImpl;
-import com.ros.ports_outbound.dao.AuthorDAO;
 import com.ros.user_service.UserDAO;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
