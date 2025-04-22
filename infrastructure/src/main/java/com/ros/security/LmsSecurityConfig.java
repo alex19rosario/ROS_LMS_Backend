@@ -31,8 +31,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -63,13 +67,14 @@ public class LmsSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(configurer -> configurer
-                .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole("MEMBER")
-                .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole("STAFF")
-                .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/genres/**").hasRole("STAFF")
-                .requestMatchers(HttpMethod.POST, "api/members/**").hasRole("MEMBER"));
+        http.cors(Customizer.withDefaults()) // Enable CORS
+            .authorizeHttpRequests(configurer -> configurer
+            .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole("MEMBER")
+            .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole("STAFF")
+            .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/api/genres/**").hasRole("STAFF")
+            .requestMatchers(HttpMethod.POST, "api/members/**").hasRole("MEMBER"));
 
         http.httpBasic(Customizer.withDefaults());
         http.authenticationProvider(authenticationProvider());
@@ -111,5 +116,18 @@ public class LmsSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Angular app
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
