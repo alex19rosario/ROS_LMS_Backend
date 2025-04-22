@@ -1,4 +1,4 @@
-package com.ros;
+package com.ros.repositories;
 
 import com.ros.entities.Book;
 import com.ros.outbound.repositories.BookDAOJpaImpl;
@@ -28,8 +28,9 @@ public class BookDAOJpaImplTest {
         bookDAO = new BookDAOJpaImpl(entityManager);
     }
 
-    @Transactional
+
     @Test
+    @Transactional
     void create_shouldPersistBook() {
         // Arrange
         Book book = new Book(9783161484100L, "Effective Java", 'Y');

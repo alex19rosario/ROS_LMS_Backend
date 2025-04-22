@@ -1,6 +1,7 @@
-package com.ros;
+package com.ros.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ros.aop.audit_service.MemberAuditService;
 import com.ros.dtos.AddMemberDTO;
 import com.ros.exceptions.EmailAlreadyExistsException;
 import com.ros.exceptions.MemberAlreadyExistsException;
@@ -12,9 +13,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.verify;
@@ -23,13 +25,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class MemberControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private MemberService memberService;
+
+    @MockitoBean
+    private MemberAuditService memberAuditService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -64,7 +70,7 @@ public class MemberControllerTest {
 
     @Test
     @WithMockUser(username = "member", roles={"MEMBER"})
-    void saveBook_shouldReturnConflict_whenMemberAlreadyExists() throws Exception{
+    void saveMember_shouldReturnConflict_whenMemberAlreadyExists() throws Exception{
         Mockito.doThrow(new MemberAlreadyExistsException("Member already exists in the database"))
                 .when(memberService).add(Mockito.any(AddMemberDTO.class));
 
@@ -78,7 +84,7 @@ public class MemberControllerTest {
 
     @Test
     @WithMockUser(username = "member", roles={"MEMBER"})
-    void saveBook_shouldReturnConflict_whenUsernameAlreadyExists() throws Exception{
+    void saveMember_shouldReturnConflict_whenUsernameAlreadyExists() throws Exception{
         Mockito.doThrow(new UsernameAlreadyExistsException("Username already exists in the database"))
                 .when(memberService).add(Mockito.any(AddMemberDTO.class));
 
@@ -92,7 +98,7 @@ public class MemberControllerTest {
 
     @Test
     @WithMockUser(username = "member", roles={"MEMBER"})
-    void saveBook_shouldReturnConflict_whenEmailAlreadyExists() throws Exception{
+    void saveMember_shouldReturnConflict_whenEmailAlreadyExists() throws Exception{
         Mockito.doThrow(new EmailAlreadyExistsException("Email already exists in the database"))
                 .when(memberService).add(Mockito.any(AddMemberDTO.class));
 
