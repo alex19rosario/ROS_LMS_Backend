@@ -167,7 +167,6 @@ build/
 
 # Ignore sensitive files
 application.properties
-application-test.properties
 private.pem
 public.pem
 
