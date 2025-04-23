@@ -165,8 +165,4 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# Ignore sensitive files
-application.properties
-private.pem
-public.pem
 
