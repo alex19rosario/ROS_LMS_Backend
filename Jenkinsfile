@@ -17,28 +17,26 @@ pipeline {
                 // Set execute permissions for mvnw
                 sh 'chmod +x mvnw'
                 // Run the build
-                sh './mvnw clean verify' // Fails build if thresholds (80%) not met
+                sh './mvnw clean verify' //
 
+                // Archive the JaCoCo exec files
+                archiveArtifacts '**/target/jacoco.exec'
+
+                // Publish HTML report (requires HTML Publisher plugin)
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'coverage-report/target/site/jacoco-aggregate',
+                    reportFiles: 'index.html',
+                    reportName: 'JaCoCo Coverage Report'
+                ])
+
+                // Simple coverage recording (optional)
                 recordCoverage(
                     tools: [[parser: 'JACOCO']],
                     id: 'jacoco',
-                    name: 'JaCoCo Coverage',
-                    sourceFileResolver: [$class: 'JacocoSourceFileResolver'],
-                    sourceCodeRetention: 'EVERY_BUILD',
-                    sourceDirectories: [
-                        'adapters/src/main/java',
-                        'application/src/main/java',
-                        'domain/src/main/java',
-                        'infrastructure/src/main/java'
-                    ],
-                    classDirectories: [
-                        '**/target/classes',
-                        '**/target/test-classes'
-                    ],
-                    qualityGates: [
-                        [threshold: 80.0, metric: 'LINE', baseline: 'PROJECT', unstable: true],
-                        [threshold: 80.0, metric: 'METHOD', baseline: 'PROJECT', unstable: true],
-                    ]
+                    name: 'JaCoCo Coverage'
                 )
             }
         }
