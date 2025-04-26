@@ -6,7 +6,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Check if this is a PR (GitHub/Bitbucket)
+                    // Check if this is a PR (GitHub)
                     if (env.CHANGE_ID) {
                         echo "Building PR #${env.CHANGE_ID} from branch: ${env.CHANGE_BRANCH}"
                         git branch: env.CHANGE_BRANCH, // PR's source branch
