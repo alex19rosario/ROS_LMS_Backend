@@ -5,8 +5,20 @@ pipeline {
         // Stage 1: Checkout code from GitHub
         stage('Checkout') {
             steps {
-                git branch: 'development',
-                url: 'https://github.com/alex19rosario/ROS_LMS_Backend.git'
+                script {
+                    // Check if this is a PR (GitHub)
+                    if (env.CHANGE_ID) {
+                        echo "Building PR #${env.CHANGE_ID} from branch: ${env.CHANGE_BRANCH}"
+                        git branch: env.CHANGE_BRANCH, // PR's source branch
+                             url: 'https://github.com/alex19rosario/ROS_LMS_Backend.git'
+                    }
+                    // Default to 'development' for non-PR triggers
+                    else {
+                        echo "Building default branch: development"
+                        git branch: 'development',
+                             url: 'https://github.com/alex19rosario/ROS_LMS_Backend.git'
+                    }
+                }
             }
         }
 
