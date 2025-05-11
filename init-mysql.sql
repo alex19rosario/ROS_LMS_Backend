@@ -176,9 +176,9 @@ INSERT INTO AUTHORITY_TYPE (TYPE_DESCRIPTION) VALUES
 
 -- Insert Users with clearer role-based usernames
 INSERT INTO USERS (USERNAME, PASSWORD, ENABLED) VALUES
-('admin', '$2a$10$XT9BYrLL1bfWW9QbiIV80.H8tIbBl4mlrgMqCEkrdMJITVxoWnnZO', 'Y'),
-('member', '$2a$10$XT9BYrLL1bfWW9QbiIV80.H8tIbBl4mlrgMqCEkrdMJITVxoWnnZO', 'Y'),
-('staff', '$2a$10$XT9BYrLL1bfWW9QbiIV80.H8tIbBl4mlrgMqCEkrdMJITVxoWnnZO', 'Y');
+('admin', '$2a$10$OjdIEClQqmbNjtEmq1BkIutKDHOZqG.NQgcNGSlt5GtQDbRGrBgRW', 'Y'),
+('member', '$2a$10$OjdIEClQqmbNjtEmq1BkIutKDHOZqG.NQgcNGSlt5GtQDbRGrBgRW', 'Y'),
+('staff', '$2a$10$OjdIEClQqmbNjtEmq1BkIutKDHOZqG.NQgcNGSlt5GtQDbRGrBgRW', 'Y');
 
 -- Assign Appropriate Roles
 INSERT INTO AUTHORITIES (USERNAME, AUTHORITY) VALUES
