@@ -167,4 +167,5 @@ build/
 
 ### AWS Jenkins intance keys ###
 jenkins-server-keys.pem
+application-prod.properties
 
