@@ -65,5 +65,3 @@ rsa.public-key=classpath:certs/public.pem
 
 ---
 
-This completes the basic setup for authentication and authorization in your Spring Boot application. Follow these steps to configure your application for secure access and testing.
-
