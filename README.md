@@ -12,25 +12,6 @@ This project uses a MySQL database running inside a Docker container. To create 
 docker compose up -d
 ```
 
-
-
-## 2. Configure Database Connection
-
-Add the following properties to `application.properties` in `infrastructure/src/main/resources/`:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/ros-lms-db
-spring.datasource.username=root
-spring.datasource.password=test123
-
-spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-spring.jpa.properties.hibernate.connection.characterEncoding=utf-8
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-spring.jpa.show-sql=true
-```
-
----
-
 ## 3. Private and Public Key Setup
 
 ### Generate RSA Keys
