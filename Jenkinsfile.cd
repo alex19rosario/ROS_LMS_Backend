@@ -2,10 +2,10 @@ pipeline {
     agent any
     environment {
         AWS_DEFAULT_REGION = "us-east-1"
-        APPLICATION_NAME = "Ros-lms-backend" // Your EB application name
-        ENVIRONMENT_NAME = "Ros-lms-backend-env" // Your EB environment name
-        S3_BUCKET = "your-deployment-bucket" // S3 bucket for deployment artifacts
-        JAR_FILE = "target/your-application.jar" // Path to your built JAR
+        APPLICATION_NAME = "Ros-lms-backend"
+        ENVIRONMENT_NAME = "Ros-lms-backend-env"
+        S3_BUCKET = "ros-lms-backend-deployments"
+        JAR_FILE = "target/lms-0.0.1-SNAPSHOT.jar"
     }
     stages {
         stage('Build') {
@@ -18,12 +18,11 @@ pipeline {
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     script {
-                        def timestamp = new Date().format('yyyyMMddHHmmss')
-                        def versionLabel = "app-${timestamp}"
-                        env.VERSION_LABEL = versionLabel
+                        def timestamp = new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone('UTC'))
+                        env.VERSION_LABEL = "app-${timestamp}"
 
                         sh """
-                            aws s3 cp ${JAR_FILE} s3://${S3_BUCKET}/${versionLabel}.jar
+                            aws s3 cp ${JAR_FILE} s3://${S3_BUCKET}/${env.VERSION_LABEL}.jar
                         """
                     }
                 }
@@ -37,14 +36,14 @@ pipeline {
                         # 1. Create version
                         aws elasticbeanstalk create-application-version \
                             --application-name ${APPLICATION_NAME} \
-                            --version-label ${VERSION_LABEL} \
-                            --source-bundle S3Bucket="${S3_BUCKET}",S3Key="${VERSION_LABEL}.jar"
+                            --version-label ${env.VERSION_LABEL} \
+                            --source-bundle S3Bucket=${S3_BUCKET},S3Key=${env.VERSION_LABEL}.jar
 
                         # 2. Deploy
                         aws elasticbeanstalk update-environment \
                             --application-name ${APPLICATION_NAME} \
                             --environment-name ${ENVIRONMENT_NAME} \
-                            --version-label ${VERSION_LABEL}
+                            --version-label ${env.VERSION_LABEL}
 
                         # 3. Wait for deployment to complete
                         echo "Waiting for deployment to finish..."
@@ -59,10 +58,10 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 script {
-                    // Add your verification steps here
-                    // For example, curl your health endpoint:
-                    // sh 'curl -s http://your-env.elasticbeanstalk.com/actuator/health'
-                    echo "Deployment verification would go here"
+                    // Add retry logic and proper health check validation
+                    retry(3) {
+                        sh 'curl -s -o /dev/null -w "%{http_code}" http://ros-lms-api.us-east-1.elasticbeanstalk.com/actuator/health | grep -q 200'
+                    }
                 }
             }
         }
