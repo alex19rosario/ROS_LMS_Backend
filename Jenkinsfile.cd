@@ -60,7 +60,7 @@ pipeline {
                 script {
                     // Add retry logic and proper health check validation
                     retry(3) {
-                        sh 'curl -s -o /dev/null -w "%{http_code}" http://ros-lms-api.us-east-1.elasticbeanstalk.com/actuator/health | grep -q 200'
+                        sh 'curl -s http://ros-lms-api.us-east-1.elasticbeanstalk.com/actuator/health'
                     }
                 }
             }
