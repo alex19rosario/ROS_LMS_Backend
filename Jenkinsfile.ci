@@ -44,25 +44,20 @@ pipeline {
                 )
             }
         }
-        // Stage 3: SonarQube Static Code Analysis
-        stage('SonarQube Analysis') {
+        // Stage 3: SonarQube Scanning
+        stage('SonarQube Scanning') {
             steps {
-                // 1. Run the SonarQube scan
                 withSonarQubeEnv('sonarqube-server') {
                     sh './mvnw sonar:sonar'
                 }
+            }
+        }
 
-                // 2. Wait for SonarQube to process results and enforce Quality Gate
-                timeout(time: 15, unit: 'MINUTES') {
-                    script {
-                        // This step FAILS the pipeline if Quality Gate is not met
-                        def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "❌ SonarQube Quality Gate failed: ${qg.status}"
-                        } else {
-                            echo "✅ SonarQube Quality Gate passed!"
-                        }
-                    }
+        // Stage 4: SonarQube Quality Gate
+        stage('SonarQube Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
