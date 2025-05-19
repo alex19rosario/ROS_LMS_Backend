@@ -12,7 +12,7 @@ This project uses a MySQL database running inside a Docker container. To create 
 docker compose up -d
 ```
 
-## 3. Private and Public Key Setup
+## 2. Private and Public Key Setup
 
 ### Generate RSA Keys
 
