@@ -42,6 +42,15 @@ class MemberDAOJpaImplTest {
 
     @Test
     @Transactional
+    void findByGovernmentID_whenMemberNotExists_shouldReturnEmptyOptional() {
+        // No setup needed - we're testing for non-existent member
+        Optional<Member> found = memberDAO.findByGovernmentID("NON_EXISTENT_ID");
+
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    @Transactional
     void testFindByUsername() {
         Member member = new Member("GOV456", "Jane", "", "Smith", "987654321", (byte) 25, 'F', "jane@example.com", "janesmith");
         memberDAO.create(member);
@@ -50,6 +59,26 @@ class MemberDAOJpaImplTest {
 
         assertThat(found).isPresent();
         assertThat(found.get().getFirstName()).isEqualTo("Jane");
+    }
+
+    @Test
+    @Transactional
+    void findByUsername_withEmptyString_shouldReturnEmptyOptional() {
+        Optional<Member> found = memberDAO.findByUsername("");
+
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    void testFindByEmail() {
+        Member member = new Member("GOV789", "Peter", "", "Zeus", "987654999", (byte) 25, 'F', "peter@example.com", "peterzeus");
+        memberDAO.create(member);
+
+        Optional<Member> found = memberDAO.findByEmail("peter@example.com");
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getFirstName()).isEqualTo("Peter");
     }
 
     @Test

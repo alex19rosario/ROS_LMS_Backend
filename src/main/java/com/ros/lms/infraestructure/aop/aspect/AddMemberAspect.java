@@ -1,6 +1,8 @@
 package com.ros.lms.infraestructure.aop.aspect;
 
+import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.infraestructure.aop.audit_service.MemberAuditService;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -24,8 +26,9 @@ public class AddMemberAspect {
     private void forAddMemberMethod(){}
 
     @AfterReturning("forAddMemberMethod()")
-    public void afterReturningAddMemberAdvice(){
-        memberAuditService.logAddMemberAfterReturning(null);
+    public void afterReturningAddMemberAdvice(JoinPoint joinPoint){
+        AddMemberDTO memberDTO = (AddMemberDTO) joinPoint.getArgs()[0];
+        memberAuditService.logAddMemberAfterReturning(memberDTO.governmentID());
     }
 
     @AfterThrowing("forAddMemberMethod()")

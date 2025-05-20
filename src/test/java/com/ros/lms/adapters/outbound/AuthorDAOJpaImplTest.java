@@ -70,6 +70,44 @@ public class AuthorDAOJpaImplTest {
         assertThat(result.get().getLastName()).isEqualTo("Smith");
     }
 
+    @Transactional
+    @Test
+    void testFindByFullName_withFirstAndLastName_nullMiddleName() {
+        // Arrange
+        Author author = new Author();
+        author.setFirstName("Peter");
+        author.setLastName("Zeus");
+        entityManager.persist(author);
+        entityManager.flush();
+
+        // Act
+        Optional<Author> result = authorDAO.findByFullName("Peter", null, "Zeus");
+
+        // Assert
+        assertThat(result).isPresent();
+        assertThat(result.get().getFirstName()).isEqualTo("Peter");
+        assertThat(result.get().getLastName()).isEqualTo("Zeus");
+    }
+
+    @Transactional
+    @Test
+    void testFindByFullName_withFirstAndLastName_emptyMiddleName() {
+        // Arrange
+        Author author = new Author();
+        author.setFirstName("Max");
+        author.setLastName("Powell");
+        entityManager.persist(author);
+        entityManager.flush();
+
+        // Act
+        Optional<Author> result = authorDAO.findByFullName("Max", "", "Powell");
+
+        // Assert
+        assertThat(result).isPresent();
+        assertThat(result.get().getFirstName()).isEqualTo("Max");
+        assertThat(result.get().getLastName()).isEqualTo("Powell");
+    }
+
     @Test
     void testFindByFullName_noResult() {
         // Act
