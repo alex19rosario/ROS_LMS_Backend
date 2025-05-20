@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AuthorityIdTest {
+class AuthorityIdTest {
 
     private AuthorityId authorityId;
     private final String testUsername = "johndoe";

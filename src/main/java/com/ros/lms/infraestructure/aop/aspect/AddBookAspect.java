@@ -2,7 +2,6 @@ package com.ros.lms.infraestructure.aop.aspect;
 
 
 import com.ros.lms.domain.dtos.AddBookDTO;
-import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -30,7 +29,7 @@ public class AddBookAspect {
     @AfterReturning("forAddBookMethod()")
     public void afterReturningAddBookAdvice(JoinPoint joinPoint){
         AddBookDTO bookDTO = (AddBookDTO) joinPoint.getArgs()[0];
-        bookAuditService.logAddBookAfterReturning(Long.valueOf(bookDTO.ISBN()).toString());
+        bookAuditService.logAddBookAfterReturning(Long.toString(bookDTO.ISBN()));
     }
 
     @AfterThrowing("forAddBookMethod()")

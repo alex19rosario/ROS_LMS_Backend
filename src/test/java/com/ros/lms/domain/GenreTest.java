@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GenreTest {
+class GenreTest {
 
     private Genre genre;
     private final String testDescription = "Science Fiction";

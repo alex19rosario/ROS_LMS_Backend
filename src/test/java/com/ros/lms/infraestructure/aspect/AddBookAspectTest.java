@@ -17,7 +17,7 @@ import java.util.Set;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AddBookAspectTest {
+class AddBookAspectTest {
 
     @Mock
     private BookAuditService bookAuditService;
@@ -56,9 +56,6 @@ public class AddBookAspectTest {
 
     @Test
     void afterThrowingAddBookAdvice_ShouldCallLogAddBookAfterThrowing() {
-        // Arrange
-        String errorMessage = "Test error message";
-
         // Act
         addBookAspect.afterThrowingAddBookAdvice();
 

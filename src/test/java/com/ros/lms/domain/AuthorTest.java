@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AuthorTest {
+class AuthorTest {
 
     private Author author;
     private final String testFirstName = "John";

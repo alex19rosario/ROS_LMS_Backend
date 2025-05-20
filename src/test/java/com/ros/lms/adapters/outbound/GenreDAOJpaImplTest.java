@@ -1,7 +1,6 @@
 package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.GenreDAOJpaImpl;
-import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Genre;
 import com.ros.lms.ports.outbound.repository_contracts.GenreDAO;
 import jakarta.persistence.EntityManager;
