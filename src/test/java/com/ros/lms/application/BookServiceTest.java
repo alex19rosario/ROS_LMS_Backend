@@ -42,10 +42,11 @@ public class BookServiceTest {
 
         // Create a sample AddBookDTO
         AuthorDTO author = new AuthorDTO("Joshua", "Bloch");
+        AuthorDTO coAuthor = new AuthorDTO("Carlos Alexander", "Rosario");
         validBookDTO = new AddBookDTO(
                 9783161484105L,
                 "Effective Java",
-                Set.of(author),
+                Set.of(author, coAuthor),
                 Set.of("SCIENCE")
         );
     }
@@ -67,7 +68,7 @@ public class BookServiceTest {
     void save_shouldSaveBook_whenBookDoesNotExist() throws BookAlreadyExistsException {
         // Arrange
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());
-        when(authorDAO.findByFullName("Joshua", null, "Bloch")).thenReturn(Optional.empty());
+        when(authorDAO.findByFullName("Carlos", "Alexander", "Rosario")).thenReturn(Optional.empty());
         when(genreDAO.findByDescription("SCIENCE")).thenReturn(Optional.of(new Genre("SCIENCE")));
 
         // Act

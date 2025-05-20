@@ -1,8 +1,8 @@
-package com.ros.lms.infraestructure;
+package com.ros.lms.infraestructure.audit_service;
 
 import com.ros.lms.infraestructure.aop.audit_repository.AuditDAO;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
-import com.ros.lms.infraestructure.aop.audit_service.BookAuditServiceImpl;
+import com.ros.lms.infraestructure.aop.audit_service.MemberAuditServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class BookAuditServiceTest {
+public class MemberAuditServiceTest{
 
     @Mock
     AuditDAO auditDAO;
 
     @InjectMocks
-    BookAuditServiceImpl bookAuditService;
+    MemberAuditServiceImpl memberAuditService;
 
     private CustomLog log;
 
@@ -30,36 +30,36 @@ public class BookAuditServiceTest {
     }
 
     @Test
-    void testLogAddBookAfterReturning() {
+    void testLogAddMemberAfterReturning() {
         // Arrange
-        String description = "Book A was added";
+        String description = "Member A was added";
 
         // Act
-        bookAuditService.logAddBookAfterReturning(description);
+        memberAuditService.logAddMemberAfterReturning(description);
 
         // Assert
         ArgumentCaptor<CustomLog> logCaptor = ArgumentCaptor.forClass(CustomLog.class);
         verify(auditDAO, times(1)).createLog(logCaptor.capture());
 
         CustomLog capturedLog = logCaptor.getValue();
-        assertEquals("Book A was added", capturedLog.description());
-        assertEquals("NEW BOOK WAS ADDED", capturedLog.actionType());
+        assertEquals("Member A was added", capturedLog.description());
+        assertEquals("NEW MEMBER WAS ADDED", capturedLog.actionType());
     }
 
     @Test
-    void testLogAddBookAfterThrowing() {
+    void testLogAddMemberAfterThrowing() {
         // Arrange
-        String description = "Failed to add Book B";
+        String description = "Failed to add Member B";
 
         // Act
-        bookAuditService.logAddBookAfterThrowing(description);
+        memberAuditService.logAddMemberAfterThrowing(description);
 
         // Assert
         ArgumentCaptor<CustomLog> logCaptor = ArgumentCaptor.forClass(CustomLog.class);
         verify(auditDAO, times(1)).createLog(logCaptor.capture());
 
         CustomLog capturedLog = logCaptor.getValue();
-        assertEquals("Failed to add Book B", capturedLog.description());
+        assertEquals("Failed to add Member B", capturedLog.description());
         assertEquals("ERROR", capturedLog.actionType());
     }
 }
