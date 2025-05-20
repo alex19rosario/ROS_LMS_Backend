@@ -35,14 +35,14 @@ public class MemberServiceTest {
     private MemberServiceImpl memberService;
 
     private AddMemberDTO validMemberDTO;
-    private AddMemberDTO validMemberDTO_withMiddleName;
+    private AddMemberDTO validMemberDtoWithMiddleName;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
         // Create a sample AddMemberDTO
-        validMemberDTO_withMiddleName = new AddMemberDTO(
+        validMemberDtoWithMiddleName = new AddMemberDTO(
                 "123123123",
                 "carlos alexander",
                 "rosario sanchez",
@@ -89,18 +89,18 @@ public class MemberServiceTest {
     @Test
     void add_Success_memberWithMiddleName() throws MemberAlreadyExistsException, UsernameAlreadyExistsException, EmailAlreadyExistsException {
         // Mock the DAO responses
-        when(memberDAO.findByGovernmentID(validMemberDTO_withMiddleName.governmentID())).thenReturn(Optional.empty());
-        when(memberDAO.findByUsername(validMemberDTO_withMiddleName.username())).thenReturn(Optional.empty());
-        when(memberDAO.findByEmail(validMemberDTO_withMiddleName.email())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(validMemberDTO_withMiddleName.password())).thenReturn("hashedPassword");
+        when(memberDAO.findByGovernmentID(validMemberDtoWithMiddleName.governmentID())).thenReturn(Optional.empty());
+        when(memberDAO.findByUsername(validMemberDtoWithMiddleName.username())).thenReturn(Optional.empty());
+        when(memberDAO.findByEmail(validMemberDtoWithMiddleName.email())).thenReturn(Optional.empty());
+        when(passwordEncoder.encode(validMemberDtoWithMiddleName.password())).thenReturn("hashedPassword");
 
         // Execute the method
-        memberService.add(validMemberDTO_withMiddleName);
+        memberService.add(validMemberDtoWithMiddleName);
 
         // Verify the interactions
-        verify(memberDAO).findByGovernmentID(validMemberDTO_withMiddleName.governmentID());
-        verify(memberDAO).findByUsername(validMemberDTO_withMiddleName.username());
-        verify(memberDAO).findByEmail(validMemberDTO_withMiddleName.email());
+        verify(memberDAO).findByGovernmentID(validMemberDtoWithMiddleName.governmentID());
+        verify(memberDAO).findByUsername(validMemberDtoWithMiddleName.username());
+        verify(memberDAO).findByEmail(validMemberDtoWithMiddleName.email());
         verify(userDAO).create(any(User.class));
         verify(memberDAO).create(any(Member.class));
     }
@@ -108,11 +108,11 @@ public class MemberServiceTest {
 
     @Test
     void add_ThrowsMemberAlreadyExistsException() {
-        when(memberDAO.findByGovernmentID(validMemberDTO_withMiddleName.governmentID())).thenReturn(Optional.of(new Member()));
+        when(memberDAO.findByGovernmentID(validMemberDtoWithMiddleName.governmentID())).thenReturn(Optional.of(new Member()));
 
-        assertThrows(MemberAlreadyExistsException.class, () -> memberService.add(validMemberDTO_withMiddleName));
+        assertThrows(MemberAlreadyExistsException.class, () -> memberService.add(validMemberDtoWithMiddleName));
 
-        verify(memberDAO).findByGovernmentID(validMemberDTO_withMiddleName.governmentID());
+        verify(memberDAO).findByGovernmentID(validMemberDtoWithMiddleName.governmentID());
         verify(memberDAO, never()).findByUsername(anyString());
         verify(memberDAO, never()).findByEmail(anyString());
         verify(userDAO, never()).create(any());
@@ -135,15 +135,15 @@ public class MemberServiceTest {
 
     @Test
     void add_ThrowsEmailAlreadyExistsException() {
-        when(memberDAO.findByGovernmentID(validMemberDTO_withMiddleName.governmentID())).thenReturn(Optional.empty());
-        when(memberDAO.findByUsername(validMemberDTO_withMiddleName.username())).thenReturn(Optional.empty());
-        when(memberDAO.findByEmail(validMemberDTO_withMiddleName.email())).thenReturn(Optional.of(new Member()));
+        when(memberDAO.findByGovernmentID(validMemberDtoWithMiddleName.governmentID())).thenReturn(Optional.empty());
+        when(memberDAO.findByUsername(validMemberDtoWithMiddleName.username())).thenReturn(Optional.empty());
+        when(memberDAO.findByEmail(validMemberDtoWithMiddleName.email())).thenReturn(Optional.of(new Member()));
 
-        assertThrows(EmailAlreadyExistsException.class, () -> memberService.add(validMemberDTO_withMiddleName));
+        assertThrows(EmailAlreadyExistsException.class, () -> memberService.add(validMemberDtoWithMiddleName));
 
-        verify(memberDAO).findByGovernmentID(validMemberDTO_withMiddleName.governmentID());
-        verify(memberDAO).findByUsername(validMemberDTO_withMiddleName.username());
-        verify(memberDAO).findByEmail(validMemberDTO_withMiddleName.email());
+        verify(memberDAO).findByGovernmentID(validMemberDtoWithMiddleName.governmentID());
+        verify(memberDAO).findByUsername(validMemberDtoWithMiddleName.username());
+        verify(memberDAO).findByEmail(validMemberDtoWithMiddleName.email());
         verify(userDAO, never()).create(any());
         verify(memberDAO, never()).create(any());
     }

@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AddMemberAspectTest {
+class AddMemberAspectTest {
 
     @Mock
     private MemberAuditService memberAuditService;
@@ -57,9 +57,6 @@ public class AddMemberAspectTest {
 
     @Test
     void afterThrowingAddMemberAdvice_ShouldCallLogAddMemberAfterThrowing() {
-        // Arrange
-        String errorMessage = "Test error message";
-
         // Act
         addMemberAspect.afterThrowingAddMemberAdvice();
 

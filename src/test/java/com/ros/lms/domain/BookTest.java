@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BookTest {
+class BookTest {
     private Book book;
     private final long testISBN = 9783161484100L;
     private final String testTitle = "Effective Java";
