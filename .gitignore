@@ -168,4 +168,7 @@ build/
 ### AWS Jenkins intance keys ###
 jenkins-server-keys.pem
 
+# User-uploaded files
+/upload-dir/
+
 
