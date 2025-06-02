@@ -18,6 +18,8 @@ public class Book {
     private String title;
     @Column(name = "IS_AVAILABLE")
     private char isAvailable;
+    @Column(name = "COVER_IMAGE_PATH")
+    private String coverImagePath;
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "BOOKS_AUTHORS",
             joinColumns = @JoinColumn(name = "BOOK_ID"),
@@ -30,10 +32,11 @@ public class Book {
     private List<Genre> genres;
 
     public Book(){}
-    public Book(long ISBN, String title, char isAvailable, List<Author> authors, List<Genre> genres) {
+    public Book(long ISBN, String title, char isAvailable, String coverImagePath, List<Author> authors, List<Genre> genres) {
         this.ISBN = ISBN;
         this.title = title;
         this.isAvailable = isAvailable;
+        this.coverImagePath = coverImagePath;
         this.authors = authors;
         this.genres = genres;
     }
@@ -77,6 +80,14 @@ public class Book {
         isAvailable = available;
     }
 
+    public String getCoverImagePath() {
+        return coverImagePath;
+    }
+
+    public void setCoverImagePath(String coverImagePath) {
+        this.coverImagePath = coverImagePath;
+    }
+
     public List<Author> getAuthors() {
         return authors;
     }
@@ -114,6 +125,7 @@ public class Book {
                 ", ISBN=" + ISBN +
                 ", title='" + title + '\'' +
                 ", isAvailable=" + isAvailable +
+                ", coverImagePath='" + coverImagePath + '\'' +
                 ", authors=" + authors +
                 ", genres=" + genres +
                 '}';

@@ -1,6 +1,7 @@
 package com.ros.lms.adapters.inbound.exception_handlers;
 
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
+import com.ros.lms.domain.exceptions.StorageException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -19,6 +20,14 @@ public class BookControllerExceptionHandler {
         problemDetail.setTitle("Existing Book Error");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> handleStorageException(StorageException ex, HttpServletRequest request){
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("Storage Error");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
 }

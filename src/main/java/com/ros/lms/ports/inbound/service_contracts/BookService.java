@@ -3,7 +3,8 @@ package com.ros.lms.ports.inbound.service_contracts;
 
 import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
+import com.ros.lms.domain.exceptions.StorageException;
 
 public interface BookService {
-    void add(AddBookDTO dto) throws BookAlreadyExistsException;
+    void add(AddBookDTO dto) throws BookAlreadyExistsException, StorageException;
 }

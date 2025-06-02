@@ -1,6 +1,6 @@
 package com.ros.lms.domain.dtos;
 
-import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @description DTO for adding a book
@@ -8,6 +8,11 @@ import java.util.Set;
  * @param title
  * @param authors
  * @param genres
+ * @param coverImage
  */
-public record AddBookDTO (long ISBN, String title, Set<AuthorDTO> authors, Set<String> genres) {
+public record AddBookDTO (long ISBN,
+                          String title,
+                          String authors,
+                          String genres,
+                          MultipartFile coverImage) {
 }
