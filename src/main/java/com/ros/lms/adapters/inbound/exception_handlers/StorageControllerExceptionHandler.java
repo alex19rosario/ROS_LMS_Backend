@@ -15,7 +15,7 @@ import java.net.URI;
 public class StorageControllerExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleUsernameAlreadyExistsException(StorageException ex, HttpServletRequest request){
+    public ResponseEntity<ProblemDetail> handleStorageException(StorageException ex, HttpServletRequest request){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setTitle("File System Error");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
@@ -23,7 +23,7 @@ public class StorageControllerExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleEmailAlreadyExistsException(StorageFileNotFoundException ex, HttpServletRequest request){
+    public ResponseEntity<ProblemDetail> handleStorageFileNotFoundExceptionException(StorageFileNotFoundException ex, HttpServletRequest request){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problemDetail.setTitle("File not Found Error");
         problemDetail.setInstance(URI.create(request.getRequestURI()));

@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public record RenamedMultipartFile(MultipartFile file, String newFilename) implements MultipartFile{
+public record RenamedMultipartFile(MultipartFile file, String newFilename) implements MultipartFile {
     @Override
     public String getName() {
         return file.getName();

@@ -34,6 +34,4 @@ public class BookController {
         AddBookDTO addBookDTO = new AddBookDTO(ISBN, title, authors, genres, coverImage);
         bookService.add(addBookDTO);
     }
-
-
 }

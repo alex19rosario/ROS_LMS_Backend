@@ -104,7 +104,7 @@ public class BookServiceImpl implements BookService {
                 // Store the file
                 storageService.store(renamedFile);
             } catch (Exception e) {
-                throw new StorageException("Failed to store event image: " + e.getMessage());
+                throw new StorageException("Failed to store cover image: " + e.getMessage());
             }
         }
 
@@ -119,10 +119,10 @@ public class BookServiceImpl implements BookService {
 
     private Set<AuthorDTO> parseAuthors(String authorsString) {
         return Arrays.stream(authorsString.split(","))
-                .map(a -> {
-                    String[] parts = a.split("-");
+                .map(authorString -> {
+                    String[] parts = authorString.split("-");
                     if (parts.length != 2) {
-                        throw new IllegalArgumentException("Invalid author format: " + a);
+                        throw new IllegalArgumentException("Invalid author format: " + authorString);
                     }
                     return new AuthorDTO(parts[0].trim(), parts[1].trim());
                 })

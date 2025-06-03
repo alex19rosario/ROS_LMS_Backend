@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.Set;
 
@@ -30,14 +32,22 @@ class AddBookAspectTest {
 
     private AddBookDTO addBookDTO;
 
+    private MockMultipartFile coverImage;
+
     @BeforeEach
     void setUp(){
-        AuthorDTO authorDTO = new AuthorDTO("John", "Doe");
+        coverImage = new MockMultipartFile(
+                "coverImage",
+                "cover.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "dummy-image-data".getBytes()
+        );
         addBookDTO = new AddBookDTO(
-                321321321,
-                "Test title",
-                Set.of(authorDTO),
-                Set.of("SCIENCE")
+                9783161484105L,
+                "Effective Java",
+                "Joshua-Bloch",
+                "SCIENCE,TECHNOLOGY",
+                coverImage
         );
     }
 

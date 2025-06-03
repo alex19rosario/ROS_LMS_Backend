@@ -16,6 +16,7 @@ class BookTest {
     private final long testISBN = 9783161484100L;
     private final String testTitle = "Effective Java";
     private final char available = 'Y';
+    private final String coverImagePath = "upload-dir/test.png";
 
     @BeforeEach
     void setUp() {
@@ -45,6 +46,9 @@ class BookTest {
         char notAvailable = 'N';
         book.setAvailable(notAvailable);
         assertEquals(notAvailable, book.isAvailable());
+
+        book.setCoverImagePath(coverImagePath);
+        assertEquals(coverImagePath, book.getCoverImagePath());
     }
 
     @Test
@@ -106,14 +110,16 @@ class BookTest {
         assertEquals(available, minimalBook.isAvailable());
         assertNull(minimalBook.getAuthors());
         assertNull(minimalBook.getGenres());
+        assertNull(minimalBook.getCoverImagePath());
 
         // Test full constructor
         List<Author> authors = List.of(new Author("Joshua", "", "Bloch"));
         List<Genre> genres = List.of(new Genre("Programming"));
-        Book fullBook = new Book(testISBN, testTitle, available, authors, genres);
+        Book fullBook = new Book(testISBN, testTitle, available, coverImagePath, authors, genres);
 
         assertEquals(authors, fullBook.getAuthors());
         assertEquals(genres, fullBook.getGenres());
+        assertEquals(coverImagePath, fullBook.getCoverImagePath());
     }
 
     @Test
