@@ -66,6 +66,7 @@ public class LmsSecurityConfig {
             .authorizeHttpRequests(configurer -> configurer
             .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/images/**").hasRole("MEMBER")
             .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole("MEMBER")
             .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole("STAFF")
             .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN")
