@@ -2,7 +2,6 @@ package com.ros.lms.adapters.inbound;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ros.lms.domain.dtos.AddBookDTO;
-import com.ros.lms.domain.dtos.AuthorDTO;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.StorageException;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
@@ -10,7 +9,6 @@ import com.ros.lms.ports.inbound.service_contracts.BookService;
 import com.ros.lms.ports.inbound.service_contracts.StorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,14 +20,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -144,13 +139,6 @@ public class BookControllerTest {
         // Arrange
         String invalidAuthors = "Joshua Bloch"; // Missing hyphen (should be "Joshua-Bloch")
 
-        MockMultipartFile coverImage = new MockMultipartFile(
-                "coverImage",
-                "cover.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "dummy-image-data".getBytes()
-        );
-
         // Mock the service to throw IllegalArgumentException when parsing authors
         doThrow(new IllegalArgumentException("Invalid author format: " + invalidAuthors))
                 .when(bookService).add(any(AddBookDTO.class));
@@ -159,7 +147,7 @@ public class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("ISBN", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
                         .param("title", validBookDTO.title())
                         .param("authors", invalidAuthors) // Invalid format
                         .param("genres", validBookDTO.genres())
@@ -176,13 +164,11 @@ public class BookControllerTest {
 
     @Test
     @WithMockUser(username = "staff", roles = {"STAFF"})
-    public void addBook_ShouldReturnBadRequest_WhenStorageExceptionIsThrown() throws Exception {
+    void addBook_ShouldReturnBadRequest_WhenStorageExceptionIsThrown() throws Exception {
         // Arrange: simulate a StorageException thrown from BookService
         doThrow(new StorageException("Invalid file storage path"))
                 .when(bookService)
                 .add(any());
-
-        MockMultipartFile coverImage = new MockMultipartFile("coverImage", "cover.jpg", "image/jpeg", "fake image".getBytes());
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/books")

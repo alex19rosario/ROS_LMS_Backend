@@ -20,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -55,8 +54,6 @@ public class BookServiceTest {
                 "dummy-image-data".getBytes()
         );
         // Create a sample AddBookDTO
-        AuthorDTO author = new AuthorDTO("Joshua", "Bloch");
-        AuthorDTO coAuthor = new AuthorDTO("Carlos Alexander", "Rosario");
         validBookDTO = new AddBookDTO(
                 9783161484105L,
                 "Effective Java",
@@ -114,7 +111,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void save_shouldThrowStorageException_whenCoverImageStorageFails() throws BookAlreadyExistsException, StorageException {
+    void save_shouldThrowStorageException_whenCoverImageStorageFails() throws StorageException {
         // Arrange
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Carlos", "Alexander", "Rosario")).thenReturn(Optional.empty());

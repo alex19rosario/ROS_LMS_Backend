@@ -12,7 +12,7 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class RenamedMultipartFileTest {
+class RenamedMultipartFileTest {
 
     private MultipartFile mockFile;
     private RenamedMultipartFile renamedFile;
