@@ -1,5 +1,6 @@
 package com.ros.lms.adapters.inbound;
 
+import com.ros.lms.domain.exceptions.StorageException;
 import com.ros.lms.domain.exceptions.StorageFileNotFoundException;
 import com.ros.lms.ports.inbound.service_contracts.StorageService;
 import org.junit.jupiter.api.Test;
@@ -69,5 +70,20 @@ public class StorageControllerTest {
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.get("/api/images/{filename}", filename))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    public void getImage_ShouldReturnBadRequest_WhenStorageExceptionIsThrown() throws Exception {
+        // Arrange
+        String filename = "non-existent-image.jpg";
+
+        // This works only if StorageException is a RuntimeException
+        when(storageService.loadAsResource(filename))
+                .thenThrow(new StorageException("Storage Error"));
+
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/images/{filename}", filename))
+                .andExpect(status().isBadRequest());
     }
 }
