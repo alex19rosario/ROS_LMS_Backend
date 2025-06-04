@@ -74,7 +74,7 @@ public class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("ISBN", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
                         .param("genres", validBookDTO.genres())
@@ -92,7 +92,7 @@ public class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("ISBN", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
                         .param("genres", validBookDTO.genres())
@@ -124,7 +124,7 @@ public class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("ISBN", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
                         .param("genres", validBookDTO.genres())
