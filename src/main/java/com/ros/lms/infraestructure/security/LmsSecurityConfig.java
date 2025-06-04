@@ -8,6 +8,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.ros.lms.application.AppUserService;
 import com.ros.lms.domain.enums.Roles;
+import com.ros.lms.domain.enums.Routes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,14 +66,14 @@ public class LmsSecurityConfig {
 
         http.cors(Customizer.withDefaults()) // Enable CORS
             .authorizeHttpRequests(configurer -> configurer
-            .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/images/**").hasRole(Roles.MEMBER.val())
-            .requestMatchers(HttpMethod.GET, "/api/books/**").hasRole(Roles.MEMBER.val())
-            .requestMatchers(HttpMethod.POST, "/api/books/**").hasRole(Roles.STAFF.val())
-            .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole(Roles.ADMIN.val())
-            .requestMatchers(HttpMethod.GET, "/api/genres/**").hasRole(Roles.STAFF.val())
-            .requestMatchers(HttpMethod.POST, "api/members/**").hasRole(Roles.MEMBER.val()));
+            .requestMatchers(HttpMethod.GET, Routes.HEALTH_CHECK.val()).permitAll()
+            .requestMatchers(HttpMethod.POST, Routes.LOGIN.val()).permitAll()
+            .requestMatchers(HttpMethod.GET, Routes.IMAGES.val()).hasRole(Roles.MEMBER.val())
+            .requestMatchers(HttpMethod.GET, Routes.BOOKS.val()).hasRole(Roles.MEMBER.val())
+            .requestMatchers(HttpMethod.POST, Routes.BOOKS.val()).hasRole(Roles.STAFF.val())
+            .requestMatchers(HttpMethod.DELETE, Routes.BOOKS.val()).hasRole(Roles.ADMIN.val())
+            .requestMatchers(HttpMethod.GET, Routes.GENRES.val()).hasRole(Roles.STAFF.val())
+            .requestMatchers(HttpMethod.POST, Routes.MEMBERS.val()).hasRole(Roles.MEMBER.val()));
 
         http.httpBasic(Customizer.withDefaults());
         http.authenticationProvider(authenticationProvider());

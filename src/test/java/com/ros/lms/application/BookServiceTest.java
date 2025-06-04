@@ -1,7 +1,6 @@
 package com.ros.lms.application;
 
 import com.ros.lms.domain.dtos.AddBookDTO;
-import com.ros.lms.domain.dtos.AuthorDTO;
 import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
