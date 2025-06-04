@@ -33,7 +33,7 @@ public class StorageControllerTest {
 
     @Test
     @WithMockUser(username = "member", roles = {"MEMBER"})
-    public void getImage_ShouldReturnImage_WhenFileExists() throws Exception {
+    void getImage_ShouldReturnImage_WhenFileExists() throws Exception {
         // Arrange
         String filename = "test-image.jpg";
         byte[] imageContent = "fake image content".getBytes();
@@ -59,7 +59,7 @@ public class StorageControllerTest {
 
     @Test
     @WithMockUser(username = "member", roles = {"MEMBER"})
-    public void getImage_ShouldReturnNotFound_WhenFileDoesNotExist() throws Exception {
+    void getImage_ShouldReturnNotFound_WhenFileDoesNotExist() throws Exception {
         // Arrange
         String filename = "non-existent-image.jpg";
 
@@ -74,7 +74,7 @@ public class StorageControllerTest {
 
     @Test
     @WithMockUser(username = "member", roles = {"MEMBER"})
-    public void getImage_ShouldReturnBadRequest_WhenStorageExceptionIsThrown() throws Exception {
+    void getImage_ShouldReturnBadRequest_WhenStorageExceptionIsThrown() throws Exception {
         // Arrange
         String filename = "non-existent-image.jpg";
 

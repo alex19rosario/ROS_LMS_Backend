@@ -113,9 +113,8 @@ public class BookServiceImpl implements BookService {
         bookDAO.create(book);
     }
 
-    private final Function<AddBookDTO, Book> addBookMapper = addBookDTO -> {
-        return new Book(addBookDTO.ISBN(), addBookDTO.title(), 'Y');
-    };
+    private final Function<AddBookDTO, Book> addBookMapper = addBookDTO ->
+            new Book(addBookDTO.ISBN(), addBookDTO.title(), 'Y');
 
     private Set<AuthorDTO> parseAuthors(String authorsString) {
         return Arrays.stream(authorsString.split(","))

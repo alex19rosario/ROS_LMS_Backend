@@ -26,7 +26,7 @@ class BookTest {
     @Test
     void testGettersAndSetters() {
         // Test initial values from constructor
-        assertEquals(testISBN, book.getISBN());
+        assertEquals(testISBN, book.getIsbn());
         assertEquals(testTitle, book.getTitle());
         assertEquals(available, book.isAvailable());
 
@@ -36,8 +36,8 @@ class BookTest {
         assertEquals(newId, book.getId());
 
         long newISBN = 9780201633610L;
-        book.setISBN(newISBN);
-        assertEquals(newISBN, book.getISBN());
+        book.setIsbn(newISBN);
+        assertEquals(newISBN, book.getIsbn());
 
         String newTitle = "Design Patterns";
         book.setTitle(newTitle);
@@ -105,7 +105,7 @@ class BookTest {
     void testConstructors() {
         // Test minimal constructor
         Book minimalBook = new Book(testISBN, testTitle, available);
-        assertEquals(testISBN, minimalBook.getISBN());
+        assertEquals(testISBN, minimalBook.getIsbn());
         assertEquals(testTitle, minimalBook.getTitle());
         assertEquals(available, minimalBook.isAvailable());
         assertNull(minimalBook.getAuthors());

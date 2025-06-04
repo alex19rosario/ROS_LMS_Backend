@@ -45,7 +45,7 @@ public class BookDAOJpaImplTest {
         // Assert
         Book persistedBook = entityManager.find(Book.class, generatedId); // Use the primary key (id)
         assertThat(persistedBook).isNotNull();
-        assertThat(persistedBook.getISBN()).isEqualTo(9783161484100L);
+        assertThat(persistedBook.getIsbn()).isEqualTo(9783161484100L);
         assertThat(persistedBook.getTitle()).isEqualTo("Effective Java");
     }
 

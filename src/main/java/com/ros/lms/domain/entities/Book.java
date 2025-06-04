@@ -13,7 +13,7 @@ public class Book {
     @Column(name = "BOOK_ID")
     private long id;
     @Column(name = "ISBN")
-    private long ISBN;
+    private long isbn;
     @Column(name = "TITLE")
     private String title;
     @Column(name = "IS_AVAILABLE")
@@ -32,8 +32,8 @@ public class Book {
     private List<Genre> genres;
 
     public Book(){}
-    public Book(long ISBN, String title, char isAvailable, String coverImagePath, List<Author> authors, List<Genre> genres) {
-        this.ISBN = ISBN;
+    public Book(long isbn, String title, char isAvailable, String coverImagePath, List<Author> authors, List<Genre> genres) {
+        this.isbn = isbn;
         this.title = title;
         this.isAvailable = isAvailable;
         this.coverImagePath = coverImagePath;
@@ -41,8 +41,8 @@ public class Book {
         this.genres = genres;
     }
 
-    public Book(long ISBN, String title, char isAvailable) {
-        this.ISBN = ISBN;
+    public Book(long isbn, String title, char isAvailable) {
+        this.isbn = isbn;
         this.title = title;
         this.isAvailable = isAvailable;
     }
@@ -56,12 +56,12 @@ public class Book {
         this.id = id;
     }
 
-    public long getISBN() {
-        return ISBN;
+    public long getIsbn() {
+        return isbn;
     }
 
-    public void setISBN(long ISBN) {
-        this.ISBN = ISBN;
+    public void setIsbn(long isbn) {
+        this.isbn = isbn;
     }
 
     public String getTitle() {
@@ -122,7 +122,7 @@ public class Book {
     public String toString() {
         return "Book{" +
                 "id=" + id +
-                ", ISBN=" + ISBN +
+                ", ISBN=" + isbn +
                 ", title='" + title + '\'' +
                 ", isAvailable=" + isAvailable +
                 ", coverImagePath='" + coverImagePath + '\'' +

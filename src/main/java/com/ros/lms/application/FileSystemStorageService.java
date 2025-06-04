@@ -28,7 +28,7 @@
         @Autowired
         public FileSystemStorageService(StorageProperties properties) throws StorageException {
 
-            if(properties.getLocation().trim().length() == 0){
+            if(properties.getLocation().trim().isEmpty()){
                 throw new StorageException("File upload location can not be Empty.");
             }
 
@@ -45,13 +45,7 @@
                                 Paths.get(file.getOriginalFilename()))
                         .normalize().toAbsolutePath();
 
-                System.out.println("file original filename: " + file.getOriginalFilename());
-                System.out.println("destinationFile: " + destinationFile);
-
                 if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-
-                    System.out.println("destinationFile parent: " + destinationFile.getParent());
-                    System.out.println("rootLocation absolute path: " + this.rootLocation.toAbsolutePath());
                     // This is a security check
                     throw new StorageException(
                             "Cannot store file outside current directory.");
