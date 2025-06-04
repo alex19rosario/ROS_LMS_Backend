@@ -25,12 +25,12 @@ public class BookDAOJpaImpl implements BookDAO {
     }
 
     @Override
-    public Optional<Book> findByISBN(long ISBN) {
+    public Optional<Book> findByISBN(long isbn) {
 
-        String query = "SELECT b FROM Book b WHERE b.ISBN = :ISBN";
+        String query = "SELECT b FROM Book b WHERE b.isbn = :isbn";
         try{
             Book book = entityManager.createQuery(query, Book.class)
-                    .setParameter("ISBN", ISBN)
+                    .setParameter("isbn", isbn)
                     .getSingleResult();
 
             return Optional.ofNullable(book);
