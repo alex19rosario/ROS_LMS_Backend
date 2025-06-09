@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class S3StorageServiceTest {
+class S3StorageServiceTest {
 
     private S3Client s3Client;
     private StorageProperties properties;
@@ -43,7 +43,7 @@ public class S3StorageServiceTest {
 
 
     @Test
-    void store_WithValidFile_ShouldUploadToS3() throws IOException {
+    void store_WithValidFile_ShouldUploadToS3() {
         // Arrange
         MockMultipartFile file = new MockMultipartFile("test.txt", "test.txt", "text/plain", "Hello".getBytes());
 

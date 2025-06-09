@@ -39,7 +39,7 @@ public class S3StorageService implements StorageService {
 
     @Override
     public void init() throws StorageException {
-
+        // No initialization needed for S3 storage.
     }
 
     @Override
@@ -87,11 +87,6 @@ public class S3StorageService implements StorageService {
     @Override
     public Resource loadAsResource(String filename) throws StorageFileNotFoundException {
         try {
-            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(filename)
-                    .build();
-
             return resourceLoader.getResource("s3://" + bucketName + "/" + filename);
         } catch (S3Exception e) {
             throw new StorageFileNotFoundException("Could not read file: " + filename, e);
@@ -112,11 +107,11 @@ public class S3StorageService implements StorageService {
             if (!listObjectsResponse.contents().isEmpty()) {
                 List<ObjectIdentifier> objectsToDelete = listObjectsResponse.contents().stream()
                         .map(s3Object -> ObjectIdentifier.builder().key(s3Object.key()).build())
-                        .collect(Collectors.toList());
+                        .toList();
 
                 DeleteObjectsRequest deleteRequest = DeleteObjectsRequest.builder()
                         .bucket(bucketName)
-                        .delete(Delete.builder().objects(objectsToDelete).build())
+                        .delete(d -> d.objects(objectsToDelete))
                         .build();
 
                 s3Client.deleteObjects(deleteRequest);
