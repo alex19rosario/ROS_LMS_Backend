@@ -5,6 +5,7 @@
     import com.ros.lms.infraestructure.config.StorageProperties;
     import com.ros.lms.ports.inbound.service_contracts.StorageService;
     import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.context.annotation.Profile;
     import org.springframework.core.io.Resource;
     import org.springframework.core.io.UrlResource;
     import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@
     import java.util.stream.Stream;
 
     @Service
+    @Profile({"dev", "test"})
     public class FileSystemStorageService implements StorageService {
 
         private final Path rootLocation;

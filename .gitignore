@@ -169,6 +169,6 @@ build/
 jenkins-server-keys.pem
 
 # User-uploaded files
-/upload-dir/
+/ros-lms-files/
 
 
