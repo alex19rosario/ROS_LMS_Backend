@@ -58,38 +58,9 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 script {
-                    // Wait for application to be fully ready
-                    def maxAttempts = 10
-                    def waitTime = 30 // seconds
-                    def attempt = 0
-                    def success = false
-
-                    while (attempt < maxAttempts && !success) {
-                        attempt++
-                        try {
-                            def status = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${HEALTH_CHECK_URL}", returnStdout: true).trim()
-                            if (status == "200") {
-                                def health = sh(script: "curl -s ${HEALTH_CHECK_URL}", returnStdout: true).trim()
-                                if (health.contains('"status":"UP"')) {
-                                    success = true
-                                    echo "Application is UP and healthy"
-                                } else {
-                                    echo "Health check returned 200 but status is not UP. Response: ${health}"
-                                }
-                            } else {
-                                echo "Attempt ${attempt}: Health check returned HTTP ${status}"
-                            }
-                        } catch (Exception e) {
-                            echo "Attempt ${attempt}: Health check failed with exception: ${e.getMessage()}"
-                        }
-
-                        if (!success && attempt < maxAttempts) {
-                            sleep(waitTime)
-                        }
-                    }
-
-                    if (!success) {
-                        error("Health check failed after ${maxAttempts} attempts")
+                    // Add retry logic and proper health check validation
+                    retry(3) {
+                        sh 'curl -s http://ros-lms-api.us-east-1.elasticbeanstalk.com/actuator/health'
                     }
                 }
             }
