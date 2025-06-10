@@ -58,9 +58,15 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 script {
-                    // Add retry logic and proper health check validation
                     retry(3) {
-                        sh 'curl -s http://ros-lms-api.us-east-1.elasticbeanstalk.com/actuator/health'
+                        sh """
+                            echo "Checking app health..."
+                            status=\$(curl -s -o /dev/null -w "%{http_code}" http://ros-lms-api.us-east-1.elasticbeanstalk.com/actuator/health)
+                            if [ "\$status" -ne 200 ]; then
+                                echo "Health check failed with status \$status"
+                                exit 1
+                            fi
+                        """
                     }
                 }
             }
