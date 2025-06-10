@@ -59,18 +59,35 @@ pipeline {
             steps {
                 script {
                     retry(3) {
-                        sh """
-                            echo "Checking app health..."
-                            status=\$(curl -s -o /dev/null -w "%{http_code}" http://ros-lms-api.us-east-1.elasticbeanstalk.com/actuator/health)
-                            if [ "\$status" -ne 200 ]; then
-                                echo "Health check failed with status \$status"
-                                exit 1
-                            fi
-                        """
+                        echo "Checking app health..."
+
+                        try {
+                            def response = sh(
+                                script: 'curl -s -w "%{http_code}" -o result.txt http://ros-lms-api.us-east-1.elasticbeanstalk.com/actuator/health',
+                                returnStdout: true
+                            ).trim()
+
+                            def body = readFile('result.txt').trim()
+                            echo "Health endpoint response body: ${body}"
+                            echo "HTTP status: ${response}"
+
+                            if (response != "200") {
+                                error "Health check failed with status ${response}"
+                            }
+
+                            if (!body.contains('"status":"UP"')) {
+                                error "Health check failed: status not UP"
+                            }
+                        } finally {
+                            // Always delete the file
+                            sh 'rm -f result.txt'
+                        }
                     }
                 }
             }
         }
+
+
     }
     post {
         success {
