@@ -1,6 +1,9 @@
 package com.ros.lms.domain.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Past;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "MEMBERS")
@@ -19,8 +22,9 @@ public class Member {
     private String lastName;
     @Column(name = "PHONE")
     private String phone;
-    @Column(name = "AGE")
-    private byte age;
+    @Column(name = "DATE_OF_BIRTH")
+    @Past(message = "Date of birth must be in the past.")
+    private LocalDate dateOfBirth;
     @Column(name = "SEX")
     private char sex;
     @Column(name = "EMAIL")
@@ -30,13 +34,13 @@ public class Member {
 
     public Member() {}
 
-    public Member(String governmentID, String firstName, String middleName, String lastName, String phone, byte age, char sex, String email, String username) {
+    public Member(String governmentID, String firstName, String middleName, String lastName, String phone, LocalDate dateOfBirth, char sex, String email, String username) {
         this.governmentID = governmentID;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.phone = phone;
-        this.age = age;
+        this.dateOfBirth = dateOfBirth;
         this.sex = sex;
         this.email = email;
         this.username = username;
@@ -90,12 +94,12 @@ public class Member {
         this.phone = phone;
     }
 
-    public byte getAge() {
-        return age;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setAge(byte age) {
-        this.age = age;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public char getSex() {
@@ -131,7 +135,7 @@ public class Member {
                 ", middleName='" + middleName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
-                ", age=" + age +
+                ", dateOfBirth=" + dateOfBirth +
                 ", sex=" + sex +
                 ", email='" + email + '\'' +
                 ", username=" + username +

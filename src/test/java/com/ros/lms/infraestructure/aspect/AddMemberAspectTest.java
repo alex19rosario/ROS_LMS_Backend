@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,7 +37,7 @@ class AddMemberAspectTest {
                 "John",
                 "Doe",
                 "6578932134",
-                (byte) 56,
+                LocalDate.of(1985, 7, 25),
                 'M' ,
                 "john@example.com",
                 "john",

@@ -1,8 +1,15 @@
 package com.ros.lms.domain;
 
 import com.ros.lms.domain.entities.Member;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,16 +21,29 @@ class MemberTest {
     private final String testMiddleName = "Robert";
     private final String testLastName = "Doe";
     private final String testPhone = "+1234567890";
-    private final byte testAge = 30;
+    private final LocalDate testDateOfBirth = LocalDate.of(1999, 9, 17);
     private final char testSex = 'M';
     private final String testEmail = "john.doe@example.com";
     private final String testUsername = "johndoe";
 
+    private static Validator validator;
+
     @BeforeEach
     void setUp() {
-        member = new Member(testGovernmentID, testFirstName, testMiddleName,
-                testLastName, testPhone, testAge, testSex,
-                testEmail, testUsername);
+        member = new Member(
+                testGovernmentID,
+                testFirstName,
+                testMiddleName,
+                testLastName,
+                testPhone,
+                testDateOfBirth,
+                testSex,
+                testEmail,
+                testUsername
+        );
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
     }
 
     @Test
@@ -34,7 +54,7 @@ class MemberTest {
         assertEquals(testMiddleName, member.getMiddleName());
         assertEquals(testLastName, member.getLastName());
         assertEquals(testPhone, member.getPhone());
-        assertEquals(testAge, member.getAge());
+        assertEquals(testDateOfBirth, member.getDateOfBirth());
         assertEquals(testSex, member.getSex());
         assertEquals(testEmail, member.getEmail());
         assertEquals(testUsername, member.getUsername());
@@ -65,9 +85,9 @@ class MemberTest {
         member.setPhone(newPhone);
         assertEquals(newPhone, member.getPhone());
 
-        byte newAge = 25;
-        member.setAge(newAge);
-        assertEquals(newAge, member.getAge());
+        LocalDate newDateOfBirth = LocalDate.of(1985, 3, 7);
+        member.setDateOfBirth(newDateOfBirth);
+        assertEquals(newDateOfBirth, member.getDateOfBirth());
 
         char newSex = 'F';
         member.setSex(newSex);
@@ -86,7 +106,7 @@ class MemberTest {
     void testConstructors() {
         // Test parameterized constructor
         Member paramMember = new Member(testGovernmentID, testFirstName, testMiddleName,
-                testLastName, testPhone, testAge, testSex,
+                testLastName, testPhone, testDateOfBirth, testSex,
                 testEmail, testUsername);
         assertEquals(testFirstName, paramMember.getFirstName());
         assertEquals(testMiddleName, paramMember.getMiddleName());
@@ -101,7 +121,7 @@ class MemberTest {
         assertNull(emptyMember.getMiddleName());
         assertNull(emptyMember.getLastName());
         assertNull(emptyMember.getPhone());
-        assertEquals(0, emptyMember.getAge()); // default value for byte
+        assertNull(emptyMember.getDateOfBirth());
         assertEquals('\u0000', emptyMember.getSex()); // default value for char
         assertNull(emptyMember.getEmail());
         assertNull(emptyMember.getUsername());
@@ -131,7 +151,7 @@ class MemberTest {
         assertNull(member.getUsername());
 
         // Test constructor with null values
-        Member nullMember = new Member(null, null, null, null, null, (byte)0, '\u0000', null, null);
+        Member nullMember = new Member(null, null, null, null, null, null, '\u0000', null, null);
         assertNull(nullMember.getGovernmentID());
         assertNull(nullMember.getFirstName());
         assertNull(nullMember.getMiddleName());
@@ -166,21 +186,6 @@ class MemberTest {
     }
 
     @Test
-    void testAgeBoundaries() {
-        // Test minimum age
-        member.setAge(Byte.MIN_VALUE);
-        assertEquals(Byte.MIN_VALUE, member.getAge());
-
-        // Test maximum age
-        member.setAge(Byte.MAX_VALUE);
-        assertEquals(Byte.MAX_VALUE, member.getAge());
-
-        // Test zero age
-        member.setAge((byte)0);
-        assertEquals(0, member.getAge());
-    }
-
-    @Test
     void testSexValues() {
         member.setSex('M');
         assertEquals('M', member.getSex());
@@ -196,6 +201,56 @@ class MemberTest {
     }
 
     @Test
+    void dateOfBirth_shouldFailValidation_whenDateIsInFuture() {
+        // Given
+        Member member = new Member(
+                "123456789",
+                "John",
+                "A",
+                "Doe",
+                "1234567890",
+                LocalDate.now().plusDays(1), // future date
+                'M',
+                "john.doe@example.com",
+                "johndoe"
+        );
+
+        // When
+        Set<ConstraintViolation<Member>> violations = validator.validate(member);
+
+        // Then
+        assertFalse(violations.isEmpty(), "Validation should fail for future date of birth.");
+
+        boolean hasPastViolation = violations.stream()
+                .anyMatch(v -> v.getPropertyPath().toString().equals("dateOfBirth")
+                        && v.getMessage().equals("Date of birth must be in the past."));
+
+        assertTrue(hasPastViolation, "Expected @Past constraint violation on dateOfBirth.");
+    }
+
+    @Test
+    void dateOfBirth_shouldPassValidation_whenDateIsInPast() {
+        // Given
+        Member member = new Member(
+                "987654321",
+                "Jane",
+                "B",
+                "Smith",
+                "0987654321",
+                LocalDate.of(2000, 1, 1), // past date
+                'F',
+                "jane.smith@example.com",
+                "janesmith"
+        );
+
+        // When
+        Set<ConstraintViolation<Member>> violations = validator.validate(member);
+
+        // Then
+        assertTrue(violations.isEmpty(), "Validation should pass for valid past date of birth.");
+    }
+
+    @Test
     void testToString() {
         // Test with all values set
         String toStringResult = member.toString();
@@ -205,7 +260,7 @@ class MemberTest {
         assertTrue(toStringResult.contains("middleName='" + testMiddleName + "'"));
         assertTrue(toStringResult.contains("lastName='" + testLastName + "'"));
         assertTrue(toStringResult.contains("phone='" + testPhone + "'"));
-        assertTrue(toStringResult.contains("age=" + testAge));
+        assertTrue(toStringResult.contains("dateOfBirth=" + testDateOfBirth));
         assertTrue(toStringResult.contains("sex=" + testSex));
         assertTrue(toStringResult.contains("email='" + testEmail + "'"));
         assertTrue(toStringResult.contains("username=" + testUsername));

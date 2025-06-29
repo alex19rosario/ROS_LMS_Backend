@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,7 +48,7 @@ public class MemberServiceTest {
                 "carlos alexander",
                 "rosario sanchez",
                 "6474256438",
-                (byte) 27,
+                LocalDate.of(1985, 9, 15),
                 'M',
                 "test19@gmail.com",
                 "carlos19",
@@ -59,7 +60,7 @@ public class MemberServiceTest {
                 "Peter",
                 "Zeus",
                 "6474259589",
-                (byte) 27,
+                LocalDate.of(1999, 7, 22),
                 'M',
                 "test18@gmail.com",
                 "peter27",
