@@ -203,7 +203,7 @@ class MemberTest {
     @Test
     void dateOfBirth_shouldFailValidation_whenDateIsInFuture() {
         // Given
-        Member member = new Member(
+        Member invalidMember = new Member(
                 "123456789",
                 "John",
                 "A",
@@ -216,7 +216,7 @@ class MemberTest {
         );
 
         // When
-        Set<ConstraintViolation<Member>> violations = validator.validate(member);
+        Set<ConstraintViolation<Member>> violations = validator.validate(invalidMember);
 
         // Then
         assertFalse(violations.isEmpty(), "Validation should fail for future date of birth.");
@@ -231,7 +231,7 @@ class MemberTest {
     @Test
     void dateOfBirth_shouldPassValidation_whenDateIsInPast() {
         // Given
-        Member member = new Member(
+        Member validMember = new Member(
                 "987654321",
                 "Jane",
                 "B",
@@ -244,7 +244,7 @@ class MemberTest {
         );
 
         // When
-        Set<ConstraintViolation<Member>> violations = validator.validate(member);
+        Set<ConstraintViolation<Member>> violations = validator.validate(validMember);
 
         // Then
         assertTrue(violations.isEmpty(), "Validation should pass for valid past date of birth.");
