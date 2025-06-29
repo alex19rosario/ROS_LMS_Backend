@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +32,7 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testCreateAndFindByGovernmentID() {
-        Member member = new Member("GOV123", "John", "", "Doe", "123456789", (byte) 30, 'M', "john@example.com", "johndoe");
+        Member member = new Member("GOV123", "John", "", "Doe", "123456789", LocalDate.of(2000, 9, 15), 'M', "john@example.com", "johndoe");
         memberDAO.create(member);
 
         Optional<Member> found = memberDAO.findByGovernmentID("GOV123");
@@ -52,7 +53,7 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testFindByUsername() {
-        Member member = new Member("GOV456", "Jane", "", "Smith", "987654321", (byte) 25, 'F', "jane@example.com", "janesmith");
+        Member member = new Member("GOV456", "Jane", "", "Smith", "987654321", LocalDate.of(2001, 12, 25), 'F', "jane@example.com", "janesmith");
         memberDAO.create(member);
 
         Optional<Member> found = memberDAO.findByUsername("janesmith");
@@ -72,7 +73,7 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testFindByEmail() {
-        Member member = new Member("GOV789", "Peter", "", "Zeus", "987654999", (byte) 25, 'F', "peter@example.com", "peterzeus");
+        Member member = new Member("GOV789", "Peter", "", "Zeus", "987654999", LocalDate.of(1966, 4, 23), 'F', "peter@example.com", "peterzeus");
         memberDAO.create(member);
 
         Optional<Member> found = memberDAO.findByEmail("peter@example.com");

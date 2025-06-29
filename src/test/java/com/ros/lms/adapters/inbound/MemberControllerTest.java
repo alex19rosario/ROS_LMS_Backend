@@ -7,6 +7,11 @@ import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
 import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
 import com.ros.lms.infraestructure.aop.audit_service.MemberAuditService;
 import com.ros.lms.ports.inbound.service_contracts.MemberService;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
+import jakarta.validation.metadata.ConstraintDescriptor;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +23,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDate;
+import java.util.Set;
 
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,7 +57,7 @@ public class MemberControllerTest {
                 "carlos alexander",
                 "rosario sanchez",
                 "6474256438",
-                (byte) 27,
+                LocalDate.of(1997, 10, 19),
                 'M',
                 "test19@gmail.com",
                 "carlos19",
@@ -110,6 +118,79 @@ public class MemberControllerTest {
         verify(memberService).add(validMemberDTO);
     }
 
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void saveMember_shouldReturnBadRequest_whenDateOfBirthIsInFuture() throws Exception {
+        AddMemberDTO invalidDto = new AddMemberDTO(
+                "123123123",
+                "carlos alexander",
+                "rosario sanchez",
+                "6474256438",
+                LocalDate.now().plusDays(1), // Invalid future date
+                'M',
+                "test.future@gmail.com",
+                "carlos_future",
+                "test123"
+        );
+
+        ConstraintViolation<AddMemberDTO> mockViolation = new ConstraintViolation<AddMemberDTO>() {
+            @Override
+            public String getMessage() {
+                return "Date of birth must be in the past.";
+            }
+            @Override
+            public String getMessageTemplate() {
+                return "Date of birth must be in the past.";
+            }
+            @Override
+            public AddMemberDTO getRootBean() {
+                return invalidDto;
+            }
+            @Override
+            public Class<AddMemberDTO> getRootBeanClass() {
+                return AddMemberDTO.class;
+            }
+            @Override
+            public Object getLeafBean() {
+                return invalidDto;
+            }
+            @Override
+            public Object[] getExecutableParameters() {
+                return null;
+            }
+            @Override
+            public Object getExecutableReturnValue() {
+                return null;
+            }
+            @Override
+            public Path getPropertyPath() {
+                return PathImpl.createPathFromString("dateOfBirth");
+            }
+            @Override
+            public Object getInvalidValue() {
+                return invalidDto.dateOfBirth();
+            }
+            @Override
+            public ConstraintDescriptor<?> getConstraintDescriptor() {
+                return null;
+            }
+            @Override
+            public <U> U unwrap(Class<U> aClass) {
+                return null;
+            }
+        };
+
+        ConstraintViolationException validationException =
+                new ConstraintViolationException("Validation failed", Set.of(mockViolation));
+
+        Mockito.doThrow(validationException)
+                .when(memberService).add(Mockito.any(AddMemberDTO.class));
+
+        mockMvc.perform(post("/api/members")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .andExpect(status().isBadRequest());
+    }
 
 
 
