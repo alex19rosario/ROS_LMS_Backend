@@ -15,7 +15,7 @@ pipeline {
                     // Default to 'development' for non-PR triggers
                     else {
                         echo "Building default branch: development"
-                        git branch: 'development',
+                        git branch: 'fix/replacing-age-with-DOB',
                              url: 'https://github.com/alex19rosario/ROS_LMS_Backend.git'
                     }
                 }
