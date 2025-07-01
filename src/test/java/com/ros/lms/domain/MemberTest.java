@@ -30,17 +30,17 @@ class MemberTest {
 
     @BeforeEach
     void setUp() {
-        member = new Member(
-                testGovernmentID,
-                testFirstName,
-                testMiddleName,
-                testLastName,
-                testPhone,
-                testDateOfBirth,
-                testSex,
-                testEmail,
-                testUsername
-        );
+        member = new Member.Builder()
+            .governmentID(testGovernmentID)
+            .firstName(testFirstName)
+            .middleName(testMiddleName)
+            .lastName(testLastName)
+            .phone(testPhone)
+            .dateOfBirth(testDateOfBirth)
+            .sex(testSex)
+            .email(testEmail)
+            .username(testUsername)
+            .build();
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
@@ -105,9 +105,17 @@ class MemberTest {
     @Test
     void testConstructors() {
         // Test parameterized constructor
-        Member paramMember = new Member(testGovernmentID, testFirstName, testMiddleName,
-                testLastName, testPhone, testDateOfBirth, testSex,
-                testEmail, testUsername);
+        Member paramMember = new Member.Builder()
+                .governmentID(testGovernmentID)
+                .firstName(testFirstName)
+                .middleName(testMiddleName)
+                .lastName(testLastName)
+                .phone(testPhone)
+                .dateOfBirth(testDateOfBirth)
+                .sex(testSex)
+                .email(testEmail)
+                .username(testUsername)
+                .build();
         assertEquals(testFirstName, paramMember.getFirstName());
         assertEquals(testMiddleName, paramMember.getMiddleName());
         assertEquals(testLastName, paramMember.getLastName());
@@ -151,7 +159,17 @@ class MemberTest {
         assertNull(member.getUsername());
 
         // Test constructor with null values
-        Member nullMember = new Member(null, null, null, null, null, null, '\u0000', null, null);
+        Member nullMember = new Member.Builder()
+                .governmentID(null)
+                .firstName(null)
+                .middleName(null)
+                .lastName(null)
+                .phone(null)
+                .dateOfBirth(null)
+                .sex('\u0000')
+                .email(null)
+                .username(null)
+                .build();
         assertNull(nullMember.getGovernmentID());
         assertNull(nullMember.getFirstName());
         assertNull(nullMember.getMiddleName());
@@ -203,17 +221,17 @@ class MemberTest {
     @Test
     void dateOfBirth_shouldFailValidation_whenDateIsInFuture() {
         // Given
-        Member invalidMember = new Member(
-                "123456789",
-                "John",
-                "A",
-                "Doe",
-                "1234567890",
-                LocalDate.now().plusDays(1), // future date
-                'M',
-                "john.doe@example.com",
-                "johndoe"
-        );
+        Member invalidMember = new Member.Builder()
+                .governmentID("123456789")
+                .firstName("John")
+                .middleName("A")
+                .lastName("Doe")
+                .phone("1234567890")
+                .dateOfBirth(LocalDate.now().plusDays(1))
+                .sex('M')
+                .email("john.doe@example.com")
+                .username("johndoe")
+                .build();
 
         // When
         Set<ConstraintViolation<Member>> violations = validator.validate(invalidMember);
@@ -231,17 +249,17 @@ class MemberTest {
     @Test
     void dateOfBirth_shouldPassValidation_whenDateIsInPast() {
         // Given
-        Member validMember = new Member(
-                "987654321",
-                "Jane",
-                "B",
-                "Smith",
-                "0987654321",
-                LocalDate.of(2000, 1, 1), // past date
-                'F',
-                "jane.smith@example.com",
-                "janesmith"
-        );
+        Member validMember = new Member.Builder()
+                .governmentID("987654321")
+                .firstName("Jane")
+                .middleName("B")
+                .lastName("Smith")
+                .phone("0987654321")
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .sex('F')
+                .email("jane.smith@example.com")
+                .username("janesmith")
+                .build();
 
         // When
         Set<ConstraintViolation<Member>> violations = validator.validate(validMember);
