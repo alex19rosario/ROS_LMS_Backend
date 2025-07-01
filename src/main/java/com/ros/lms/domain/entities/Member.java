@@ -34,16 +34,75 @@ public class Member {
 
     public Member() {}
 
-    public Member(String governmentID, String firstName, String middleName, String lastName, String phone, LocalDate dateOfBirth, char sex, String email, String username) {
-        this.governmentID = governmentID;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.dateOfBirth = dateOfBirth;
-        this.sex = sex;
-        this.email = email;
-        this.username = username;
+    public static class Builder {
+        // Required parameters
+        private long id;
+        private String governmentID;
+        private String firstName;
+        private String middleName;
+        private String lastName;
+        private String phone;
+        private LocalDate dateOfBirth;
+        private char sex;
+        private String email;
+        private String username;
+
+        public Builder id(long val) {
+            id = val;
+            return this;
+        }
+        public Builder governmentID(String val) {
+            governmentID = val;
+            return this;
+        }
+        public Builder firstName(String val) {
+            firstName = val;
+            return this;
+        }
+        public Builder middleName(String val) {
+            middleName = val;
+            return this;
+        }
+        public Builder lastName(String val) {
+            lastName = val;
+            return this;
+        }
+        public Builder phone(String val) {
+            phone = val;
+            return this;
+        }
+        public Builder dateOfBirth(LocalDate val) {
+            dateOfBirth = val;
+            return this;
+        }
+        public Builder sex(char val) {
+            sex = val;
+            return this;
+        }
+        public Builder email(String val) {
+            email = val;
+            return this;
+        }
+        public Builder username(String val) {
+            username = val;
+            return this;
+        }
+        public Member build() {
+            return new Member(this);
+        }
+    }
+
+    private Member(Builder builder) {
+        id = builder.id;
+        governmentID = builder.governmentID;
+        firstName = builder.firstName;
+        middleName = builder.middleName;
+        lastName = builder.lastName;
+        phone = builder.phone;
+        dateOfBirth = builder.dateOfBirth;
+        sex = builder.sex;
+        email = builder.email;
+        username = builder.username;
     }
 
     public long getId() {

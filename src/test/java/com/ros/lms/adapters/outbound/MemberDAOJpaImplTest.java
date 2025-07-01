@@ -32,7 +32,17 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testCreateAndFindByGovernmentID() {
-        Member member = new Member("GOV123", "John", "", "Doe", "123456789", LocalDate.of(2000, 9, 15), 'M', "john@example.com", "johndoe");
+        Member member = new Member.Builder()
+                .governmentID("GOV123")
+                .firstName("John")
+                .lastName("Doe")
+                .phone("9876543211")
+                .dateOfBirth(LocalDate.of(2000, 9, 15))
+                .sex('M')
+                .email("john@example.com")
+                .username("johndoe")
+                .build();
+
         memberDAO.create(member);
 
         Optional<Member> found = memberDAO.findByGovernmentID("GOV123");
@@ -53,7 +63,17 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testFindByUsername() {
-        Member member = new Member("GOV456", "Jane", "", "Smith", "987654321", LocalDate.of(2001, 12, 25), 'F', "jane@example.com", "janesmith");
+        Member member = new Member.Builder()
+                .governmentID("GOV456")
+                .firstName("Jane")
+                .lastName("Smith")
+                .phone("987654321")
+                .dateOfBirth(LocalDate.of(2001, 12, 25))
+                .sex('F')
+                .email("jane@example.com")
+                .username("janesmith")
+                .build();
+
         memberDAO.create(member);
 
         Optional<Member> found = memberDAO.findByUsername("janesmith");
@@ -73,7 +93,16 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testFindByEmail() {
-        Member member = new Member("GOV789", "Peter", "", "Zeus", "987654999", LocalDate.of(1966, 4, 23), 'F', "peter@example.com", "peterzeus");
+        Member member = new Member.Builder()
+                .governmentID("GOV789")
+                .firstName("Peter")
+                .lastName("Zeus")
+                .phone("987654999")
+                .dateOfBirth(LocalDate.of(1966, 4, 23))
+                .sex('F')
+                .email("peter@example.com")
+                .username("peterzeus")
+                .build();
         memberDAO.create(member);
 
         Optional<Member> found = memberDAO.findByEmail("peter@example.com");
