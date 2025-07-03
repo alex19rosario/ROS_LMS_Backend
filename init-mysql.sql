@@ -157,6 +157,23 @@ CREATE TABLE LOGS (
         'ERROR'))
 );
 
+-- Speeds up WHERE TITLE LIKE '%...%'
+CREATE INDEX idx_books_title ON BOOKS (TITLE);
+
+-- Helps JOIN and WHERE g.description LIKE '%...%'
+CREATE INDEX idx_genres_description ON GENRES (DESCRIPTION);
+
+-- These assist with filtering by name parts individually.
+CREATE INDEX idx_authors_first_name ON AUTHORS (FIRST_NAME);
+CREATE INDEX idx_authors_middle_name ON AUTHORS (MIDDLE_NAME);
+CREATE INDEX idx_authors_last_name ON AUTHORS (LAST_NAME);
+
+-- Helps with JOIN BOOKS_GENRES -> GENRES.
+CREATE INDEX idx_books_genres_genre_id ON BOOKS_GENRES (GENRE_ID);
+
+-- Helps with JOIN BOOKS_AUTHORS -> AUTHORS.
+CREATE INDEX idx_books_authors_author_id ON BOOKS_AUTHORS (AUTHOR_ID);
+
 -- MySQL stored procedure to replace Oracle's GENERATE_LOG
 DELIMITER //
 CREATE PROCEDURE GENERATE_LOG(
@@ -224,3 +241,58 @@ INSERT INTO GENRES (DESCRIPTION) VALUES ('HISTORY');
 INSERT INTO GENRES (DESCRIPTION) VALUES ('MAGAZINE');
 INSERT INTO GENRES (DESCRIPTION) VALUES ('FICTION');
 
+
+-- Insert Authors
+INSERT INTO AUTHORS (FIRST_NAME, MIDDLE_NAME, LAST_NAME) VALUES
+('John', 'A.', 'Smith'),
+('Alice', NULL, 'Walker'),
+('Robert', 'B.', 'Johnson'),
+('Emily', NULL, 'Davis'),
+('Michael', NULL, 'Brown'),
+('Laura', 'C.', 'Miller'),
+('David', NULL, 'Wilson'),
+('Sarah', 'E.', 'Taylor'),
+('James', NULL, 'Anderson'),
+('Olivia', 'F.', 'Thomas');
+
+-- Insert Books
+INSERT INTO BOOKS (ISBN, TITLE, IS_AVAILABLE, COVER_IMAGE_PATH) VALUES
+(9780000000001, 'The Lost Artifact', 'Y', '/images/book1.jpg'),
+(9780000000002, 'Echoes of Tomorrow', 'Y', '/images/book2.jpg'),
+(9780000000003, 'Whispers in the Wind', 'Y', '/images/book3.jpg'),
+(9780000000004, 'The Final Countdown', 'N', '/images/book4.jpg'),
+(9780000000005, 'Hearts in Harmony', 'Y', '/images/book5.jpg'),
+(9780000000006, 'Beyond the Stars', 'Y', '/images/book6.jpg'),
+(9780000000007, 'Shadows of Deceit', 'N', '/images/book7.jpg'),
+(9780000000008, 'Chronicles of the Unknown', 'Y', '/images/book8.jpg'),
+(9780000000009, 'Mystic River', 'Y', '/images/book9.jpg'),
+(9780000000010, 'Garden of Dreams', 'Y', '/images/book10.jpg');
+
+
+-- Map Books to Authors
+INSERT INTO BOOKS_AUTHORS (BOOK_ID, AUTHOR_ID) VALUES
+(1, 1), (1, 2),
+(2, 3),
+(3, 4), (3, 5),
+(4, 6),
+(5, 7), (5, 8),
+(6, 9),
+(7, 10), (7, 1),
+(8, 2),
+(9, 3), (9, 4),
+(10, 5);
+
+
+-- Map Books to Genres
+-- We'll use GENRE_IDs assuming they were inserted in order
+INSERT INTO BOOKS_GENRES (BOOK_ID, GENRE_ID) VALUES
+(1, 1), (1, 10),         -- Mystery, Adventure
+(2, 2),                  -- Science Fiction
+(3, 3), (3, 5),          -- Romance, Thriller
+(4, 4),                  -- Fantasy
+(5, 6), (5, 14),         -- Historical Fiction, Poetry
+(6, 2), (6, 21),         -- Science Fiction, Science
+(7, 15), (7, 16),        -- Dystopian, Crime
+(8, 13),                 -- Graphic Novel
+(9, 1), (9, 7),          -- Mystery, Horror
+(10, 3), (10, 11);       -- Romance, Children's Literature

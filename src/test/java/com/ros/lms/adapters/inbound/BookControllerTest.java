@@ -2,7 +2,9 @@ package com.ros.lms.adapters.inbound;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ros.lms.domain.dtos.AddBookDTO;
+import com.ros.lms.domain.dtos.BookDTO;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
+import com.ros.lms.domain.exceptions.PageOutOfRangeException;
 import com.ros.lms.domain.exceptions.StorageException;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
 import com.ros.lms.ports.inbound.service_contracts.BookService;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -20,6 +24,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -179,6 +186,73 @@ public class BookControllerTest {
                         .param("genres", "Fiction"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void getAllBooks_shouldReturnOkWithResults() throws Exception {
+        List<BookDTO> books = List.of(
+                new BookDTO(1L, 1234567890123L, "Sample Book", Set.of(), Set.of(), true, "/path/image.jpg")
+        );
+        PageImpl<BookDTO> bookPage = new PageImpl<>(books, PageRequest.of(0, 10), 1);
+
+        when(bookService.getAll(0, 10, null, null, null, null)).thenReturn(bookPage);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books"))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertTrue(result.getResponse().getContentAsString().contains("Sample Book")));
+    }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void getAllBooks_shouldApplyFiltersCorrectly() throws Exception {
+        when(bookService.getAll(0, 10, "Java", "TECHNOLOGY", "Joshua", "Bloch"))
+                .thenReturn(new PageImpl<>(List.of(), PageRequest.of(0, 10), 0));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books")
+                        .param("title", "Java")
+                        .param("genre", "TECHNOLOGY")
+                        .param("authorFirstName", "Joshua")
+                        .param("authorLastName", "Bloch"))
+                .andExpect(status().isOk());
+
+        verify(bookService).getAll(0, 10, "Java", "TECHNOLOGY", "Joshua", "Bloch");
+    }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void getAllBooks_shouldReturnBadRequest_whenPageSizeIsTooLarge() throws Exception {
+        when(bookService.getAll(anyInt(), anyInt(), any(), any(), any(), any()))
+                .thenThrow(new PageOutOfRangeException("Page size too large"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books")
+                        .param("size", "999"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void getAllBooks_shouldReturnBadRequest_whenPageIsNegative() throws Exception {
+        when(bookService.getAll(-1, 10, null, null, null, null))
+                .thenThrow(new PageOutOfRangeException("Negative page"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books")
+                        .param("page", "-1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void getAllBooks_shouldReturnEmptyPage() throws Exception {
+        PageImpl<BookDTO> emptyPage = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
+
+        when(bookService.getAll(0, 10, null, null, null, null)).thenReturn(emptyPage);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books"))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertTrue(result.getResponse().getContentAsString().contains("\"totalElements\":0")));
+    }
+
+
 
 
 
