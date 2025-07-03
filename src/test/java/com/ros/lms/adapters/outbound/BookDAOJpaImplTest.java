@@ -174,4 +174,34 @@ public class BookDAOJpaImplTest {
         assertThat(titles).containsExactlyInAnyOrder("Book One", "Book Two");
     }
 
+    @Test
+    @Transactional
+    void findAllOrderedByTitle_shouldReturnFilteredBooks_byAuthorLastName() {
+        // Arrange
+        Author author1 = new Author("Joshua", null, "Bloch");
+        Author author2 = new Author("Robert", "C.", "Martin");
+
+        Book book1 = new Book(111L, "Effective Java", 'Y');
+        book1.addAuthor(author1);
+
+        Book book2 = new Book(222L, "Clean Code", 'Y');
+        book2.addAuthor(author2);
+
+        entityManager.persist(author1);
+        entityManager.persist(author2);
+        entityManager.persist(book1);
+        entityManager.persist(book2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // Act
+        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, null, "Bloch", pageable);
+
+        // Assert
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        Book foundBook = result.getContent().getFirst();
+        assertThat(foundBook.getTitle()).isEqualTo("Effective Java");
+        assertThat(foundBook.getAuthors().getFirst().getLastName()).isEqualTo("Bloch");
+    }
+
 }
