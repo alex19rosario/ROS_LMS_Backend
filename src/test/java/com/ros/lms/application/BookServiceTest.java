@@ -1,10 +1,12 @@
 package com.ros.lms.application;
 
 import com.ros.lms.domain.dtos.AddBookDTO;
+import com.ros.lms.domain.dtos.BookDTO;
 import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
+import com.ros.lms.domain.exceptions.PageOutOfRangeException;
 import com.ros.lms.domain.exceptions.StorageException;
 import com.ros.lms.ports.inbound.service_contracts.StorageService;
 import com.ros.lms.ports.outbound.repository_contracts.AuthorDAO;
@@ -15,12 +17,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class BookServiceTest {
@@ -195,6 +201,101 @@ public class BookServiceTest {
     }
 
 
+    @Test
+    void getAll_shouldReturnMappedDTOs_whenInputsAreValid() throws PageOutOfRangeException {
+        Book book = new Book(9783161484105L, "Effective Java", 'Y');
+        book.setId(1L);
 
+        Page<Book> bookPage = new PageImpl<>(List.of(book));
+        when(bookDAO.findAllOrderedByTitle(eq("Java"), eq("TECH"), eq("Joshua"), eq("Bloch"), any(Pageable.class)))
+                .thenReturn(bookPage);
 
+        Page<BookDTO> result = bookService.getAll(0, 10, "Java", "TECH", "Joshua", "Bloch");
+
+        assertEquals(1, result.getTotalElements());
+        BookDTO dto = result.getContent().getFirst();
+        assertEquals("Effective Java", dto.title());
+        assertEquals(9783161484105L, dto.isbn());
+        assertTrue(dto.status());
+    }
+
+    @Test
+    void getAll_shouldReturnMappedDTOs_whenInputsAreValid_andStatusNotAvailable() throws PageOutOfRangeException {
+        Book book = new Book(9783161484105L, "Effective Java", 'N');
+        book.setId(1L);
+
+        Page<Book> bookPage = new PageImpl<>(List.of(book));
+        when(bookDAO.findAllOrderedByTitle(eq("Java"), eq("TECH"), eq("Joshua"), eq("Bloch"), any(Pageable.class)))
+                .thenReturn(bookPage);
+
+        Page<BookDTO> result = bookService.getAll(0, 10, "Java", "TECH", "Joshua", "Bloch");
+
+        assertEquals(1, result.getTotalElements());
+        BookDTO dto = result.getContent().getFirst();
+        assertEquals("Effective Java", dto.title());
+        assertEquals(9783161484105L, dto.isbn());
+        assertFalse(dto.status());
+    }
+
+    @Test
+    void getAll_shouldThrowException_whenPageIsNegative() {
+        PageOutOfRangeException ex = assertThrows(PageOutOfRangeException.class, () ->
+                bookService.getAll(-1, 10, null, null, null, null));
+        assertEquals("Page number cannot be negative", ex.getMessage());
+    }
+
+    @Test
+    void getAll_shouldThrowException_whenSizeIsZero() {
+        PageOutOfRangeException ex = assertThrows(PageOutOfRangeException.class, () ->
+                bookService.getAll(0, 0, null, null, null, null));
+        assertEquals("Page size must be greater than 0", ex.getMessage());
+    }
+
+    @Test
+    void getAll_shouldThrowException_whenSizeTooLarge() {
+        PageOutOfRangeException ex = assertThrows(PageOutOfRangeException.class, () ->
+                bookService.getAll(0, 999, null, null, null, null));
+        assertEquals("Page size cannot exceed 100", ex.getMessage());
+    }
+
+    @Test
+    void getAll_shouldReturnEmptyPage_whenNoBooksFound() throws PageOutOfRangeException {
+        when(bookDAO.findAllOrderedByTitle(any(), any(), any(), any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        Page<BookDTO> result = bookService.getAll(0, 10, null, null, null, null);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getAll_shouldMapAuthorDTOProperly_whenAuthorsArePresent() throws Exception {
+        // Arrange
+        Book book = new Book(9783161484105L, "Effective Java", 'Y');
+        book.setId(1L);
+
+        Author author = new Author("Joshua", null, "Bloch");
+        book.setAuthors(List.of(author)); // This will be mapped via authorDTOMapper
+
+        Genre genre = new Genre("TECHNOLOGY");
+        book.setGenres(List.of(genre));
+
+        Page<Book> page = new PageImpl<>(List.of(book));
+
+        when(bookDAO.findAllOrderedByTitle(any(), any(), any(), any(), any()))
+                .thenReturn(page);
+
+        // Act
+        var result = bookService.getAll(0, 10, null, null, null, null);
+
+        // Assert
+        assertEquals(1, result.getContent().size());
+        BookDTO dto = result.getContent().getFirst();
+
+        assertEquals("Effective Java", dto.title());
+        assertEquals(9783161484105L, dto.isbn());
+        assertTrue(dto.authors().stream().anyMatch(a ->
+                "Joshua".equals(a.firstName()) && "Bloch".equals(a.lastName())
+        ));
+    }
 }

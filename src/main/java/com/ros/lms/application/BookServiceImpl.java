@@ -2,11 +2,13 @@ package com.ros.lms.application;
 
 import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.domain.dtos.AuthorDTO;
+import com.ros.lms.domain.dtos.BookDTO;
 import com.ros.lms.domain.dtos.RenamedMultipartFile;
 import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
+import com.ros.lms.domain.exceptions.PageOutOfRangeException;
 import com.ros.lms.domain.exceptions.StorageException;
 import com.ros.lms.ports.inbound.service_contracts.BookService;
 import com.ros.lms.ports.inbound.service_contracts.StorageService;
@@ -15,6 +17,11 @@ import com.ros.lms.ports.outbound.repository_contracts.BookDAO;
 import com.ros.lms.ports.outbound.repository_contracts.GenreDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +37,7 @@ public class BookServiceImpl implements BookService {
     private final AuthorDAO authorDAO;
     private final GenreDAO genreDAO;
     private final StorageService storageService;
+    private static final int MAX_PAGE_SIZE = 100;
 
     @Autowired
     public BookServiceImpl(
@@ -45,6 +53,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Transactional
+    @CacheEvict(value = "booksCache", allEntries = true)
     @Override
     public void add(AddBookDTO addBookDTO) throws BookAlreadyExistsException, StorageException {
         // Check if the book exist by ISBN
@@ -113,6 +122,24 @@ public class BookServiceImpl implements BookService {
         bookDAO.create(book);
     }
 
+    @Cacheable(
+            value = "booksCache",
+            key = "'page=' + #page + '&size=' + #size + '&title=' + #title + '&genre=' + #genre + '&first=' + #authorFirstName + '&last=' + #authorLastName"
+    )
+    @Override
+    public Page<BookDTO> getAll(int page, int size, String title, String genre, String authorFirstName, String authorLastName) throws PageOutOfRangeException {
+
+        if(page < 0) throw new PageOutOfRangeException("Page number cannot be negative");
+
+        else if(size <= 0) throw new PageOutOfRangeException("Page size must be greater than 0");
+
+        else if(size > MAX_PAGE_SIZE) throw new PageOutOfRangeException("Page size cannot exceed " + MAX_PAGE_SIZE);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> bookPage = bookDAO.findAllOrderedByTitle(title, genre, authorFirstName, authorLastName, pageable);
+        return bookPage.map(bookDTOMapper);
+    }
+
     private final Function<AddBookDTO, Book> addBookMapper = addBookDTO ->
             new Book(addBookDTO.ISBN(), addBookDTO.title(), 'Y');
 
@@ -134,6 +161,36 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toSet());
     }
 
+    private final Function<Author, AuthorDTO> authorDTOMapper =
+            entity -> new AuthorDTO(entity.getFirstName(), entity.getLastName());
+
+    private final Function<Book, BookDTO> bookDTOMapper = entity -> {
+
+        Set<AuthorDTO> authors = Optional.ofNullable(entity.getAuthors())
+                .orElse(List.of())
+                .stream()
+                .map(authorDTOMapper)
+                .collect(Collectors.toSet());
+
+
+        Set<String> genres = Optional.ofNullable(entity.getGenres())
+                .orElse(List.of())
+                .stream()
+                .map(Genre::getDescription)
+                .collect(Collectors.toSet());
+
+        boolean status = entity.isAvailable() == 'Y';
+
+        return new BookDTO(
+                entity.getId(),
+                entity.getIsbn(),
+                entity.getTitle(),
+                authors,
+                genres,
+                status,
+                entity.getCoverImagePath()
+                );
+    };
 
 
 }
