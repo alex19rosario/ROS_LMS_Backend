@@ -24,7 +24,10 @@ public class MemberController {
     }
 
     @PostMapping("members")
-    public void addMember(@RequestBody AddMemberDTO addMemberDTO) throws MemberAlreadyExistsException, UsernameAlreadyExistsException, EmailAlreadyExistsException {
+    public void addMember(@RequestBody AddMemberDTO addMemberDTO) throws
+            MemberAlreadyExistsException,
+            UsernameAlreadyExistsException,
+            EmailAlreadyExistsException {
         memberService.add(addMemberDTO);
     }
 

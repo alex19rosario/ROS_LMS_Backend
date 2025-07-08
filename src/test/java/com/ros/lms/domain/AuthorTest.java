@@ -48,12 +48,12 @@ class AuthorTest {
         assertEquals(newLastName, author.getLastName());
 
         List<Book> books = new ArrayList<>();
-        books.add(new Book(9780007136556L, "The Lord of the Rings", 'Y'));
+        books.add(new Book(9780007136556L, "The Lord of the Rings", true));
         author.setBooks(books);
 
         assertNotNull(author.getBooks());
         assertEquals(1, author.getBooks().size());
-        assertEquals("The Lord of the Rings", author.getBooks().get(0).getTitle());
+        assertEquals("The Lord of the Rings", author.getBooks().getFirst().getTitle());
     }
 
     @Test
@@ -67,8 +67,8 @@ class AuthorTest {
 
         // Test full constructor
         List<Book> books = List.of(
-                new Book(9780007136556L, "The Lord of the Rings", 'Y'),
-                new Book(9780261102354L, "The Hobbit", 'Y')
+                new Book(9780007136556L, "The Lord of the Rings", true),
+                new Book(9780261102354L, "The Hobbit", true)
         );
         Author fullAuthor = new Author(testFirstName, testMiddleName, testLastName, books);
 
@@ -86,15 +86,15 @@ class AuthorTest {
 
         // Test setting books list
         List<Book> books = new ArrayList<>();
-        books.add(new Book(9780007136556L, "The Lord of the Rings", 'Y'));
+        books.add(new Book(9780007136556L, "The Lord of the Rings", true));
         author.setBooks(books);
 
         assertNotNull(author.getBooks());
         assertEquals(1, author.getBooks().size());
-        assertEquals("The Lord of the Rings", author.getBooks().get(0).getTitle());
+        assertEquals("The Lord of the Rings", author.getBooks().getFirst().getTitle());
 
         // Test modifying the books list
-        author.getBooks().add(new Book(9780261102354L, "The Hobbit", 'Y'));
+        author.getBooks().add(new Book(9780261102354L, "The Hobbit", true));
         assertEquals(2, author.getBooks().size());
     }
 
@@ -124,7 +124,7 @@ class AuthorTest {
 
     @Test
     void testSetBooksToNull() {
-        List<Book> books = List.of(new Book(9780007136556L, "The Lord of the Rings", 'Y'));
+        List<Book> books = List.of(new Book(9780007136556L, "The Lord of the Rings", true));
         author.setBooks(books);
         assertNotNull(author.getBooks());
 

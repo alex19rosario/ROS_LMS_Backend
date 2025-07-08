@@ -39,7 +39,7 @@ public class BookDAOJpaImplTest {
     @Transactional
     void create_shouldPersistBook() {
         // Arrange
-        Book book = new Book(9783161484100L, "Effective Java", 'Y');
+        Book book = new Book(9783161484100L, "Effective Java", true);
 
         // Act
         bookDAO.create(book);
@@ -59,7 +59,7 @@ public class BookDAOJpaImplTest {
     @Test
     void findByISBN_shouldReturnBook_whenBookExists() {
         // Arrange
-        Book book = new Book(9783161484100L, "Effective Java", 'Y');
+        Book book = new Book(9783161484100L, "Effective Java", true);
         entityManager.persist(book); // Pre-populate the database
 
         // Act
@@ -83,8 +83,8 @@ public class BookDAOJpaImplTest {
     @Transactional
     void findAllOrderedByTitle_shouldReturnFilteredBooks_byTitle() {
         // Arrange
-        Book book1 = new Book(111L, "Effective Java", 'Y');
-        Book book2 = new Book(222L, "Clean Code", 'Y');
+        Book book1 = new Book(111L, "Effective Java", true);
+        Book book2 = new Book(222L, "Clean Code", true);
         entityManager.persist(book1);
         entityManager.persist(book2);
 
@@ -105,10 +105,10 @@ public class BookDAOJpaImplTest {
         Genre genreTech = new Genre("TECHNOLOGY");
         Genre genreSci = new Genre("SCIENCE");
 
-        Book book1 = new Book(111L, "Clean Code", 'Y');
+        Book book1 = new Book(111L, "Clean Code", true);
         book1.addGenre(genreTech);
 
-        Book book2 = new Book(222L, "Physics Fundamentals", 'Y');
+        Book book2 = new Book(222L, "Physics Fundamentals", true);
         book2.addGenre(genreSci);
 
         entityManager.persist(genreTech);
@@ -133,10 +133,10 @@ public class BookDAOJpaImplTest {
         Author author1 = new Author("Joshua", null, "Bloch");
         Author author2 = new Author("Robert", "C.", "Martin");
 
-        Book book1 = new Book(111L, "Effective Java", 'Y');
+        Book book1 = new Book(111L, "Effective Java", true);
         book1.addAuthor(author1);
 
-        Book book2 = new Book(222L, "Clean Code", 'Y');
+        Book book2 = new Book(222L, "Clean Code", true);
         book2.addAuthor(author2);
 
         entityManager.persist(author1);
@@ -158,8 +158,8 @@ public class BookDAOJpaImplTest {
     @Transactional
     void findAllOrderedByTitle_shouldReturnAllBooks_whenNoFilters() {
         // Arrange
-        Book book1 = new Book(111L, "Book One", 'Y');
-        Book book2 = new Book(222L, "Book Two", 'Y');
+        Book book1 = new Book(111L, "Book One", true);
+        Book book2 = new Book(222L, "Book Two", true);
         entityManager.persist(book1);
         entityManager.persist(book2);
 
@@ -181,10 +181,10 @@ public class BookDAOJpaImplTest {
         Author author1 = new Author("Joshua", null, "Bloch");
         Author author2 = new Author("Robert", "C.", "Martin");
 
-        Book book1 = new Book(111L, "Effective Java", 'Y');
+        Book book1 = new Book(111L, "Effective Java", true);
         book1.addAuthor(author1);
 
-        Book book2 = new Book(222L, "Clean Code", 'Y');
+        Book book2 = new Book(222L, "Clean Code", true);
         book2.addAuthor(author2);
 
         entityManager.persist(author1);

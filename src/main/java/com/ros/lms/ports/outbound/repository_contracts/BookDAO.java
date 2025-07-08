@@ -10,4 +10,6 @@ public interface BookDAO {
     void create(Book book);
     Optional<Book> findByISBN(long isbn);
     Page<Book> findAllOrderedByTitle(String title, String genre, String authorFirstName, String authorLastName, Pageable pageable);
+    Optional<Book> findById(long id);
+    void update(Book book);
 }

@@ -105,4 +105,20 @@ public class BookDAOJpaImpl implements BookDAO {
         return new PageImpl<>(query.getResultList(), pageable, total);
     }
 
+    @Override
+    public Optional<Book> findById(long id) {
+        try {
+            Book book = entityManager.find(Book.class, id);
+            return Optional.ofNullable(book);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void update(Book book) {
+        entityManager.merge(book);
+    }
+
+
 }
