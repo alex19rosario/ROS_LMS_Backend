@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.GenreType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -80,21 +81,21 @@ class BookTest {
 
         // Test adding single genre
         Genre genre1 = new Genre();
-        genre1.setDescription("Programming");
+        genre1.setDescription(GenreType.TECHNOLOGY);
         book.addGenre(genre1);
 
         assertNotNull(book.getGenres());
         assertEquals(1, book.getGenres().size());
-        assertEquals("Programming", book.getGenres().getFirst().getDescription());
+        assertEquals(GenreType.TECHNOLOGY, book.getGenres().getFirst().getDescription());
 
         // Test setting genres list
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre("Computer Science"));
-        genres.add(new Genre("Software Engineering"));
+        genres.add(new Genre(GenreType.SCIENCE));
+        genres.add(new Genre(GenreType.ADVENTURE));
         book.setGenres(genres);
 
         assertEquals(2, book.getGenres().size());
-        assertEquals("Computer Science", book.getGenres().getFirst().getDescription());
+        assertEquals(GenreType.SCIENCE, book.getGenres().getFirst().getDescription());
     }
 
     @Test
@@ -110,7 +111,7 @@ class BookTest {
 
         // Test full constructor
         List<Author> authors = List.of(new Author("Joshua", "", "Bloch"));
-        List<Genre> genres = List.of(new Genre("Programming"));
+        List<Genre> genres = List.of(new Genre(GenreType.TECHNOLOGY));
         Book fullBook = new Book(testISBN, testTitle, available, coverImagePath, authors, genres);
 
         assertEquals(authors, fullBook.getAuthors());
@@ -129,7 +130,7 @@ class BookTest {
     @Test
     void testAddGenreToNullList() {
         book.setGenres(null); // Explicitly set to null
-        book.addGenre(new Genre("Refactoring"));
+        book.addGenre(new Genre(GenreType.TECHNOLOGY));
         assertNotNull(book.getGenres());
         assertEquals(1, book.getGenres().size());
     }

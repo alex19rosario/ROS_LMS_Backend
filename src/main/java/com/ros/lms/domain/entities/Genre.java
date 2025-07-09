@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.GenreType;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -11,8 +12,10 @@ public class Genre {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "GENRE_ID")
     private long id;
+
     @Column(name = "DESCRIPTION")
-    private String description;
+    private GenreType description;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "BOOKS_GENRES",
             joinColumns = @JoinColumn(name = "GENRE_ID"),
@@ -21,12 +24,12 @@ public class Genre {
 
     public Genre(){}
 
-    public Genre(String description, List<Book> books) {
+    public Genre(GenreType description, List<Book> books) {
         this.description = description;
         this.books = books;
     }
 
-    public Genre(String description) {
+    public Genre(GenreType description) {
         this.description = description;
     }
 
@@ -38,11 +41,11 @@ public class Genre {
         this.id = id;
     }
 
-    public String getDescription() {
+    public GenreType getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(GenreType description) {
         this.description = description;
     }
 
@@ -57,7 +60,7 @@ public class Genre {
     @Override
     public String toString() {
         return "Genre{" +
-                "description='" + description + '\'' +
+                "description='" + description.getLabel() + '\'' +
                 ", books=" + books +
                 '}';
     }
