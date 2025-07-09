@@ -203,7 +203,7 @@ public class BookServiceTest {
 
     @Test
     void getAll_shouldReturnMappedDTOs_whenInputsAreValid() throws PageOutOfRangeException {
-        Book book = new Book(9783161484105L, "Effective Java", 'Y');
+        Book book = new Book(9783161484105L, "Effective Java", true);
         book.setId(1L);
 
         Page<Book> bookPage = new PageImpl<>(List.of(book));
@@ -221,7 +221,7 @@ public class BookServiceTest {
 
     @Test
     void getAll_shouldReturnMappedDTOs_whenInputsAreValid_andStatusNotAvailable() throws PageOutOfRangeException {
-        Book book = new Book(9783161484105L, "Effective Java", 'N');
+        Book book = new Book(9783161484105L, "Effective Java", false);
         book.setId(1L);
 
         Page<Book> bookPage = new PageImpl<>(List.of(book));
@@ -271,7 +271,7 @@ public class BookServiceTest {
     @Test
     void getAll_shouldMapAuthorDTOProperly_whenAuthorsArePresent() throws Exception {
         // Arrange
-        Book book = new Book(9783161484105L, "Effective Java", 'Y');
+        Book book = new Book(9783161484105L, "Effective Java", true);
         book.setId(1L);
 
         Author author = new Author("Joshua", null, "Bloch");

@@ -1,0 +1,60 @@
+package com.ros.lms.adapters.outbound;
+
+import com.ros.lms.adapters.outbound.repositories.StaffDAOJpaImpl;
+import com.ros.lms.domain.entities.Staff;
+import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@ActiveProfiles("test") // This activates application-test.properties
+public class StaffDAOJpaImplTest {
+    @Autowired
+    private EntityManager entityManager;
+
+    private StaffDAO staffDAO;
+
+    @BeforeEach
+    void setUp() {
+        staffDAO = new StaffDAOJpaImpl(entityManager);
+    }
+
+    @Test
+    @Transactional
+    void testFindByUsername() {
+        Staff staff = new Staff.Builder()
+                .governmentID("GOV456")
+                .firstName("Jane")
+                .lastName("Smith")
+                .phone("987654321")
+                .sex('F')
+                .email("jane@example.com")
+                .username("janesmith")
+                .build();
+
+        entityManager.persist(staff);
+
+        Optional<Staff> found = staffDAO.findByUsername("janesmith");
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getFirstName()).isEqualTo("Jane");
+    }
+
+    @Test
+    @Transactional
+    void findByUsername_withEmptyString_shouldReturnEmptyOptional() {
+        Optional<Staff> found = staffDAO.findByUsername("");
+
+        assertThat(found).isEmpty();
+    }
+
+}

@@ -1,6 +1,5 @@
-package com.ros.lms.domain;
+package com.ros.lms.domain.entities;
 
-import com.ros.lms.domain.entities.Member;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -290,4 +289,34 @@ class MemberTest {
         assertTrue(toStringResult.contains("middleName='null'"));
         assertTrue(toStringResult.contains("email='null'"));
     }
+
+    @Test
+    void testBuilderSetsAllFieldsCorrectly() {
+        LocalDate dob = LocalDate.of(1990, 5, 20);
+
+        Member builtMember = new Member.Builder()
+                .id(42L)
+                .governmentID("GOV-XYZ123")
+                .firstName("Alice")
+                .middleName("B.")
+                .lastName("Wonderland")
+                .phone("555-1234")
+                .dateOfBirth(dob)
+                .sex('F')
+                .email("alice@example.com")
+                .username("alicew")
+                .build();
+
+        assertEquals(42L, builtMember.getId());
+        assertEquals("GOV-XYZ123", builtMember.getGovernmentID());
+        assertEquals("Alice", builtMember.getFirstName());
+        assertEquals("B.", builtMember.getMiddleName());
+        assertEquals("Wonderland", builtMember.getLastName());
+        assertEquals("555-1234", builtMember.getPhone());
+        assertEquals(dob, builtMember.getDateOfBirth());
+        assertEquals('F', builtMember.getSex());
+        assertEquals("alice@example.com", builtMember.getEmail());
+        assertEquals("alicew", builtMember.getUsername());
+    }
+
 }

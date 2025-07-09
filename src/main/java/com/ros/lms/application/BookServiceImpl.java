@@ -141,7 +141,7 @@ public class BookServiceImpl implements BookService {
     }
 
     private final Function<AddBookDTO, Book> addBookMapper = addBookDTO ->
-            new Book(addBookDTO.ISBN(), addBookDTO.title(), 'Y');
+            new Book(addBookDTO.ISBN(), addBookDTO.title(), true);
 
     private Set<AuthorDTO> parseAuthors(String authorsString) {
         return Arrays.stream(authorsString.split(","))
@@ -179,15 +179,13 @@ public class BookServiceImpl implements BookService {
                 .map(Genre::getDescription)
                 .collect(Collectors.toSet());
 
-        boolean status = entity.isAvailable() == 'Y';
-
         return new BookDTO(
                 entity.getId(),
                 entity.getIsbn(),
                 entity.getTitle(),
                 authors,
                 genres,
-                status,
+                entity.isAvailable(),
                 entity.getCoverImagePath()
                 );
     };

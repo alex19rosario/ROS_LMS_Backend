@@ -51,9 +51,6 @@ public class BookControllerTest {
     @MockitoBean
     private StorageService storageService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     private AddBookDTO validBookDTO;
 
     private MockMultipartFile coverImage;
@@ -251,10 +248,5 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(result -> assertTrue(result.getResponse().getContentAsString().contains("\"totalElements\":0")));
     }
-
-
-
-
-
 }
 

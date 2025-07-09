@@ -1,8 +1,5 @@
-package com.ros.lms.domain;
+package com.ros.lms.domain.entities;
 
-import com.ros.lms.domain.entities.Author;
-import com.ros.lms.domain.entities.Book;
-import com.ros.lms.domain.entities.Genre;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +12,7 @@ class BookTest {
     private Book book;
     private final long testISBN = 9783161484100L;
     private final String testTitle = "Effective Java";
-    private final char available = 'Y';
+    private final boolean available = true;
     private final String coverImagePath = "upload-dir/test.png";
 
     @BeforeEach
@@ -43,9 +40,8 @@ class BookTest {
         book.setTitle(newTitle);
         assertEquals(newTitle, book.getTitle());
 
-        char notAvailable = 'N';
-        book.setAvailable(notAvailable);
-        assertEquals(notAvailable, book.isAvailable());
+        book.setAvailable(false);
+        assertFalse(book.isAvailable());
 
         book.setCoverImagePath(coverImagePath);
         assertEquals(coverImagePath, book.getCoverImagePath());

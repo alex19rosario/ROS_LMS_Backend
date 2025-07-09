@@ -1,7 +1,5 @@
-package com.ros.lms.domain;
+package com.ros.lms.domain.entities;
 
-import com.ros.lms.domain.entities.Book;
-import com.ros.lms.domain.entities.Genre;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,12 +34,12 @@ class GenreTest {
         assertEquals(newDescription, genre.getDescription());
 
         List<Book> books = new ArrayList<>();
-        books.add(new Book(9783161484100L, "Dune", 'Y'));
+        books.add(new Book(9783161484100L, "Dune", true));
         genre.setBooks(books);
 
         assertNotNull(genre.getBooks());
         assertEquals(1, genre.getBooks().size());
-        assertEquals("Dune", genre.getBooks().get(0).getTitle());
+        assertEquals("Dune", genre.getBooks().getFirst().getTitle());
     }
 
     @Test
@@ -53,14 +51,14 @@ class GenreTest {
 
         // Test full constructor
         List<Book> books = List.of(
-                new Book(9783161484100L, "Dune", 'Y'),
-                new Book(9780553103540L, "Game of Thrones", 'Y')
+                new Book(9783161484100L, "Dune", true),
+                new Book(9780553103540L, "Game of Thrones", true)
         );
         Genre fullGenre = new Genre(testDescription, books);
 
         assertEquals(testDescription, fullGenre.getDescription());
         assertEquals(2, fullGenre.getBooks().size());
-        assertEquals("Dune", fullGenre.getBooks().get(0).getTitle());
+        assertEquals("Dune", fullGenre.getBooks().getFirst().getTitle());
     }
 
     @Test
@@ -70,21 +68,21 @@ class GenreTest {
 
         // Test setting books list
         List<Book> books = new ArrayList<>();
-        books.add(new Book(9783161484100L, "Dune", 'Y'));
+        books.add(new Book(9783161484100L, "Dune", true));
         genre.setBooks(books);
 
         assertNotNull(genre.getBooks());
         assertEquals(1, genre.getBooks().size());
-        assertEquals("Dune", genre.getBooks().get(0).getTitle());
+        assertEquals("Dune", genre.getBooks().getFirst().getTitle());
 
         // Test modifying the books list
-        genre.getBooks().add(new Book(9780553103540L, "Game of Thrones", 'Y'));
+        genre.getBooks().add(new Book(9780553103540L, "Game of Thrones", true));
         assertEquals(2, genre.getBooks().size());
     }
 
     @Test
     void testSetBooksToNull() {
-        List<Book> books = List.of(new Book(9783161484100L, "Dune", 'Y'));
+        List<Book> books = List.of(new Book(9783161484100L, "Dune", true));
         genre.setBooks(books);
         assertNotNull(genre.getBooks());
 
@@ -100,7 +98,7 @@ class GenreTest {
         assertTrue(toStringResult.contains("books=null"));
 
         // Test with books
-        List<Book> books = List.of(new Book(9783161484100L, "Dune", 'Y'));
+        List<Book> books = List.of(new Book(9783161484100L, "Dune", true));
         genre.setBooks(books);
         toStringResult = genre.toString();
         assertTrue(toStringResult.contains("books=" + books.toString()));

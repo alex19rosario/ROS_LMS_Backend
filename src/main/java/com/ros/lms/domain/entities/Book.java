@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.converters.CharToBooleanConverter;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -12,19 +13,26 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BOOK_ID")
     private long id;
+
     @Column(name = "ISBN")
     private long isbn;
+
     @Column(name = "TITLE")
     private String title;
+
     @Column(name = "IS_AVAILABLE")
-    private char isAvailable;
+    @Convert(converter = CharToBooleanConverter.class)
+    private boolean isAvailable;
+
     @Column(name = "COVER_IMAGE_PATH")
     private String coverImagePath;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "BOOKS_AUTHORS",
             joinColumns = @JoinColumn(name = "BOOK_ID"),
             inverseJoinColumns = @JoinColumn(name = "AUTHOR_ID"))
     private List<Author> authors;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "BOOKS_GENRES",
             joinColumns = @JoinColumn(name = "BOOK_ID"),
@@ -32,7 +40,7 @@ public class Book {
     private List<Genre> genres;
 
     public Book(){}
-    public Book(long isbn, String title, char isAvailable, String coverImagePath, List<Author> authors, List<Genre> genres) {
+    public Book(long isbn, String title, boolean isAvailable, String coverImagePath, List<Author> authors, List<Genre> genres) {
         this.isbn = isbn;
         this.title = title;
         this.isAvailable = isAvailable;
@@ -41,7 +49,7 @@ public class Book {
         this.genres = genres;
     }
 
-    public Book(long isbn, String title, char isAvailable) {
+    public Book(long isbn, String title, boolean isAvailable) {
         this.isbn = isbn;
         this.title = title;
         this.isAvailable = isAvailable;
@@ -72,11 +80,11 @@ public class Book {
         this.title = title;
     }
 
-    public char isAvailable() {
+    public boolean isAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(char available) {
+    public void setAvailable(boolean available) {
         isAvailable = available;
     }
 

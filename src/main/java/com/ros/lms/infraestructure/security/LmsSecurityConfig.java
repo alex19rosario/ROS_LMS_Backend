@@ -73,7 +73,8 @@ public class LmsSecurityConfig {
             .requestMatchers(HttpMethod.POST, Routes.BOOKS.val()).hasRole(Roles.STAFF.val())
             .requestMatchers(HttpMethod.DELETE, Routes.BOOKS.val()).hasRole(Roles.ADMIN.val())
             .requestMatchers(HttpMethod.GET, Routes.GENRES.val()).hasRole(Roles.STAFF.val())
-            .requestMatchers(HttpMethod.POST, Routes.MEMBERS.val()).hasRole(Roles.MEMBER.val()));
+            .requestMatchers(HttpMethod.POST, Routes.MEMBERS.val()).hasRole(Roles.MEMBER.val())
+            .requestMatchers(HttpMethod.POST, Routes.LOANS.val()).hasRole(Roles.STAFF.val()));
 
         http.httpBasic(Customizer.withDefaults());
         http.authenticationProvider(authenticationProvider());

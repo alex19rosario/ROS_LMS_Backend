@@ -1,7 +1,11 @@
 package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.MemberDAOJpaImpl;
+import com.ros.lms.domain.entities.Book;
+import com.ros.lms.domain.entities.Loan;
+import com.ros.lms.domain.entities.LoanStatus;
 import com.ros.lms.domain.entities.Member;
+import com.ros.lms.domain.enums.MemberStatuses;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
