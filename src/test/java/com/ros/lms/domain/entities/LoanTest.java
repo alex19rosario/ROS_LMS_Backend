@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.Sex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,7 @@ class LoanTest {
     @BeforeEach
     void setUp() {
         member = new Member();
+        member.setSex(Sex.MALE);
         book = new Book();
         loanStatus = new LoanStatus("LOANED");
         staff = new Staff();

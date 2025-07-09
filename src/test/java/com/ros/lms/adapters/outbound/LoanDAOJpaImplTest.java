@@ -2,6 +2,7 @@ package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.LoanDAOJpaImpl;
 import com.ros.lms.domain.entities.*;
+import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.ports.outbound.repository_contracts.LoanDAO;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ class LoanDAOJpaImplTest {
         member.setLastName("Doe");
         member.setPhone("1234567890");
         member.setDateOfBirth(LocalDate.of(1990, 1, 1));
-        member.setSex('M');
+        member.setSex(Sex.MALE);
         member.setEmail("john.doe@example.com");
         member.setUsername("johndoe");
         entityManager.persist(member);
@@ -62,7 +63,7 @@ class LoanDAOJpaImplTest {
         staff.setMiddleName("B");
         staff.setLastName("Smith");
         staff.setPhone("9876543210");
-        staff.setSex('F');
+        staff.setSex(Sex.FEMALE);
         staff.setEmail("jane.smith@example.com");
         staff.setUsername("janesmith");
         entityManager.persist(staff);

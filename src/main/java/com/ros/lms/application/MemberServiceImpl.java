@@ -7,6 +7,7 @@ import com.ros.lms.domain.entities.AuthorityId;
 import com.ros.lms.domain.entities.Member;
 import com.ros.lms.domain.entities.User;
 import com.ros.lms.domain.enums.Roles;
+import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
 import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
 import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
@@ -66,7 +67,7 @@ public class MemberServiceImpl implements MemberService {
         member.setLastName(dto.lastName());
         member.setPhone(dto.phone());
         member.setDateOfBirth(dto.dateOfBirth());
-        member.setSex(dto.sex());
+        member.setSex(Sex.fromCode(dto.sex()));
         member.setEmail(dto.email());
         member.setUsername(dto.username());
         return member;
