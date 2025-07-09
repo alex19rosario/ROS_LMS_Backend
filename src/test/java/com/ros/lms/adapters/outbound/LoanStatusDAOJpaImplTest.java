@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class LoanStatusDAOJpaImplTest {
+class LoanStatusDAOJpaImplTest {
 
     @Autowired
     private EntityManager entityManager;

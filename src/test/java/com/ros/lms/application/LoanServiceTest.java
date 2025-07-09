@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LoanServiceTest {
+class LoanServiceTest {
 
     @Mock private BookDAO bookDAO;
     @Mock private MemberDAO memberDAO;

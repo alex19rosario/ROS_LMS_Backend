@@ -51,8 +51,9 @@ class LoanStatusTest {
 
         String result = loanStatus.toString();
 
-        assertThat(result).contains("LoanStatus{");
-        assertThat(result).contains("id=99");
-        assertThat(result).contains("description='RETURNED'");
+        assertThat(result)
+                .contains("LoanStatus{")
+                .contains("id=99")
+                .contains("description='RETURNED'");
     }
 }

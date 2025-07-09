@@ -16,7 +16,7 @@ import java.time.LocalDate;
 
 @SpringBootTest
 @ActiveProfiles("test") // This activates application-test.properties
-public class LoanDAOJpaImplTest {
+class LoanDAOJpaImplTest {
     @Autowired
     private EntityManager entityManager;
 

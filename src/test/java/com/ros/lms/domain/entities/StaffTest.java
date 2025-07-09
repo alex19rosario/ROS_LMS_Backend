@@ -80,15 +80,17 @@ class StaffTest {
         String str = staff.toString();
 
         // Assert
-        assertThat(str).contains("Staff{");
-        assertThat(str).contains("id=7");
-        assertThat(str).contains("governmentID='GOV777'");
-        assertThat(str).contains("firstName='Bob'");
-        assertThat(str).contains("middleName='C.'");
-        assertThat(str).contains("lastName='Brown'");
-        assertThat(str).contains("phone='5551234567'");
-        assertThat(str).contains("sex=M");
-        assertThat(str).contains("email='bob.brown@example.com'");
-        assertThat(str).contains("username='bobbrown'");
+        assertThat(str).contains(
+                "Staff{",
+                "id=7",
+                "governmentID='GOV777'",
+                "firstName='Bob'",
+                "middleName='C.'",
+                "lastName='Brown'",
+                "phone='5551234567'",
+                "sex=M",
+                "email='bob.brown@example.com'",
+                "username='bobbrown'"
+        );
     }
 }

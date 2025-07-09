@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test") // This activates application-test.properties
-public class StaffDAOJpaImplTest {
+class StaffDAOJpaImplTest {
     @Autowired
     private EntityManager entityManager;
 

@@ -13,7 +13,6 @@ public class CharToBooleanConverter implements AttributeConverter<Boolean, Chara
 
     @Override
     public Boolean convertToEntityAttribute(Character character) {
-        if (character == null) return null;
         return character == 'Y';
     }
 }

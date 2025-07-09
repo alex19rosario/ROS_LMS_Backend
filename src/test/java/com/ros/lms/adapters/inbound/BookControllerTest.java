@@ -1,6 +1,5 @@
 package com.ros.lms.adapters.inbound;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.domain.dtos.BookDTO;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
@@ -37,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class BookControllerTest {
+class BookControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
