@@ -52,7 +52,7 @@ public class Staff {
             return this;
         }
 
-        public Builder firsName(String val) {
+        public Builder firstName(String val) {
             firstName = val;
             return this;
         }
@@ -85,6 +85,10 @@ public class Staff {
         public Builder username(String val) {
             username = val;
             return this;
+        }
+
+        public Staff build() {
+            return new Staff(this);
         }
     }
 

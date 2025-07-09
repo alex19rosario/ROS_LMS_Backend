@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test") // This activates application-test.properties
@@ -202,6 +204,70 @@ public class BookDAOJpaImplTest {
         Book foundBook = result.getContent().getFirst();
         assertThat(foundBook.getTitle()).isEqualTo("Effective Java");
         assertThat(foundBook.getAuthors().getFirst().getLastName()).isEqualTo("Bloch");
+    }
+
+    @Test
+    @Transactional
+    void findById_shouldReturnBook_whenBookExists() {
+        // Arrange
+        Book book = new Book(9783161484100L, "Effective Java", true);
+        entityManager.persist(book);
+        entityManager.flush();
+
+        // Act
+        Optional<Book> foundBook = bookDAO.findById(book.getId());
+
+        // Assert
+        assertThat(foundBook).isPresent();
+        assertThat(foundBook.get().getTitle()).isEqualTo("Effective Java");
+    }
+
+    @Test
+    @Transactional
+    void findById_shouldReturnEmpty_whenBookDoesNotExist() {
+        // Act
+        Optional<Book> foundBook = bookDAO.findById(999L);
+
+        // Assert
+        assertThat(foundBook).isNotPresent();
+    }
+
+    @Test
+    @Transactional
+    void update_shouldMergeChangesToExistingBook() {
+        // Arrange
+        Book book = new Book(9783161484100L, "Effective Java", true);
+        entityManager.persist(book);
+        entityManager.flush();
+        entityManager.clear(); // Detach all entities to simulate real update
+
+        // Act
+        Book updatedBook = new Book(9783161484100L, "Effective Java - 3rd Edition", true);
+        updatedBook.setId(book.getId());
+        bookDAO.update(updatedBook);
+        entityManager.flush();
+
+        // Assert
+        Book mergedBook = entityManager.find(Book.class, book.getId());
+        assertThat(mergedBook.getTitle()).isEqualTo("Effective Java - 3rd Edition");
+    }
+
+    @Test
+    void findById_shouldReturnEmpty_whenExceptionOccurs() {
+        // Arrange
+        EntityManager mockEm = mock(EntityManager.class);
+        BookDAOJpaImpl dao = new BookDAOJpaImpl(mockEm);
+
+        long invalidId = 999L;
+
+        // Simulate failure in entityManager.find
+        when(mockEm.find(Book.class, invalidId)).thenThrow(new RuntimeException("DB failure"));
+
+        // Act
+        Optional<Book> result = dao.findById(invalidId);
+
+        // Assert
+        assertThat(result).isEmpty();
     }
 
 }

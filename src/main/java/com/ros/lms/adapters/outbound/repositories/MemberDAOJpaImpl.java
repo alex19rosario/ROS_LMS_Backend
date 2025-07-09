@@ -67,20 +67,4 @@ public class MemberDAOJpaImpl implements MemberDAO {
             return Optional.empty();
         }
     }
-
-    @Override
-    public Optional<MemberStatuses> findStatusByMemberId(long memberId) {
-        String query = "SELECT v FROM MemberStatusView v WHERE v.memberId = :memberId";
-        try {
-            MemberStatusView view = entityManager.createQuery(query, MemberStatusView.class)
-                    .setParameter("memberId", memberId)
-                    .getSingleResult();
-
-            MemberStatuses status = MemberStatuses.fromValue(view.getMemberStatus());
-            return Optional.of(status);
-
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
 }

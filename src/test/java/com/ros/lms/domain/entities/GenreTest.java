@@ -1,7 +1,5 @@
-package com.ros.lms.domain;
+package com.ros.lms.domain.entities;
 
-import com.ros.lms.domain.entities.Book;
-import com.ros.lms.domain.entities.Genre;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

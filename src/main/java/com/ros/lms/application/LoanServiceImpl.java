@@ -1,10 +1,7 @@
 package com.ros.lms.application;
 
 import com.ros.lms.domain.dtos.AddLoanDTO;
-import com.ros.lms.domain.entities.Book;
-import com.ros.lms.domain.entities.Loan;
-import com.ros.lms.domain.entities.LoanStatus;
-import com.ros.lms.domain.entities.Member;
+import com.ros.lms.domain.entities.*;
 import com.ros.lms.domain.enums.LoanStatuses;
 import com.ros.lms.domain.enums.MemberStatuses;
 import com.ros.lms.domain.exceptions.*;
@@ -24,6 +21,7 @@ public class LoanServiceImpl implements LoanService {
     private final LoanStatusDAO loanStatusDAO;
     private final LoanDAO loanDAO;
     private final StaffDAO staffDAO;
+    private final MemberStatusDAO memberStatusDAO;
 
     @Autowired
     public LoanServiceImpl(
@@ -31,12 +29,14 @@ public class LoanServiceImpl implements LoanService {
             @Qualifier("memberDAOJpaImpl") MemberDAO memberDAO,
             @Qualifier("loanStatusDAOJpaImpl") LoanStatusDAO loanStatusDAO,
             @Qualifier("loanDAOJpaImpl") LoanDAO loanDAO,
-            @Qualifier("staffDAOJpaImpl") StaffDAO staffDAO) {
+            @Qualifier("staffDAOJpaImpl") StaffDAO staffDAO,
+            @Qualifier("memberStatusDAOJpaImpl") MemberStatusDAO memberStatusDAO) {
         this.bookDAO = bookDAO;
         this.memberDAO = memberDAO;
         this.loanStatusDAO = loanStatusDAO;
         this.loanDAO = loanDAO;
         this.staffDAO = staffDAO;
+        this.memberStatusDAO = memberStatusDAO;
     }
 
     @Transactional
@@ -56,12 +56,11 @@ public class LoanServiceImpl implements LoanService {
                 .orElseThrow(() -> new MemberNotFoundException("Member with username " + addLoanDTO.memberUsername() + " not found"));
 
         // Check if staff exists
-        if (staffDAO.findByUsername(addLoanDTO.staffUsername()).isEmpty()) {
-            throw new StaffNotFoundException("Staff with username " + addLoanDTO.staffUsername() + " not found.");
-        }
+        Staff staff = staffDAO.findByUsername(addLoanDTO.staffUsername())
+                .orElseThrow(() -> new StaffNotFoundException("Staff with username " + addLoanDTO.staffUsername() + " not found."));
 
         // Check if member is eligible
-        MemberStatuses memberStatus = memberDAO.findStatusByMemberId(member.getId())
+        MemberStatuses memberStatus = memberStatusDAO.findStatusByMemberId(member.getId())
                 .orElseThrow(() -> new IllegalStateException("Could not determine member status for member ID " + member.getId()));
 
         switch (memberStatus) {
@@ -72,7 +71,7 @@ public class LoanServiceImpl implements LoanService {
                 LoanStatus loanStatus = loanStatusDAO.findLoanStatusByEnum(LoanStatuses.LOANED)
                         .orElseThrow(() -> new IllegalStateException("Could not determine loan status for member ID " + member.getId()));
                 book.setAvailable(false);
-                Loan loan = new Loan(member, book, loanStatus);
+                Loan loan = new Loan(member, book, loanStatus, staff);
                 loanDAO.create(loan);
                 bookDAO.update(book);
             }

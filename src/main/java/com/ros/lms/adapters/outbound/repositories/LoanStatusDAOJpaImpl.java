@@ -1,6 +1,5 @@
 package com.ros.lms.adapters.outbound.repositories;
 
-import com.ros.lms.domain.entities.Genre;
 import com.ros.lms.domain.entities.LoanStatus;
 import com.ros.lms.domain.enums.LoanStatuses;
 import com.ros.lms.ports.outbound.repository_contracts.LoanStatusDAO;

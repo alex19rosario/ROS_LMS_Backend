@@ -26,15 +26,20 @@ public class Loan {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "STATUS_ID")
     private LoanStatus status;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "STAFF_ID", nullable = false)
+    private Staff staff;
+
 
     public Loan() {}
 
-    public Loan(Member member, Book book, LoanStatus status) {
+    public Loan(Member member, Book book, LoanStatus status, Staff staff) {
         this.member = member;
         this.book = book;
         this.loanDate = LocalDateTime.now();
         this.dueDate = this.loanDate.plusDays(3);
         this.status = status;
+        this.staff = staff;
     }
 
     public long getId() {
@@ -93,6 +98,14 @@ public class Loan {
         this.status = status;
     }
 
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
     @Override
     public String toString() {
         return "Loan{" +
@@ -103,6 +116,7 @@ public class Loan {
                 ", dueDate=" + dueDate +
                 ", returnDate=" + returnDate +
                 ", status=" + status +
+                ", staff=" + staff +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.ros.lms.domain;
+package com.ros.lms.domain.entities;
 
 import com.ros.lms.domain.dtos.RenamedMultipartFile;
 import org.junit.jupiter.api.BeforeEach;
