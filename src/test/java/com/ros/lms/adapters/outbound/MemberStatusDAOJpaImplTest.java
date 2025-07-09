@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-public class MemberStatusDAOJpaImplTest {
+class MemberStatusDAOJpaImplTest {
 
     private EntityManager entityManager;
     private MemberStatusDAOJpaImpl memberStatusDAO;
@@ -40,7 +40,7 @@ public class MemberStatusDAOJpaImplTest {
 
         when(entityManager.createQuery(anyString(), eq(MemberStatusView.class)))
                 .thenReturn(mockQuery);
-        when(mockQuery.setParameter(eq("memberId"), eq(memberId))).thenReturn(mockQuery);
+        when(mockQuery.setParameter("memberId", memberId)).thenReturn(mockQuery);
         when(mockQuery.getSingleResult()).thenReturn(mockView);
 
         // Act
@@ -48,7 +48,7 @@ public class MemberStatusDAOJpaImplTest {
 
         // Assert
         assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(MemberStatuses.HAS_LOAN);
+        assertThat(result).contains(MemberStatuses.HAS_LOAN);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class MemberStatusDAOJpaImplTest {
 
         when(entityManager.createQuery(anyString(), eq(MemberStatusView.class)))
                 .thenReturn(mockQuery);
-        when(mockQuery.setParameter(eq("memberId"), eq(memberId))).thenReturn(mockQuery);
+        when(mockQuery.setParameter("memberId", memberId)).thenReturn(mockQuery);
         when(mockQuery.getSingleResult()).thenThrow(new RuntimeException("Not found"));
 
         Optional<MemberStatuses> result = memberStatusDAO.findStatusByMemberId(memberId);

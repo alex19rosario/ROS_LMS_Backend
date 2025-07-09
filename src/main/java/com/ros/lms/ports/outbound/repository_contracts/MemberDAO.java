@@ -1,7 +1,6 @@
 package com.ros.lms.ports.outbound.repository_contracts;
 
 import com.ros.lms.domain.entities.Member;
-import com.ros.lms.domain.enums.MemberStatuses;
 
 import java.util.Optional;
 

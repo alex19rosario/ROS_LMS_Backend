@@ -73,12 +73,15 @@ class LoanTest {
         String str = loan.toString();
 
         // Assert
-        assertThat(str).contains("Loan{");
-        assertThat(str).contains("member=");
-        assertThat(str).contains("book=");
-        assertThat(str).contains("loanDate=");
-        assertThat(str).contains("dueDate=");
-        assertThat(str).contains("status=");
-        assertThat(str).contains("staff=");
+        // Assert
+        assertThat(str).contains(
+                "Loan{",
+                "member=",
+                "book=",
+                "loanDate=",
+                "dueDate=",
+                "status=",
+                "staff="
+        );
     }
 }

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test") // This activates application-test.properties
-public class UserDAOJpaImplTest {
+class UserDAOJpaImplTest {
     @Autowired
     private EntityManager entityManager;
 

@@ -2,8 +2,6 @@ package com.ros.lms.domain.entities;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name = "STAFFS")
 public class Staff {

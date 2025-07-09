@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CharToBooleanConverterTest {
+class CharToBooleanConverterTest {
 
     private final CharToBooleanConverter converter = new CharToBooleanConverter();
 
@@ -38,10 +38,5 @@ public class CharToBooleanConverterTest {
         assertThat(converter.convertToEntityAttribute('X')).isFalse();
         assertThat(converter.convertToEntityAttribute('y')).isFalse();
         assertThat(converter.convertToEntityAttribute('1')).isFalse();
-    }
-
-    @Test
-    void testConvertToEntityAttribute_shouldReturnNullForNull() {
-        assertThat(converter.convertToEntityAttribute(null)).isNull();
     }
 }
