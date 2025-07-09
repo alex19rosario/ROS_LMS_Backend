@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MemberStatusViewTest {
+class MemberStatusViewTest {
 
     @Test
     void testGettersAndSetters() {
@@ -52,7 +52,7 @@ public class MemberStatusViewTest {
         view.setLastName(" ");
         view.setMemberStatus("\t");
 
-        assertThat(view.getFirstName()).isEqualTo("");
+        assertThat(view.getFirstName()).isEmpty();
         assertThat(view.getLastName()).isEqualTo(" ");
         assertThat(view.getMemberStatus()).isEqualTo("\t");
     }

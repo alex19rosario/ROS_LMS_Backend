@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest
 @ActiveProfiles("test") // This activates application-test.properties
@@ -75,11 +77,12 @@ class LoanDAOJpaImplTest {
 
         // Assert: retrieve and verify
         Loan persistedLoan = entityManager.find(Loan.class, loan.getId());
-        assert persistedLoan != null;
-        assert persistedLoan.getBook().getTitle().equals("Effective Java");
-        assert persistedLoan.getMember().getFirstName().equals("John");
-        assert persistedLoan.getStatus().getDescription().equals("ONGOING");
-        assert persistedLoan.getStaff().getUsername().equals("janesmith");
+
+        assertThat(persistedLoan).isNotNull();
+        assertThat(persistedLoan.getBook().getTitle()).isEqualTo("Effective Java");
+        assertThat(persistedLoan.getMember().getFirstName()).isEqualTo("John");
+        assertThat(persistedLoan.getStatus().getDescription()).isEqualTo("ONGOING");
+        assertThat(persistedLoan.getStaff().getUsername()).isEqualTo("janesmith");
     }
 
 }
