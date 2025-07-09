@@ -1,8 +1,6 @@
 package com.ros.lms.adapters.outbound.repositories;
 
 import com.ros.lms.domain.entities.Member;
-import com.ros.lms.domain.enums.MemberStatuses;
-import com.ros.lms.domain.views.MemberStatusView;
 import com.ros.lms.ports.outbound.repository_contracts.MemberDAO;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;

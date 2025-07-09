@@ -47,8 +47,9 @@ class MemberStatusDAOJpaImplTest {
         Optional<MemberStatuses> result = memberStatusDAO.findStatusByMemberId(memberId);
 
         // Assert
-        assertThat(result).isPresent();
-        assertThat(result).contains(MemberStatuses.HAS_LOAN);
+        assertThat(result)
+                .isPresent()
+                .contains(MemberStatuses.HAS_LOAN);
     }
 
     @Test
