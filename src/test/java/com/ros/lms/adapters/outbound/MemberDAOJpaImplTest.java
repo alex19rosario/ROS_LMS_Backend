@@ -2,6 +2,7 @@ package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.MemberDAOJpaImpl;
 import com.ros.lms.domain.entities.Member;
+import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,7 @@ class MemberDAOJpaImplTest {
                 .lastName("Doe")
                 .phone("9876543211")
                 .dateOfBirth(LocalDate.of(2000, 9, 15))
-                .sex('M')
+                .sex(Sex.MALE)
                 .email("john@example.com")
                 .username("johndoe")
                 .build();
@@ -69,7 +70,7 @@ class MemberDAOJpaImplTest {
                 .lastName("Smith")
                 .phone("987654321")
                 .dateOfBirth(LocalDate.of(2001, 12, 25))
-                .sex('F')
+                .sex(Sex.FEMALE)
                 .email("jane@example.com")
                 .username("janesmith")
                 .build();
@@ -99,7 +100,7 @@ class MemberDAOJpaImplTest {
                 .lastName("Zeus")
                 .phone("987654999")
                 .dateOfBirth(LocalDate.of(1966, 4, 23))
-                .sex('F')
+                .sex(Sex.FEMALE)
                 .email("peter@example.com")
                 .username("peterzeus")
                 .build();

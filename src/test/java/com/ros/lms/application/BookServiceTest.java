@@ -5,6 +5,7 @@ import com.ros.lms.domain.dtos.BookDTO;
 import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
+import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
 import com.ros.lms.domain.exceptions.StorageException;
@@ -86,7 +87,7 @@ public class BookServiceTest {
         // Arrange
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Carlos", "Alexander", "Rosario")).thenReturn(Optional.empty());
-        when(genreDAO.findByDescription("SCIENCE")).thenReturn(Optional.of(new Genre("SCIENCE")));
+        when(genreDAO.findByDescription(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
 
         // Act
         bookService.add(validBookDTO);
@@ -94,7 +95,7 @@ public class BookServiceTest {
         // Assert
         verify(bookDAO).findByISBN(validBookDTO.ISBN());
         verify(authorDAO).findByFullName("Joshua", null, "Bloch");
-        verify(genreDAO).findByDescription("SCIENCE");
+        verify(genreDAO).findByDescription(GenreType.SCIENCE);
         verify(bookDAO).create(any(Book.class));
     }
 
@@ -104,7 +105,7 @@ public class BookServiceTest {
         Author existingAuthor = new Author("Joshua", "", "Bloch");
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Joshua", null, "Bloch")).thenReturn(Optional.of(existingAuthor));
-        when(genreDAO.findByDescription("SCIENCE")).thenReturn(Optional.of(new Genre("SCIENCE")));
+        when(genreDAO.findByDescription(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
 
         // Act
         bookService.add(validBookDTO);
@@ -112,7 +113,7 @@ public class BookServiceTest {
         // Assert
         verify(authorDAO).findByFullName("Joshua", null, "Bloch");
         verify(bookDAO).create(any(Book.class));
-        verify(genreDAO).findByDescription("SCIENCE");
+        verify(genreDAO).findByDescription(GenreType.SCIENCE);
     }
 
     @Test
@@ -121,8 +122,8 @@ public class BookServiceTest {
         when(bookDAO.findByISBN(validBookDTO.ISBN())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Carlos", "Alexander", "Rosario")).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Joshua", null, "Bloch")).thenReturn(Optional.empty());
-        when(genreDAO.findByDescription("SCIENCE")).thenReturn(Optional.of(new Genre("SCIENCE")));
-        when(genreDAO.findByDescription("TECHNOLOGY")).thenReturn(Optional.of(new Genre("TECHNOLOGY")));
+        when(genreDAO.findByDescription(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
+        when(genreDAO.findByDescription(GenreType.TECHNOLOGY)).thenReturn(Optional.of(new Genre(GenreType.TECHNOLOGY)));
 
         // Simulate failure during storage
         doThrow(new RuntimeException("Disk full")).when(storageService).store(any());
@@ -170,7 +171,7 @@ public class BookServiceTest {
 
         when(bookDAO.findByISBN(noCoverImageDTO.ISBN())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Robert", "C.", "Martin")).thenReturn(Optional.empty());
-        when(genreDAO.findByDescription("TECHNOLOGY")).thenReturn(Optional.of(new Genre("TECHNOLOGY")));
+        when(genreDAO.findByDescription(GenreType.TECHNOLOGY)).thenReturn(Optional.of(new Genre(GenreType.TECHNOLOGY)));
 
         // Act
         bookService.add(noCoverImageDTO);
@@ -277,7 +278,7 @@ public class BookServiceTest {
         Author author = new Author("Joshua", null, "Bloch");
         book.setAuthors(List.of(author)); // This will be mapped via authorDTOMapper
 
-        Genre genre = new Genre("TECHNOLOGY");
+        Genre genre = new Genre(GenreType.TECHNOLOGY);
         book.setGenres(List.of(genre));
 
         Page<Book> page = new PageImpl<>(List.of(book));

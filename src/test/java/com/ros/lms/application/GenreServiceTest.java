@@ -1,5 +1,6 @@
 package com.ros.lms.application;
 
+import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.ports.outbound.repository_contracts.GenreDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,14 +29,25 @@ public class GenreServiceTest {
     @Test
     void testGetAllGenres() {
         // Arrange
-        Set<String> mockGenres = Set.of("Fiction", "Non-Fiction", "Science");
-        when(genreDAO.findAll()).thenReturn(mockGenres);
+        Set<GenreType> mockEnumGenres = Set.of(
+                GenreType.FICTION,
+                GenreType.NON_FICTION,
+                GenreType.SCIENCE
+        );
+
+        when(genreDAO.findAll()).thenReturn(mockEnumGenres);
 
         // Act
         Set<String> result = genreService.getAll();
 
         // Assert
-        assertEquals(mockGenres, result, "The genres returned should match the mock data");
+        Set<String> expectedLabels = Set.of(
+                GenreType.FICTION.getLabel(),
+                GenreType.NON_FICTION.getLabel(),
+                GenreType.SCIENCE.getLabel()
+        );
+
+        assertEquals(expectedLabels, result, "The genres returned should match the expected labels");
         verify(genreDAO, times(1)).findAll();
     }
 }

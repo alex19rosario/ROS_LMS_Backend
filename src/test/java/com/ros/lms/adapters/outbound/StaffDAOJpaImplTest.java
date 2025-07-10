@@ -2,6 +2,7 @@ package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.StaffDAOJpaImpl;
 import com.ros.lms.domain.entities.Staff;
+import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -36,7 +37,7 @@ class StaffDAOJpaImplTest {
                 .firstName("Jane")
                 .lastName("Smith")
                 .phone("987654321")
-                .sex('F')
+                .sex(Sex.FEMALE)
                 .email("jane@example.com")
                 .username("janesmith")
                 .build();

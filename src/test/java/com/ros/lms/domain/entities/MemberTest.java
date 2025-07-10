@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.Sex;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -21,7 +22,7 @@ class MemberTest {
     private final String testLastName = "Doe";
     private final String testPhone = "+1234567890";
     private final LocalDate testDateOfBirth = LocalDate.of(1999, 9, 17);
-    private final char testSex = 'M';
+    private final Sex testSex = Sex.MALE;
     private final String testEmail = "john.doe@example.com";
     private final String testUsername = "johndoe";
 
@@ -88,9 +89,8 @@ class MemberTest {
         member.setDateOfBirth(newDateOfBirth);
         assertEquals(newDateOfBirth, member.getDateOfBirth());
 
-        char newSex = 'F';
-        member.setSex(newSex);
-        assertEquals(newSex, member.getSex());
+        member.setSex(Sex.FEMALE);
+        assertEquals(Sex.FEMALE, member.getSex());
 
         String newEmail = "jane.smith@example.com";
         member.setEmail(newEmail);
@@ -129,7 +129,7 @@ class MemberTest {
         assertNull(emptyMember.getLastName());
         assertNull(emptyMember.getPhone());
         assertNull(emptyMember.getDateOfBirth());
-        assertEquals('\u0000', emptyMember.getSex()); // default value for char
+        assertNull(emptyMember.getSex()); // default value for char
         assertNull(emptyMember.getEmail());
         assertNull(emptyMember.getUsername());
     }
@@ -165,7 +165,7 @@ class MemberTest {
                 .lastName(null)
                 .phone(null)
                 .dateOfBirth(null)
-                .sex('\u0000')
+                .sex(null)
                 .email(null)
                 .username(null)
                 .build();
@@ -204,17 +204,11 @@ class MemberTest {
 
     @Test
     void testSexValues() {
-        member.setSex('M');
-        assertEquals('M', member.getSex());
+        member.setSex(Sex.MALE);
+        assertEquals(Sex.MALE, member.getSex());
 
-        member.setSex('F');
-        assertEquals('F', member.getSex());
-
-        member.setSex('O'); // Other
-        assertEquals('O', member.getSex());
-
-        member.setSex('X'); // Unknown or unspecified
-        assertEquals('X', member.getSex());
+        member.setSex(Sex.FEMALE);
+        assertEquals(Sex.FEMALE, member.getSex());
     }
 
     @Test
@@ -227,7 +221,7 @@ class MemberTest {
                 .lastName("Doe")
                 .phone("1234567890")
                 .dateOfBirth(LocalDate.now().plusDays(1))
-                .sex('M')
+                .sex(Sex.MALE)
                 .email("john.doe@example.com")
                 .username("johndoe")
                 .build();
@@ -255,7 +249,7 @@ class MemberTest {
                 .lastName("Smith")
                 .phone("0987654321")
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .sex('F')
+                .sex(Sex.FEMALE)
                 .email("jane.smith@example.com")
                 .username("janesmith")
                 .build();
@@ -278,7 +272,7 @@ class MemberTest {
         assertTrue(toStringResult.contains("lastName='" + testLastName + "'"));
         assertTrue(toStringResult.contains("phone='" + testPhone + "'"));
         assertTrue(toStringResult.contains("dateOfBirth=" + testDateOfBirth));
-        assertTrue(toStringResult.contains("sex=" + testSex));
+        assertTrue(toStringResult.contains("sex=" + testSex.getCode()));
         assertTrue(toStringResult.contains("email='" + testEmail + "'"));
         assertTrue(toStringResult.contains("username=" + testUsername));
 
@@ -302,7 +296,7 @@ class MemberTest {
                 .lastName("Wonderland")
                 .phone("555-1234")
                 .dateOfBirth(dob)
-                .sex('F')
+                .sex(Sex.FEMALE)
                 .email("alice@example.com")
                 .username("alicew")
                 .build();
@@ -314,7 +308,7 @@ class MemberTest {
         assertEquals("Wonderland", builtMember.getLastName());
         assertEquals("555-1234", builtMember.getPhone());
         assertEquals(dob, builtMember.getDateOfBirth());
-        assertEquals('F', builtMember.getSex());
+        assertEquals(Sex.FEMALE, builtMember.getSex());
         assertEquals("alice@example.com", builtMember.getEmail());
         assertEquals("alicew", builtMember.getUsername());
     }

@@ -1,6 +1,7 @@
 package com.ros.lms.infraestructure.aspect;
 
 import com.ros.lms.domain.dtos.AddMemberDTO;
+import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.infraestructure.aop.aspect.AddMemberAspect;
 import com.ros.lms.infraestructure.aop.audit_service.MemberAuditService;
 import org.aspectj.lang.JoinPoint;
@@ -38,7 +39,7 @@ class AddMemberAspectTest {
                 "Doe",
                 "6578932134",
                 LocalDate.of(1985, 7, 25),
-                'M' ,
+                Sex.MALE,
                 "john@example.com",
                 "john",
                 "test123");

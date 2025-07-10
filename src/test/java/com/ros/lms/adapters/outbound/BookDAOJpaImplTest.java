@@ -4,6 +4,7 @@ import com.ros.lms.adapters.outbound.repositories.BookDAOJpaImpl;
 import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
+import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.ports.outbound.repository_contracts.BookDAO;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,8 +105,8 @@ public class BookDAOJpaImplTest {
     @Transactional
     void findAllOrderedByTitle_shouldReturnFilteredBooks_byGenre() {
         // Arrange
-        Genre genreTech = new Genre("TECHNOLOGY");
-        Genre genreSci = new Genre("SCIENCE");
+        Genre genreTech = new Genre(GenreType.TECHNOLOGY);
+        Genre genreSci = new Genre(GenreType.SCIENCE);
 
         Book book1 = new Book(111L, "Clean Code", true);
         book1.addGenre(genreTech);

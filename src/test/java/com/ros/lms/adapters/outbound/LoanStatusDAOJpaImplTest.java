@@ -34,7 +34,7 @@ class LoanStatusDAOJpaImplTest {
     @Transactional
     void findLoanStatusByEnum_shouldReturnCorrectStatus_whenExists() {
         // Arrange
-        LoanStatus loanStatus = new LoanStatus(LoanStatuses.LOANED.getVal());
+        LoanStatus loanStatus = new LoanStatus(LoanStatuses.LOANED);
         entityManager.persist(loanStatus);
 
         // Act
@@ -42,7 +42,7 @@ class LoanStatusDAOJpaImplTest {
 
         // Assert
         assertThat(result).isPresent();
-        assertThat(result.get().getDescription()).isEqualTo("LOANED");
+        assertThat(result.get().getDescription()).isEqualTo(LoanStatuses.LOANED);
     }
 
     @Test

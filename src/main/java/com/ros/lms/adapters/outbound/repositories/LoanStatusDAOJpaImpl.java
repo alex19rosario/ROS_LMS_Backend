@@ -25,7 +25,7 @@ public class LoanStatusDAOJpaImpl implements LoanStatusDAO {
         String query = "SELECT ls FROM LoanStatus ls WHERE ls.description = :description";
         try {
             LoanStatus loanStatus = entityManager.createQuery(query, LoanStatus.class)
-                    .setParameter("description", status.getVal())
+                    .setParameter("description", status)
                     .getSingleResult();
 
             return Optional.ofNullable(loanStatus);

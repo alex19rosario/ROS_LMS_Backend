@@ -3,6 +3,7 @@ package com.ros.lms.application;
 import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.domain.entities.Member;
 import com.ros.lms.domain.entities.User;
+import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
 import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
 import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
@@ -49,7 +50,7 @@ public class MemberServiceTest {
                 "rosario sanchez",
                 "6474256438",
                 LocalDate.of(1985, 9, 15),
-                'M',
+                Sex.MALE,
                 "test19@gmail.com",
                 "carlos19",
                 "test123"
@@ -61,7 +62,7 @@ public class MemberServiceTest {
                 "Zeus",
                 "6474259589",
                 LocalDate.of(1999, 7, 22),
-                'M',
+                Sex.MALE,
                 "test18@gmail.com",
                 "peter27",
                 "test123"

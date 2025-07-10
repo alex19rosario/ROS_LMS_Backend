@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
 
@@ -12,23 +13,32 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MEMBER_ID")
     private long id;
+
     @Column(name = "GOVERNMENT_ID")
     private String governmentID;
+
     @Column(name = "FIRST_NAME")
     private String firstName;
+
     @Column(name = "MIDDLE_NAME")
     private String middleName;
+
     @Column(name = "LAST_NAME")
     private String lastName;
+
     @Column(name = "PHONE")
     private String phone;
+
     @Column(name = "DATE_OF_BIRTH")
     @Past(message = "Date of birth must be in the past.")
     private LocalDate dateOfBirth;
+
     @Column(name = "SEX")
-    private char sex;
+    private Sex sex;
+
     @Column(name = "EMAIL")
     private String email;
+
     @Column(name = "USERNAME")
     private String username;
 
@@ -43,7 +53,7 @@ public class Member {
         private String lastName;
         private String phone;
         private LocalDate dateOfBirth;
-        private char sex;
+        private Sex sex;
         private String email;
         private String username;
 
@@ -75,7 +85,7 @@ public class Member {
             dateOfBirth = val;
             return this;
         }
-        public Builder sex(char val) {
+        public Builder sex(Sex val) {
             sex = val;
             return this;
         }
@@ -161,11 +171,11 @@ public class Member {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public char getSex() {
+    public Sex getSex() {
         return sex;
     }
 
-    public void setSex(char sex) {
+    public void setSex(Sex sex) {
         this.sex = sex;
     }
 
@@ -195,7 +205,7 @@ public class Member {
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", sex=" + sex +
+                ", sex=" + sex.getCode() +
                 ", email='" + email + '\'' +
                 ", username=" + username +
                 '}';

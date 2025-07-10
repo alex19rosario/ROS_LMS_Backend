@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.LoanStatuses;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -11,14 +12,16 @@ public class LoanStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "STATUS_ID")
     private long id;
+
     @Column(name = "DESCRIPTION")
-    private String description;
+    private LoanStatuses description;
+
     @OneToMany(mappedBy = "status")
     private List<Loan> loans;
 
     public LoanStatus(){}
 
-    public LoanStatus(String description) {
+    public LoanStatus(LoanStatuses description) {
         this.description = description;
     }
 
@@ -30,11 +33,11 @@ public class LoanStatus {
         this.id = id;
     }
 
-    public String getDescription() {
+    public LoanStatuses getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(LoanStatuses description) {
         this.description = description;
     }
 
@@ -50,7 +53,7 @@ public class LoanStatus {
     public String toString() {
         return "LoanStatus{" +
                 "id=" + id +
-                ", description='" + description + '\'' +
+                ", description='" + description.getVal() + '\'' +
                 '}';
     }
 }

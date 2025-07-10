@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.Sex;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +17,7 @@ class StaffTest {
                 .middleName("A.")
                 .lastName("Doe")
                 .phone("1234567890")
-                .sex('M')
+                .sex(Sex.MALE)
                 .email("john.doe@example.com")
                 .username("johndoe")
                 .build();
@@ -28,7 +29,7 @@ class StaffTest {
         assertThat(staff.getMiddleName()).isEqualTo("A.");
         assertThat(staff.getLastName()).isEqualTo("Doe");
         assertThat(staff.getPhone()).isEqualTo("1234567890");
-        assertThat(staff.getSex()).isEqualTo('M');
+        assertThat(staff.getSex()).isEqualTo(Sex.MALE);
         assertThat(staff.getEmail()).isEqualTo("john.doe@example.com");
         assertThat(staff.getUsername()).isEqualTo("johndoe");
     }
@@ -45,7 +46,7 @@ class StaffTest {
         staff.setMiddleName("B.");
         staff.setLastName("Smith");
         staff.setPhone("9876543210");
-        staff.setSex('F');
+        staff.setSex(Sex.FEMALE);
         staff.setEmail("alice.smith@example.com");
         staff.setUsername("alicesmith");
 
@@ -56,7 +57,7 @@ class StaffTest {
         assertThat(staff.getMiddleName()).isEqualTo("B.");
         assertThat(staff.getLastName()).isEqualTo("Smith");
         assertThat(staff.getPhone()).isEqualTo("9876543210");
-        assertThat(staff.getSex()).isEqualTo('F');
+        assertThat(staff.getSex()).isEqualTo(Sex.FEMALE);
         assertThat(staff.getEmail()).isEqualTo("alice.smith@example.com");
         assertThat(staff.getUsername()).isEqualTo("alicesmith");
     }
@@ -71,7 +72,7 @@ class StaffTest {
                 .middleName("C.")
                 .lastName("Brown")
                 .phone("5551234567")
-                .sex('M')
+                .sex(Sex.MALE)
                 .email("bob.brown@example.com")
                 .username("bobbrown")
                 .build();

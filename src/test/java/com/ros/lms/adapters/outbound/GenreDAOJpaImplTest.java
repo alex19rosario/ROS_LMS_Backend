@@ -2,6 +2,7 @@ package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.GenreDAOJpaImpl;
 import com.ros.lms.domain.entities.Genre;
+import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.ports.outbound.repository_contracts.GenreDAO;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,22 +36,22 @@ public class GenreDAOJpaImplTest {
     void testFindByDescriptionWhenGenreExists() {
         // Arrange
         Genre genre = new Genre();
-        genre.setDescription("test genre");
+        genre.setDescription(GenreType.TECHNOLOGY);
         entityManager.persist(genre);
         entityManager.flush();
 
         // Act
-        Optional<Genre> result = genreDAO.findByDescription("test genre");
+        Optional<Genre> result = genreDAO.findByDescription(GenreType.TECHNOLOGY);
 
         // Assert
         assertTrue(result.isPresent(), "Genre should be found");
-        assertEquals("test genre", result.get().getDescription(), "Description should match");
+        assertEquals(GenreType.TECHNOLOGY, result.get().getDescription(), "Description should match");
     }
 
     @Test
     void testFindByDescription_noResult() {
         // Act
-        Optional<Genre> result = genreDAO.findByDescription("Nonexistent");
+        Optional<Genre> result = genreDAO.findByDescription(GenreType.ADVENTURE);
         // Assert
         assertThat(result).isEmpty();
     }
@@ -59,12 +60,9 @@ public class GenreDAOJpaImplTest {
     @Test
     void testFindAllWhenGenresExist() {
         // Arrange
-        Genre genre1 = new Genre();
-        genre1.setDescription("test genre 1");
-        Genre genre2 = new Genre();
-        genre2.setDescription("test genre 2");
-        Genre genre3 = new Genre();
-        genre3.setDescription("test genre 3");
+        Genre genre1 = new Genre(GenreType.TECHNOLOGY);
+        Genre genre2 = new Genre(GenreType.SCIENCE);
+        Genre genre3 = new Genre(GenreType.ADVENTURE);
 
         entityManager.persist(genre1);
         entityManager.persist(genre2);
@@ -72,10 +70,10 @@ public class GenreDAOJpaImplTest {
         entityManager.flush();
 
         // Act
-        Set<String> result = genreDAO.findAll();
+        Set<GenreType> result = genreDAO.findAll();
 
         // Assert
-        assertNotEquals(0, result.size());
+        assertThat(result).contains(GenreType.TECHNOLOGY, GenreType.SCIENCE, GenreType.ADVENTURE);
     }
 
 }

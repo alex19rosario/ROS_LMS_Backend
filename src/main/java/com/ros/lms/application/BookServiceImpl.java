@@ -7,6 +7,7 @@ import com.ros.lms.domain.dtos.RenamedMultipartFile;
 import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
+import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
 import com.ros.lms.domain.exceptions.StorageException;
@@ -92,10 +93,14 @@ public class BookServiceImpl implements BookService {
         }
 
         Set<String> genres = parseGenres(addBookDTO.genres());
-        //Iterate over the genres
-        for (String desc: genres){
-            Optional<Genre> genre = genreDAO.findByDescription(desc);
-            genre.ifPresent(book::addGenre);
+        for (String desc : genres) {
+            try {
+                GenreType genreType = GenreType.valueOf(desc.toUpperCase());
+                Optional<Genre> genre = genreDAO.findByDescription(genreType);
+                genre.ifPresent(book::addGenre);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid genre provided: " + desc);
+            }
         }
 
         // Handle file upload
@@ -173,7 +178,7 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toSet());
 
 
-        Set<String> genres = Optional.ofNullable(entity.getGenres())
+        Set<GenreType> genres = Optional.ofNullable(entity.getGenres())
                 .orElse(List.of())
                 .stream()
                 .map(Genre::getDescription)

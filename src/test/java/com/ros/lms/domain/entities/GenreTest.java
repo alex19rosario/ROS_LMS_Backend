@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.GenreType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GenreTest {
 
     private Genre genre;
-    private final String testDescription = "Science Fiction";
+    private final GenreType testDescription = GenreType.SCIENCE_FICTION;
 
     @BeforeEach
     void setUp() {
@@ -29,9 +30,8 @@ class GenreTest {
         genre.setId(newId);
         assertEquals(newId, genre.getId());
 
-        String newDescription = "Fantasy";
-        genre.setDescription(newDescription);
-        assertEquals(newDescription, genre.getDescription());
+        genre.setDescription(GenreType.FANTASY);
+        assertEquals(GenreType.FANTASY, genre.getDescription());
 
         List<Book> books = new ArrayList<>();
         books.add(new Book(9783161484100L, "Dune", true));
@@ -94,7 +94,7 @@ class GenreTest {
     void testToString() {
         // Test with no books
         String toStringResult = genre.toString();
-        assertTrue(toStringResult.contains("description='" + testDescription + "'"));
+        assertTrue(toStringResult.contains("description='" + testDescription.getLabel() + "'"));
         assertTrue(toStringResult.contains("books=null"));
 
         // Test with books

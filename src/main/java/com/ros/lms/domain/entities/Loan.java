@@ -11,21 +11,28 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LOAN_ID")
     private long id;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MEMBER_ID", nullable = false)
     private Member member;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "BOOK_ID", nullable = false)
     private Book book;
+
     @Column(name = "LOAN_DATE")
     private LocalDateTime loanDate;
+
     @Column(name = "DUE_DATE")
     private LocalDateTime dueDate;
+
     @Column(name = "RETURN_DATE")
     private LocalDateTime returnDate;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "STATUS_ID")
     private LoanStatus status;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "STAFF_ID", nullable = false)
     private Staff staff;

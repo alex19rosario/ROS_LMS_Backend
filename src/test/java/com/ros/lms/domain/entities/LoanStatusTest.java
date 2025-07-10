@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.LoanStatuses;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -19,9 +20,9 @@ class LoanStatusTest {
 
     @Test
     void testConstructorWithDescription_shouldSetDescription() {
-        LoanStatus loanStatus = new LoanStatus("LOANED");
+        LoanStatus loanStatus = new LoanStatus(LoanStatuses.LOANED);
 
-        assertThat(loanStatus.getDescription()).isEqualTo("LOANED");
+        assertThat(loanStatus.getDescription()).isEqualTo(LoanStatuses.LOANED);
     }
 
     @Test
@@ -35,18 +36,18 @@ class LoanStatusTest {
 
         // Act
         loanStatus.setId(1L);
-        loanStatus.setDescription("OVERDUE");
+        loanStatus.setDescription(LoanStatuses.OVERDUE);
         loanStatus.setLoans(loanList);
 
         // Assert
         assertThat(loanStatus.getId()).isEqualTo(1L);
-        assertThat(loanStatus.getDescription()).isEqualTo("OVERDUE");
+        assertThat(loanStatus.getDescription()).isEqualTo(LoanStatuses.OVERDUE);
         assertThat(loanStatus.getLoans()).containsExactly(loan1, loan2);
     }
 
     @Test
     void testToString_shouldContainIdAndDescription() {
-        LoanStatus loanStatus = new LoanStatus("RETURNED");
+        LoanStatus loanStatus = new LoanStatus(LoanStatuses.RETURNED);
         loanStatus.setId(99L);
 
         String result = loanStatus.toString();

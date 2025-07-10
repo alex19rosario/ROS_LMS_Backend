@@ -1,5 +1,7 @@
 package com.ros.lms.domain.dtos;
 
+import com.ros.lms.domain.enums.GenreType;
+
 import java.util.Set;
 
 /**
@@ -18,7 +20,7 @@ public record BookDTO(
         long isbn,
         String title,
         Set<AuthorDTO> authors,
-        Set<String> genres,
+        Set<GenreType> genres,
         boolean status,
         String imagePath
 ) {

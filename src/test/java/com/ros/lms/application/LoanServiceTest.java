@@ -48,7 +48,7 @@ class LoanServiceTest {
         availableBook = new Book(1L, "Test Book", true);
         validMember = new Member();
         validMember.setId(10L);
-        loanedStatus = new LoanStatus("LOANED");
+        loanedStatus = new LoanStatus(LoanStatuses.LOANED);
         loanedStatus.setId(1L);
         validStaff = new Staff();
         validStaff.setId(11L);
