@@ -1,9 +1,6 @@
 package com.ros.lms.application;
 
-import com.ros.lms.domain.dtos.AddBookDTO;
-import com.ros.lms.domain.dtos.AuthorDTO;
-import com.ros.lms.domain.dtos.BookDTO;
-import com.ros.lms.domain.dtos.RenamedMultipartFile;
+import com.ros.lms.domain.dtos.*;
 import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
@@ -129,19 +126,27 @@ public class BookServiceImpl implements BookService {
 
     @Cacheable(
             value = "booksCache",
-            key = "'page=' + #page + '&size=' + #size + '&title=' + #title + '&genre=' + #genre + '&first=' + #authorFirstName + '&last=' + #authorLastName"
+            key = "#searchBookDTO.toString()"
     )
     @Override
-    public Page<BookDTO> getAll(int page, int size, String title, String genre, String authorFirstName, String authorLastName) throws PageOutOfRangeException {
+    public Page<BookDTO> getAll(SearchBookDTO searchBookDTO) throws PageOutOfRangeException {
 
-        if(page < 0) throw new PageOutOfRangeException("Page number cannot be negative");
+        if(searchBookDTO.page() < 0) throw new PageOutOfRangeException("Page number cannot be negative");
 
-        else if(size <= 0) throw new PageOutOfRangeException("Page size must be greater than 0");
+        else if(searchBookDTO.size() <= 0) throw new PageOutOfRangeException("Page size must be greater than 0");
 
-        else if(size > MAX_PAGE_SIZE) throw new PageOutOfRangeException("Page size cannot exceed " + MAX_PAGE_SIZE);
+        else if(searchBookDTO.size() > MAX_PAGE_SIZE) throw new PageOutOfRangeException("Page size cannot exceed " + MAX_PAGE_SIZE);
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Book> bookPage = bookDAO.findAllOrderedByTitle(title, genre, authorFirstName, authorLastName, pageable);
+        Pageable pageable = PageRequest.of(searchBookDTO.page(), searchBookDTO.size());
+
+        Page<Book> bookPage = bookDAO.findAllOrderedByTitle(
+                searchBookDTO.title(),
+                searchBookDTO.genre(),
+                searchBookDTO.authorFirstName(),
+                searchBookDTO.authorLastName(),
+                searchBookDTO.isAvailable(),
+                pageable);
+
         return bookPage.map(bookDTOMapper);
     }
 

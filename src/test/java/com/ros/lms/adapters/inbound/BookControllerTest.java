@@ -2,6 +2,8 @@ package com.ros.lms.adapters.inbound;
 
 import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.domain.dtos.BookDTO;
+import com.ros.lms.domain.dtos.SearchBookDTO;
+import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
 import com.ros.lms.domain.exceptions.StorageException;
@@ -191,7 +193,7 @@ class BookControllerTest {
         );
         PageImpl<BookDTO> bookPage = new PageImpl<>(books, PageRequest.of(0, 10), 1);
 
-        when(bookService.getAll(0, 10, null, null, null, null)).thenReturn(bookPage);
+        when(bookService.getAll( new SearchBookDTO(0, 10, null, null, null, null, null))).thenReturn(bookPage);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/books"))
                 .andExpect(status().isOk())
@@ -201,7 +203,8 @@ class BookControllerTest {
     @Test
     @WithMockUser(username = "member", roles = {"MEMBER"})
     void getAllBooks_shouldApplyFiltersCorrectly() throws Exception {
-        when(bookService.getAll(0, 10, "Java", "TECHNOLOGY", "Joshua", "Bloch"))
+        SearchBookDTO expectedDTO = new SearchBookDTO(0, 10, "Java", GenreType.TECHNOLOGY, "Joshua", "Bloch", null);
+        when(bookService.getAll(expectedDTO))
                 .thenReturn(new PageImpl<>(List.of(), PageRequest.of(0, 10), 0));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/books")
@@ -211,13 +214,13 @@ class BookControllerTest {
                         .param("authorLastName", "Bloch"))
                 .andExpect(status().isOk());
 
-        verify(bookService).getAll(0, 10, "Java", "TECHNOLOGY", "Joshua", "Bloch");
+        verify(bookService).getAll(expectedDTO);
     }
 
     @Test
     @WithMockUser(username = "member", roles = {"MEMBER"})
     void getAllBooks_shouldReturnBadRequest_whenPageSizeIsTooLarge() throws Exception {
-        when(bookService.getAll(anyInt(), anyInt(), any(), any(), any(), any()))
+        when(bookService.getAll(any(SearchBookDTO.class)))
                 .thenThrow(new PageOutOfRangeException("Page size too large"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/books")
@@ -228,7 +231,7 @@ class BookControllerTest {
     @Test
     @WithMockUser(username = "member", roles = {"MEMBER"})
     void getAllBooks_shouldReturnBadRequest_whenPageIsNegative() throws Exception {
-        when(bookService.getAll(-1, 10, null, null, null, null))
+        when(bookService.getAll(any(SearchBookDTO.class)))
                 .thenThrow(new PageOutOfRangeException("Negative page"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/books")
@@ -240,8 +243,8 @@ class BookControllerTest {
     @WithMockUser(username = "member", roles = {"MEMBER"})
     void getAllBooks_shouldReturnEmptyPage() throws Exception {
         PageImpl<BookDTO> emptyPage = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
-
-        when(bookService.getAll(0, 10, null, null, null, null)).thenReturn(emptyPage);
+        when(bookService.getAll(new SearchBookDTO(0, 10, null, null, null, null, null)))
+                .thenReturn(emptyPage);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/books"))
                 .andExpect(status().isOk())
