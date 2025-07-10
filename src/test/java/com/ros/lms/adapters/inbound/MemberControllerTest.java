@@ -2,6 +2,7 @@ package com.ros.lms.adapters.inbound;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ros.lms.domain.dtos.AddMemberDTO;
+import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
 import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
 import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
@@ -58,7 +59,7 @@ class MemberControllerTest {
                 "rosario sanchez",
                 "6474256438",
                 LocalDate.of(1997, 10, 19),
-                'M',
+                Sex.MALE,
                 "test19@gmail.com",
                 "carlos19",
                 "test123"
@@ -127,7 +128,7 @@ class MemberControllerTest {
                 "rosario sanchez",
                 "6474256438",
                 LocalDate.now().plusDays(1), // Invalid future date
-                'M',
+                Sex.MALE,
                 "test.future@gmail.com",
                 "carlos_future",
                 "test123"

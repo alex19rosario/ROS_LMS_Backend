@@ -2,6 +2,7 @@ package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.LoanDAOJpaImpl;
 import com.ros.lms.domain.entities.*;
+import com.ros.lms.domain.enums.LoanStatuses;
 import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.ports.outbound.repository_contracts.LoanDAO;
 import jakarta.persistence.EntityManager;
@@ -53,8 +54,7 @@ class LoanDAOJpaImplTest {
         book.setCoverImagePath("cover.jpg");
         entityManager.persist(book);
 
-        LoanStatus status = new LoanStatus();
-        status.setDescription("ONGOING");
+        LoanStatus status = new LoanStatus(LoanStatuses.LOANED);
         entityManager.persist(status);
 
         Staff staff = new Staff();
@@ -82,7 +82,7 @@ class LoanDAOJpaImplTest {
         assertThat(persistedLoan).isNotNull();
         assertThat(persistedLoan.getBook().getTitle()).isEqualTo("Effective Java");
         assertThat(persistedLoan.getMember().getFirstName()).isEqualTo("John");
-        assertThat(persistedLoan.getStatus().getDescription()).isEqualTo("ONGOING");
+        assertThat(persistedLoan.getStatus().getDescription()).isEqualTo(LoanStatuses.LOANED);
         assertThat(persistedLoan.getStaff().getUsername()).isEqualTo("janesmith");
     }
 

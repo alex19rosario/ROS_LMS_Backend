@@ -67,7 +67,7 @@ public class MemberServiceImpl implements MemberService {
         member.setLastName(dto.lastName());
         member.setPhone(dto.phone());
         member.setDateOfBirth(dto.dateOfBirth());
-        member.setSex(Sex.fromCode(dto.sex()));
+        member.setSex(dto.sex());
         member.setEmail(dto.email());
         member.setUsername(dto.username());
         return member;

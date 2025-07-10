@@ -178,11 +178,10 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toSet());
 
 
-        Set<String> genres = Optional.ofNullable(entity.getGenres())
+        Set<GenreType> genres = Optional.ofNullable(entity.getGenres())
                 .orElse(List.of())
                 .stream()
                 .map(Genre::getDescription)
-                .map(GenreType::getLabel)
                 .collect(Collectors.toSet());
 
         return new BookDTO(
