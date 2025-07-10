@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Repository
 public class GenreDAOJpaImpl implements GenreDAO {

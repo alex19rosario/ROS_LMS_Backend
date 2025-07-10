@@ -7,7 +7,6 @@ import com.ros.lms.domain.entities.AuthorityId;
 import com.ros.lms.domain.entities.Member;
 import com.ros.lms.domain.entities.User;
 import com.ros.lms.domain.enums.Roles;
-import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
 import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
 import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
