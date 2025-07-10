@@ -2,6 +2,8 @@ package com.ros.lms.adapters.inbound.controllers;
 
 import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.domain.dtos.BookDTO;
+import com.ros.lms.domain.dtos.SearchBookDTO;
+import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
 import com.ros.lms.domain.exceptions.StorageException;
@@ -44,12 +46,14 @@ public class BookController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) String title,
-        @RequestParam(required = false) String genre,
+        @RequestParam(required = false) GenreType genre,
         @RequestParam(required = false) String authorFirstName,
         @RequestParam(required = false) String authorLastName,
+        @RequestParam(required = false) Boolean isAvailable,
         PagedResourcesAssembler<BookDTO> assembler
     ) throws PageOutOfRangeException {
-        Page<BookDTO> booksPage = bookService.getAll(page, size, title, genre, authorFirstName, authorLastName);
+        SearchBookDTO searchBookDTO = new SearchBookDTO(page, size, title, genre, authorFirstName, authorLastName, isAvailable);
+        Page<BookDTO> booksPage = bookService.getAll(searchBookDTO);
         return assembler.toModel(booksPage, EntityModel::of);
     }
 }

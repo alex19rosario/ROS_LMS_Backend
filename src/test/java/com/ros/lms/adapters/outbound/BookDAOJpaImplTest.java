@@ -94,7 +94,7 @@ public class BookDAOJpaImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<Book> result = bookDAO.findAllOrderedByTitle("Clean", null, null, null, pageable);
+        Page<Book> result = bookDAO.findAllOrderedByTitle("Clean", null, null, null, null, pageable);
 
         // Assert
         assertThat(result.getTotalElements()).isEqualTo(1);
@@ -122,7 +122,7 @@ public class BookDAOJpaImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<Book> result = bookDAO.findAllOrderedByTitle(null, "TECH", null, null, pageable);
+        Page<Book> result = bookDAO.findAllOrderedByTitle(null, GenreType.TECHNOLOGY, null, null, null, pageable);
 
         // Assert
         assertThat(result.getTotalElements()).isEqualTo(1);
@@ -150,7 +150,7 @@ public class BookDAOJpaImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, "Joshua", null, pageable);
+        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, "Joshua", null, null, pageable);
 
         // Assert
         assertThat(result.getTotalElements()).isEqualTo(1);
@@ -169,7 +169,7 @@ public class BookDAOJpaImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, null, null, pageable);
+        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, null, null, null, pageable);
 
         // Assert
         assertThat(result.getTotalElements()).isEqualTo(2);
@@ -198,7 +198,7 @@ public class BookDAOJpaImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // Act
-        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, null, "Bloch", pageable);
+        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, null, "Bloch", null, pageable);
 
         // Assert
         assertThat(result.getTotalElements()).isEqualTo(1);
@@ -206,6 +206,45 @@ public class BookDAOJpaImplTest {
         assertThat(foundBook.getTitle()).isEqualTo("Effective Java");
         assertThat(foundBook.getAuthors().getFirst().getLastName()).isEqualTo("Bloch");
     }
+
+    @Test
+    @Transactional
+    void findAllOrderedByTitle_shouldReturnOnlyAvailableBooks() {
+        // Arrange
+        Book availableBook = new Book(123L, "Available Book", true);
+        Book unavailableBook = new Book(456L, "Unavailable Book", false);
+        entityManager.persist(availableBook);
+        entityManager.persist(unavailableBook);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // Act
+        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, null, null, true, pageable);
+
+        // Assert
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent().getFirst().getTitle()).isEqualTo("Available Book");
+    }
+
+    @Test
+    @Transactional
+    void findAllOrderedByTitle_shouldReturnOnlyUnavailableBooks() {
+        // Arrange
+        Book availableBook = new Book(123L, "Available Book", true);
+        Book unavailableBook = new Book(456L, "Unavailable Book", false);
+        entityManager.persist(availableBook);
+        entityManager.persist(unavailableBook);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // Act
+        Page<Book> result = bookDAO.findAllOrderedByTitle(null, null, null, null, false, pageable);
+
+        // Assert
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent().getFirst().getTitle()).isEqualTo("Unavailable Book");
+    }
+
 
     @Test
     @Transactional

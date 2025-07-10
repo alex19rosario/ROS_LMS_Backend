@@ -1,16 +1,14 @@
 package com.ros.lms.adapters.outbound.repositories;
 
 import com.ros.lms.domain.entities.Book;
+import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.ports.outbound.repository_contracts.BookDAO;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import jakarta.persistence.Query;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +45,7 @@ public class BookDAOJpaImpl implements BookDAO {
     }
 
     @Override
-    public Page<Book> findAllOrderedByTitle(String title, String genre, String authorFirstName, String authorLastName, Pageable pageable) {
+    public Page<Book> findAllOrderedByTitle(String title, GenreType genre, String authorFirstName, String authorLastName, Boolean isAvailable, Pageable pageable) {
         // Base JPQL strings
         String countJpql = "SELECT COUNT(DISTINCT b) FROM Book b " +
                 "LEFT JOIN b.genres g " +
@@ -68,10 +66,10 @@ public class BookDAOJpaImpl implements BookDAO {
         }
 
         // Genre filter
-        if (genre != null && !genre.isBlank()) {
-            countJpql += " AND UPPER(g.description) LIKE UPPER(:genre)";
-            selectJpql += " AND UPPER(g.description) LIKE UPPER(:genre)";
-            params.put("genre", "%" + genre + "%"); // contains anywhere
+        if (genre != null) {
+            countJpql += " AND g.description = :genre";
+            selectJpql += " AND g.description = :genre";
+            params.put("genre", genre); // <-- Use the GenreType enum directly
         }
 
         // Author first/middle name filter
@@ -86,6 +84,13 @@ public class BookDAOJpaImpl implements BookDAO {
             countJpql += " AND UPPER(a.lastName) LIKE UPPER(:authorLastName)";
             selectJpql += " AND UPPER(a.lastName) LIKE UPPER(:authorLastName)";
             params.put("authorLastName", "%" + authorLastName + "%");
+        }
+
+        // Availability filter
+        if (isAvailable != null) {
+            countJpql += " AND b.isAvailable = :isAvailable";
+            selectJpql += " AND b.isAvailable = :isAvailable";
+            params.put("isAvailable", isAvailable);
         }
 
         // Order by title
