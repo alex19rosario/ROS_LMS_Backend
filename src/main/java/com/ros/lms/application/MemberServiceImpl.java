@@ -77,7 +77,7 @@ public class MemberServiceImpl implements MemberService {
         user.setUsername(dto.username());
         String hashedPassword = passwordEncoder.encode(dto.password());
         user.setPassword(hashedPassword);
-        user.setEnabled('Y');
+        user.setEnabled(true);
         Set<Authority> authorities = Set.of(authorityMapper.apply(dto));
         user.setAuthorities(authorities);
         return user;

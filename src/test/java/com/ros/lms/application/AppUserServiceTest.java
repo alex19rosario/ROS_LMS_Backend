@@ -41,7 +41,7 @@ public class AppUserServiceTest {
         user = new User();
         user.setUsername("testUser");
         user.setPassword("encodedPassword");
-        user.setEnabled('Y');
+        user.setEnabled(true);
         user.setAuthorities(Set.of(authority));
     }
 
@@ -84,7 +84,7 @@ public class AppUserServiceTest {
     @Test
     void loadUserByUsername_UserDisabled_ReturnsUserDetailsWithDisabledFlag() {
         // Arrange
-        user.setEnabled('N');
+        user.setEnabled(false);
         when(userDAO.findByUsername("testUser")).thenReturn(Optional.of(user));
 
         // Act

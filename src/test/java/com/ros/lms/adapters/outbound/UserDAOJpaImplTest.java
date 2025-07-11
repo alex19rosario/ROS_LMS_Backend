@@ -36,7 +36,7 @@ class UserDAOJpaImplTest {
     @Test
     void testCreateUser() {
         // Arrange
-        User user = new User("testUser", "testPassword", 'Y');
+        User user = new User("testUser", "testPassword", true);
         Set<Authority> authorities = new HashSet<>();
         Authority authority = new Authority();
         authority.setUser(user);
@@ -52,7 +52,7 @@ class UserDAOJpaImplTest {
         assertNotNull(persistedUser, "User should be persisted in the database.");
         assertEquals("testUser", persistedUser.getUsername());
         assertEquals("testPassword", persistedUser.getPassword());
-        assertEquals('Y', persistedUser.getEnabled());
+        assertTrue(persistedUser.getEnabled());
         assertNotNull(persistedUser.getAuthorities());
         assertEquals(1, persistedUser.getAuthorities().size());
     }
@@ -61,7 +61,7 @@ class UserDAOJpaImplTest {
     @Test
     void testFindByUsername_UserExists() {
         // Arrange
-        User user = new User("existingUser", "password123", 'Y');
+        User user = new User("existingUser", "password123", true);
         entityManager.persist(user);
         entityManager.flush();
 
@@ -72,7 +72,7 @@ class UserDAOJpaImplTest {
         assertTrue(result.isPresent(), "User should be found in the database.");
         assertEquals("existingUser", result.get().getUsername());
         assertEquals("password123", result.get().getPassword());
-        assertEquals('Y', result.get().getEnabled());
+        assertTrue(result.get().getEnabled());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.converters.CharToBooleanConverter;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -11,16 +12,20 @@ public class User {
     @Id
     @Column(name = "USERNAME")
     private String username;
+
     @Column(name = "PASSWORD")
     private String password;
+
     @Column(name = "ENABLED", nullable = false)
-    private char enabled;
+    @Convert(converter = CharToBooleanConverter.class)
+    private Boolean enabled;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Authority> authorities;
 
     public User() {}
 
-    public User(String username, String password, char enabled) {
+    public User(String username, String password, Boolean enabled) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -42,11 +47,11 @@ public class User {
         this.password = password;
     }
 
-    public char getEnabled() {
+    public Boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(char enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 

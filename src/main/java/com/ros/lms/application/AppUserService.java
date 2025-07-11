@@ -45,7 +45,7 @@ public class AppUserService implements UserDetailsService {
                     .accountExpired(false)
                     .accountLocked(false)
                     .credentialsExpired(false)
-                    .disabled(user.getEnabled() == 'N')
+                    .disabled(!user.getEnabled())
                     .build();
         } else {
             throw new UsernameNotFoundException("User not found");
