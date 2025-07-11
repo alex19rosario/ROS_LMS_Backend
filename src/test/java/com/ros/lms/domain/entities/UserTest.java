@@ -13,7 +13,7 @@ class UserTest {
     private User user;
     private final String testUsername = "testuser";
     private final String testPassword = "securePassword123";
-    private final char testEnabled = 'Y';
+    private final boolean testEnabled = true;
 
     @BeforeEach
     void setUp() {
@@ -37,9 +37,8 @@ class UserTest {
         user.setPassword(newPassword);
         assertEquals(newPassword, user.getPassword());
 
-        char newEnabled = 'N';
-        user.setEnabled(newEnabled);
-        assertEquals(newEnabled, user.getEnabled());
+        user.setEnabled(false);
+        assertFalse(user.getEnabled());
 
         Set<Authority> authorities = new HashSet<>();
         authorities.add(new Authority(new AuthorityId(testUsername, "ROLE_USER")));
@@ -62,7 +61,7 @@ class UserTest {
         User emptyUser = new User();
         assertNull(emptyUser.getUsername());
         assertNull(emptyUser.getPassword());
-        assertEquals('\u0000', emptyUser.getEnabled()); // char default value
+        assertNull(emptyUser.getEnabled()); // char default value
         assertNull(emptyUser.getAuthorities());
     }
 
@@ -99,10 +98,10 @@ class UserTest {
         assertNull(user.getAuthorities());
 
         // Test constructor with null values
-        User nullUser = new User(null, null, 'N');
+        User nullUser = new User(null, null, null);
         assertNull(nullUser.getUsername());
         assertNull(nullUser.getPassword());
-        assertEquals('N', nullUser.getEnabled());
+        assertNull(nullUser.getEnabled());
         assertNull(nullUser.getAuthorities());
     }
 
@@ -150,18 +149,11 @@ class UserTest {
     @Test
     void testEnabledStatus() {
         // Test valid enabled values
-        user.setEnabled('Y');
-        assertEquals('Y', user.getEnabled());
+        user.setEnabled(true);
+        assertEquals(true, user.getEnabled());
 
-        user.setEnabled('N');
-        assertEquals('N', user.getEnabled());
-
-        // Test invalid enabled values (should still work as it's just a char)
-        user.setEnabled('X');
-        assertEquals('X', user.getEnabled());
-
-        user.setEnabled('1');
-        assertEquals('1', user.getEnabled());
+        user.setEnabled(false);
+        assertEquals(false, user.getEnabled());
     }
 
 }
