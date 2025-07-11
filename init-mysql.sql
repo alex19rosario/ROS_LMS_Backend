@@ -28,7 +28,7 @@ CREATE TABLE GENRES (
 
 CREATE TABLE BOOKS (
     BOOK_ID INT AUTO_INCREMENT,
-    ISBN BIGINT,
+    ISBN VARCHAR(13),
     TITLE VARCHAR(50) NOT NULL,
     IS_AVAILABLE CHAR(1),
     COVER_IMAGE_PATH VARCHAR(200),
@@ -306,16 +306,16 @@ INSERT INTO AUTHORS (FIRST_NAME, MIDDLE_NAME, LAST_NAME) VALUES
 
 -- Insert Dummy Books
 INSERT INTO BOOKS (ISBN, TITLE, IS_AVAILABLE, COVER_IMAGE_PATH) VALUES
-(9780000000001, 'The Lost Artifact', 'Y', '/images/book1.jpg'),
-(9780000000002, 'Echoes of Tomorrow', 'Y', '/images/book2.jpg'),
-(9780000000003, 'Whispers in the Wind', 'Y', '/images/book3.jpg'),
-(9780000000004, 'The Final Countdown', 'N', '/images/book4.jpg'),
-(9780000000005, 'Hearts in Harmony', 'Y', '/images/book5.jpg'),
-(9780000000006, 'Beyond the Stars', 'Y', '/images/book6.jpg'),
-(9780000000007, 'Shadows of Deceit', 'N', '/images/book7.jpg'),
-(9780000000008, 'Chronicles of the Unknown', 'Y', '/images/book8.jpg'),
-(9780000000009, 'Mystic River', 'Y', '/images/book9.jpg'),
-(9780000000010, 'Garden of Dreams', 'Y', '/images/book10.jpg');
+('9780000000001', 'The Lost Artifact', 'Y', '/images/book1.jpg'),
+('9780000000002', 'Echoes of Tomorrow', 'Y', '/images/book2.jpg'),
+('9780000000003', 'Whispers in the Wind', 'Y', '/images/book3.jpg'),
+('9780000000004', 'The Final Countdown', 'N', '/images/book4.jpg'),
+('9780000000005', 'Hearts in Harmony', 'Y', '/images/book5.jpg'),
+('9780000000006', 'Beyond the Stars', 'Y', '/images/book6.jpg'),
+('9780000000007', 'Shadows of Deceit', 'N', '/images/book7.jpg'),
+('9780000000008', 'Chronicles of the Unknown', 'Y', '/images/book8.jpg'),
+('9780000000009', 'Mystic River', 'Y', '/images/book9.jpg'),
+('9780000000010', 'Garden of Dreams', 'Y', '/images/book10.jpg');
 
 
 -- Map Books to Authors
