@@ -287,7 +287,7 @@ class MemberTest {
 
     @Test
     void testToString_shouldHandleNullValues() {
-        Member member = new Member.Builder()
+        Member newMember = new Member.Builder()
                 .id(1L)
                 .governmentID("GOV123")
                 .firstName("Alice")
@@ -299,7 +299,7 @@ class MemberTest {
                 .username("alicesmith")
                 .build();
 
-        String str = member.toString();
+        String str = newMember.toString();
 
         assertThat(str).contains(
                 "sex=null"
