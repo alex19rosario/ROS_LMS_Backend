@@ -20,10 +20,14 @@ class LoanTest {
     void setUp() {
         member = new Member();
         member.setSex(Sex.MALE);
+
         book = new Book();
         loanStatus = new LoanStatus(LoanStatuses.LOANED);
+
         staff = new Staff();
+        staff.setSex(Sex.FEMALE);
     }
+
 
     @Test
     void testConstructor_shouldInitializeFieldsCorrectly() {
