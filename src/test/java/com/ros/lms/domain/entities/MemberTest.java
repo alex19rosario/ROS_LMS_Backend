@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MemberTest {
@@ -282,6 +283,27 @@ class MemberTest {
         toStringResult = member.toString();
         assertTrue(toStringResult.contains("middleName='null'"));
         assertTrue(toStringResult.contains("email='null'"));
+    }
+
+    @Test
+    void testToString_shouldHandleNullValues() {
+        Member member = new Member.Builder()
+                .id(1L)
+                .governmentID("GOV123")
+                .firstName("Alice")
+                .middleName(null) // null value
+                .lastName("Smith")
+                .phone("123456789")
+                .sex(null) // null value
+                .email(null) // null value
+                .username("alicesmith")
+                .build();
+
+        String str = member.toString();
+
+        assertThat(str).contains(
+                "sex=null"
+        );
     }
 
     @Test

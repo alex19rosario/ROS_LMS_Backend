@@ -94,4 +94,25 @@ class StaffTest {
                 "username='bobbrown'"
         );
     }
+
+    @Test
+    void testToString_shouldHandleNullValues() {
+        Staff staff = new Staff.Builder()
+                .id(1L)
+                .governmentID("GOV123")
+                .firstName("Alice")
+                .middleName(null) // null value
+                .lastName("Smith")
+                .phone("123456789")
+                .sex(null) // null value
+                .email(null) // null value
+                .username("alicesmith")
+                .build();
+
+        String str = staff.toString();
+
+        assertThat(str).contains(
+                "sex=null"
+        );
+    }
 }

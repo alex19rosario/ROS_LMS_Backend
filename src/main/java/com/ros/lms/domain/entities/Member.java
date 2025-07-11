@@ -8,39 +8,15 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "MEMBERS")
-public class Member {
+public class Member extends PersonBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MEMBER_ID")
     private long id;
 
-    @Column(name = "GOVERNMENT_ID")
-    private String governmentID;
-
-    @Column(name = "FIRST_NAME")
-    private String firstName;
-
-    @Column(name = "MIDDLE_NAME")
-    private String middleName;
-
-    @Column(name = "LAST_NAME")
-    private String lastName;
-
-    @Column(name = "PHONE")
-    private String phone;
-
     @Column(name = "DATE_OF_BIRTH")
     @Past(message = "Date of birth must be in the past.")
     private LocalDate dateOfBirth;
-
-    @Column(name = "SEX")
-    private Sex sex;
-
-    @Column(name = "EMAIL")
-    private String email;
-
-    @Column(name = "USERNAME")
-    private String username;
 
     public Member() {}
 
@@ -104,15 +80,15 @@ public class Member {
 
     private Member(Builder builder) {
         id = builder.id;
-        governmentID = builder.governmentID;
-        firstName = builder.firstName;
-        middleName = builder.middleName;
-        lastName = builder.lastName;
-        phone = builder.phone;
+        super.setGovernmentID(builder.governmentID);
+        super.setFirstName(builder.firstName);
+        super.setMiddleName(builder.middleName);
+        super.setLastName(builder.lastName);
+        super.setPhone(builder.phone);
         dateOfBirth = builder.dateOfBirth;
-        sex = builder.sex;
-        email = builder.email;
-        username = builder.username;
+        super.setSex(builder.sex);
+        super.setEmail(builder.email);
+        super.setUsername(builder.username);
     }
 
     public long getId() {
@@ -123,46 +99,6 @@ public class Member {
         this.id = id;
     }
 
-    public String getGovernmentID() {
-        return governmentID;
-    }
-
-    public void setGovernmentID(String governmentID) {
-        this.governmentID = governmentID;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
@@ -171,43 +107,20 @@ public class Member {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Sex getSex() {
-        return sex;
-    }
-
-    public void setSex(Sex sex) {
-        this.sex = sex;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     @Override
     public String toString() {
         return "Member{" +
                 "id=" + id +
-                ", governmentID='" + governmentID + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phone='" + phone + '\'' +
+                ", governmentID='" + super.getGovernmentID() + '\'' +
+                ", firstName='" + super.getFirstName() + '\'' +
+                ", middleName='" + super.getMiddleName() + '\'' +
+                ", lastName='" + super.getLastName() + '\'' +
+                ", phone='" + super.getPhone() + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", sex=" + sex.getCode() +
-                ", email='" + email + '\'' +
-                ", username=" + username +
+                ", sex=" + (super.getSex() != null ? super.getSex().getCode() : "null") +
+                ", email='" + super.getEmail() + '\'' +
+                ", username=" + super.getUsername() +
                 '}';
     }
 }
