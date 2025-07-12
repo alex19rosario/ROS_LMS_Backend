@@ -45,7 +45,7 @@ class LoanServiceTest {
         MockitoAnnotations.openMocks(this);
 
         validLoanDTO = new AddLoanDTO(1L, "memberUser", "staffUser");
-        availableBook = new Book(1L, "Test Book", true);
+        availableBook = new Book("1234567895", "Test Book", true);
         validMember = new Member();
         validMember.setId(10L);
         loanedStatus = new LoanStatus(LoanStatuses.LOANED);

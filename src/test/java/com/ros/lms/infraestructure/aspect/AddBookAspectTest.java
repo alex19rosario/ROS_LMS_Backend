@@ -40,7 +40,7 @@ class AddBookAspectTest {
                 "dummy-image-data".getBytes()
         );
         addBookDTO = new AddBookDTO(
-                9783161484105L,
+                "9783161484105",
                 "Effective Java",
                 "Joshua-Bloch",
                 "SCIENCE,TECHNOLOGY",
@@ -58,7 +58,7 @@ class AddBookAspectTest {
         addBookAspect.afterReturningAddBookAdvice(joinPoint);
 
         // Assert
-        verify(bookAuditService, times(1)).logAddBookAfterReturning(Long.valueOf(addBookDTO.ISBN()).toString());
+        verify(bookAuditService, times(1)).logAddBookAfterReturning(Long.valueOf(addBookDTO.isbn()).toString());
     }
 
     @Test

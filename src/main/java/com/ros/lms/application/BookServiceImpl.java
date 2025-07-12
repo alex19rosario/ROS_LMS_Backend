@@ -55,7 +55,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public void add(AddBookDTO addBookDTO) throws BookAlreadyExistsException, StorageException {
         // Check if the book exist by ISBN
-        Optional<Book> existingBook = bookDAO.findByISBN(addBookDTO.ISBN());
+        Optional<Book> existingBook = bookDAO.findByISBN(addBookDTO.isbn());
         if(existingBook.isPresent())
             throw new BookAlreadyExistsException("Book already exists in the database.");
 
@@ -151,7 +151,7 @@ public class BookServiceImpl implements BookService {
     }
 
     private final Function<AddBookDTO, Book> addBookMapper = addBookDTO ->
-            new Book(addBookDTO.ISBN(), addBookDTO.title(), true);
+            new Book(addBookDTO.isbn(), addBookDTO.title(), true);
 
     private Set<AuthorDTO> parseAuthors(String authorsString) {
         return Arrays.stream(authorsString.split(","))

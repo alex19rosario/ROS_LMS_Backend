@@ -17,7 +17,7 @@ import java.util.Set;
 
 public record BookDTO(
         long id,
-        long isbn,
+        String isbn,
         String title,
         Set<AuthorDTO> authors,
         Set<GenreType> genres,

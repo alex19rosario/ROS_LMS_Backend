@@ -29,7 +29,7 @@ public class AddBookAspect {
     @AfterReturning("forAddBookMethod()")
     public void afterReturningAddBookAdvice(JoinPoint joinPoint){
         AddBookDTO bookDTO = (AddBookDTO) joinPoint.getArgs()[0];
-        bookAuditService.logAddBookAfterReturning(Long.toString(bookDTO.ISBN()));
+        bookAuditService.logAddBookAfterReturning((bookDTO.isbn()));
     }
 
     @AfterThrowing("forAddBookMethod()")

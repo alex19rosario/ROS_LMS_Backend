@@ -30,7 +30,7 @@ public class BookDAOJpaImpl implements BookDAO {
     }
 
     @Override
-    public Optional<Book> findByISBN(long isbn) {
+    public Optional<Book> findByISBN(String isbn) {
 
         String query = "SELECT b FROM Book b WHERE b.isbn = :isbn";
         try{

@@ -4,13 +4,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @description DTO for adding a book
- * @param ISBN
+ * @param isbn
  * @param title
  * @param authors
  * @param genres
  * @param coverImage
  */
-public record AddBookDTO (long ISBN,
+public record AddBookDTO (String isbn,
                           String title,
                           String authors,
                           String genres,

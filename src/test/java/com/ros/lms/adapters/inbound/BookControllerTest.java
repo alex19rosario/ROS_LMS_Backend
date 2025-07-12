@@ -65,7 +65,7 @@ class BookControllerTest {
                 "dummy-image-data".getBytes()
         );
         validBookDTO = new AddBookDTO(
-                9783161484105L,
+                "9783161484105",
                 "Effective Java",
                 "Joshua-Bloch",
                 "SCIENCE,TECHNOLOGY",
@@ -79,7 +79,7 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
                         .param("genres", validBookDTO.genres())
@@ -97,7 +97,7 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
                         .param("genres", validBookDTO.genres())
@@ -113,7 +113,7 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("ISBN", String.valueOf(validBookDTO.ISBN()))
+                        .param("ISBN", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
                         .param("genres", validBookDTO.genres())
@@ -129,7 +129,7 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
                         .param("genres", validBookDTO.genres())
@@ -152,7 +152,7 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", invalidAuthors) // Invalid format
                         .param("genres", validBookDTO.genres())
@@ -189,7 +189,7 @@ class BookControllerTest {
     @WithMockUser(username = "member", roles = {"MEMBER"})
     void getAllBooks_shouldReturnOkWithResults() throws Exception {
         List<BookDTO> books = List.of(
-                new BookDTO(1L, 1234567890123L, "Sample Book", Set.of(), Set.of(), true, "/path/image.jpg")
+                new BookDTO(1L, "1234567890123", "Sample Book", Set.of(), Set.of(), true, "/path/image.jpg")
         );
         PageImpl<BookDTO> bookPage = new PageImpl<>(books, PageRequest.of(0, 10), 1);
 

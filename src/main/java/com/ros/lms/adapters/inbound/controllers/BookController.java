@@ -31,7 +31,7 @@ public class BookController {
 
     @PostMapping(value = "/books", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addBook(
-            @RequestParam("isbn") long isbn,
+            @RequestParam("isbn") String isbn,
             @RequestParam("title") String title,
             @RequestParam("authors") String authors,
             @RequestParam("genres") String genres,
