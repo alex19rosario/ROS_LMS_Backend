@@ -8,11 +8,13 @@ import org.springframework.web.multipart.MultipartFile;
  * @param title
  * @param authors
  * @param genres
+ * @param staffUsername
  * @param coverImage
  */
 public record AddBookDTO (String isbn,
                           String title,
                           String authors,
                           String genres,
+                          String staffUsername,
                           MultipartFile coverImage) {
 }

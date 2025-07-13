@@ -44,6 +44,7 @@ class AddBookAspectTest {
                 "Effective Java",
                 "Joshua-Bloch",
                 "SCIENCE,TECHNOLOGY",
+                "staff",
                 coverImage
         );
     }
