@@ -25,8 +25,6 @@ class AddBookAspectTest {
     @InjectMocks
     private AddBookAspect addBookAspect;
 
-    private AddBookDTO addBookDTO;
-
     private MockMultipartFile coverImage;
 
     @Test
