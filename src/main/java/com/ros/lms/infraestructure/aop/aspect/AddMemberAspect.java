@@ -22,7 +22,7 @@ public class AddMemberAspect {
         this.memberAuditService = memberAuditService;
     }
 
-    @Pointcut("execution(public void com.ros.inbound.controllers.MemberController.addMember(..))")
+    @Pointcut("execution(public void com.ros.lms.adapters.inbound.controllers.MemberController.addMember(..))")
     private void forAddMemberMethod(){}
 
     @AfterReturning("forAddMemberMethod()")
