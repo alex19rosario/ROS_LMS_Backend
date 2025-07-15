@@ -25,7 +25,7 @@ public class BookAuditServiceImpl implements BookAuditService {
 
         CustomLog log = new CustomLog.Builder()
                 .staffUsername(staffUsername)
-                .actionType(ActionType.A_BOOK_WAS_RETURNED.getValue())
+                .actionType(ActionType.NEW_BOOK_WAS_ADDED.getValue())
                 .bookIsbn(bookIsbn)
                 .build();
 
