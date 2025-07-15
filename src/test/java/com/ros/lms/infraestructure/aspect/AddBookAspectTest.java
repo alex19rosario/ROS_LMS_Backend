@@ -1,6 +1,5 @@
 package com.ros.lms.infraestructure.aspect;
 
-import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.infraestructure.aop.aspect.AddBookAspect;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
 import org.aspectj.lang.JoinPoint;
