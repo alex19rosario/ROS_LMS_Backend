@@ -1,5 +1,6 @@
 package com.ros.lms.infraestructure.audit_service;
 
+import com.ros.lms.domain.enums.ActionType;
 import com.ros.lms.infraestructure.aop.audit_repository.AuditDAO;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditServiceImpl;
@@ -45,7 +46,7 @@ class BookAuditServiceTest {
         CustomLog capturedLog = logCaptor.getValue();
         assertEquals("adminUser", capturedLog.staffUsername());
         assertEquals("9781234567890", capturedLog.bookIsbn());
-        assertEquals("A BOOK WAS RETURNED", capturedLog.actionType()); // Make sure this matches your enum's getValue()
+        assertEquals(ActionType.NEW_BOOK_WAS_ADDED.getValue(), capturedLog.actionType()); // Make sure this matches your enum's getValue()
     }
 
     @Test
