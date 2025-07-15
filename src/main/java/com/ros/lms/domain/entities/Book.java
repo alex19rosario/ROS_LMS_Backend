@@ -2,6 +2,7 @@ package com.ros.lms.domain.entities;
 
 import com.ros.lms.domain.converters.CharToBooleanConverter;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,9 @@ public class Book {
     @Column(name = "BOOK_ID")
     private long id;
 
+    @Size(min = 10, max = 13, message = "ISBN must be between 10 and 13 characters long")
     @Column(name = "ISBN")
-    private long isbn;
+    private String isbn;
 
     @Column(name = "TITLE")
     private String title;
@@ -40,7 +42,7 @@ public class Book {
     private List<Genre> genres;
 
     public Book(){}
-    public Book(long isbn, String title, boolean isAvailable, String coverImagePath, List<Author> authors, List<Genre> genres) {
+    public Book(String isbn, String title, boolean isAvailable, String coverImagePath, List<Author> authors, List<Genre> genres) {
         this.isbn = isbn;
         this.title = title;
         this.isAvailable = isAvailable;
@@ -49,7 +51,7 @@ public class Book {
         this.genres = genres;
     }
 
-    public Book(long isbn, String title, boolean isAvailable) {
+    public Book(String isbn, String title, boolean isAvailable) {
         this.isbn = isbn;
         this.title = title;
         this.isAvailable = isAvailable;
@@ -64,11 +66,11 @@ public class Book {
         this.id = id;
     }
 
-    public long getIsbn() {
+    public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(long isbn) {
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
 

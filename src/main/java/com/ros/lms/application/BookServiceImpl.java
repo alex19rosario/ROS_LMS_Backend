@@ -4,15 +4,18 @@ import com.ros.lms.domain.dtos.*;
 import com.ros.lms.domain.entities.Author;
 import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
+import com.ros.lms.domain.entities.Staff;
 import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
+import com.ros.lms.domain.exceptions.StaffNotFoundException;
 import com.ros.lms.domain.exceptions.StorageException;
 import com.ros.lms.ports.inbound.service_contracts.BookService;
 import com.ros.lms.ports.inbound.service_contracts.StorageService;
 import com.ros.lms.ports.outbound.repository_contracts.AuthorDAO;
 import com.ros.lms.ports.outbound.repository_contracts.BookDAO;
 import com.ros.lms.ports.outbound.repository_contracts.GenreDAO;
+import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
@@ -34,30 +37,37 @@ public class BookServiceImpl implements BookService {
     private final BookDAO bookDAO;
     private final AuthorDAO authorDAO;
     private final GenreDAO genreDAO;
+    private final StaffDAO staffDAO;
     private final StorageService storageService;
     private static final int MAX_PAGE_SIZE = 100;
 
     @Autowired
     public BookServiceImpl(
             @Qualifier("bookDAOJpaImpl") BookDAO bookDAO,
-            @Qualifier("authorDAOJpaImpl")AuthorDAO authorDAO,
-            @Qualifier("genreDAOJpaImpl")GenreDAO genreDAO,
+            @Qualifier("authorDAOJpaImpl") AuthorDAO authorDAO,
+            @Qualifier("genreDAOJpaImpl") GenreDAO genreDAO,
+            @Qualifier("staffDAOJpaImpl") StaffDAO staffDAO,
             StorageService storageService
     ){
         this.bookDAO = bookDAO;
         this.authorDAO = authorDAO;
         this.genreDAO = genreDAO;
+        this.staffDAO = staffDAO;
         this.storageService = storageService;
     }
 
     @Transactional
     @CacheEvict(value = "booksCache", allEntries = true)
     @Override
-    public void add(AddBookDTO addBookDTO) throws BookAlreadyExistsException, StorageException {
+    public void add(AddBookDTO addBookDTO) throws BookAlreadyExistsException, StorageException, StaffNotFoundException {
         // Check if the book exist by ISBN
-        Optional<Book> existingBook = bookDAO.findByISBN(addBookDTO.ISBN());
+        Optional<Book> existingBook = bookDAO.findByISBN(addBookDTO.isbn());
         if(existingBook.isPresent())
             throw new BookAlreadyExistsException("Book already exists in the database.");
+        // Validate that the staff exists
+        Optional<Staff> staff = staffDAO.findByUsername(addBookDTO.staffUsername());
+        if (staff.isEmpty())
+            throw new StaffNotFoundException("Staff not found with username: " + addBookDTO.staffUsername());
 
         // Map the DTO to a Book entity
         Book book = addBookMapper.apply(addBookDTO);
@@ -151,7 +161,7 @@ public class BookServiceImpl implements BookService {
     }
 
     private final Function<AddBookDTO, Book> addBookMapper = addBookDTO ->
-            new Book(addBookDTO.ISBN(), addBookDTO.title(), true);
+            new Book(addBookDTO.isbn(), addBookDTO.title(), true);
 
     private Set<AuthorDTO> parseAuthors(String authorsString) {
         return Arrays.stream(authorsString.split(","))
@@ -199,6 +209,4 @@ public class BookServiceImpl implements BookService {
                 entity.getCoverImagePath()
                 );
     };
-
-
 }

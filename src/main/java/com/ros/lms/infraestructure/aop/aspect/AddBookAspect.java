@@ -23,18 +23,22 @@ public class AddBookAspect {
         this.bookAuditService = bookAuditService;
     }
 
-    @Pointcut("execution(public void com.ros.inbound.controllers.BookController.addBook(..))")
+    @Pointcut("execution(public void com.ros.lms.adapters.inbound.controllers.BookController.addBook(..))")
     private void forAddBookMethod(){}
 
     @AfterReturning("forAddBookMethod()")
     public void afterReturningAddBookAdvice(JoinPoint joinPoint){
-        AddBookDTO bookDTO = (AddBookDTO) joinPoint.getArgs()[0];
-        bookAuditService.logAddBookAfterReturning(Long.toString(bookDTO.ISBN()));
+        String isbn = (String) joinPoint.getArgs()[0];
+        String staffUsername = (String) joinPoint.getArgs()[4];
+        bookAuditService.logAddBookAfterReturning(staffUsername, isbn);
     }
 
-    @AfterThrowing("forAddBookMethod()")
-    public void afterThrowingAddBookAdvice(){
-        bookAuditService.logAddBookAfterThrowing("An error occurred while adding a book");
+    @AfterThrowing(pointcut = "forAddBookMethod()", throwing = "ex")
+    public void afterThrowingAddBookAdvice(JoinPoint joinPoint, Throwable ex){
+        String isbn = (String) joinPoint.getArgs()[0];
+        String staffUsername = (String) joinPoint.getArgs()[4];
+        String description = "An error occurred while adding book: " + ex.getMessage();
+        bookAuditService.logAddBookAfterThrowing(description, isbn, staffUsername);
     }
 
 }

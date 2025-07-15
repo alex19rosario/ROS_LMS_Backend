@@ -4,13 +4,11 @@ import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.infraestructure.aop.aspect.AddBookAspect;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
 import org.aspectj.lang.JoinPoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import static org.mockito.Mockito.*;
@@ -31,43 +29,58 @@ class AddBookAspectTest {
 
     private MockMultipartFile coverImage;
 
-    @BeforeEach
-    void setUp(){
-        coverImage = new MockMultipartFile(
-                "coverImage",
-                "cover.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "dummy-image-data".getBytes()
-        );
-        addBookDTO = new AddBookDTO(
-                9783161484105L,
-                "Effective Java",
-                "Joshua-Bloch",
-                "SCIENCE,TECHNOLOGY",
-                coverImage
-        );
-    }
-
     @Test
     void afterReturningAddBookAdvice_ShouldCallLogAddBookAfterReturning() {
         // Arrange
-        Object[] args = new Object[]{addBookDTO};
+        String isbn = "9783161484105";
+        String staffUsername = "staff";
+        Object[] args = new Object[]{
+                isbn, // index 0
+                "Effective Java",
+                "Joshua-Bloch",
+                "SCIENCE,TECHNOLOGY",
+                staffUsername, // index 4
+                coverImage
+        };
+
         when(joinPoint.getArgs()).thenReturn(args);
 
         // Act
         addBookAspect.afterReturningAddBookAdvice(joinPoint);
 
         // Assert
-        verify(bookAuditService, times(1)).logAddBookAfterReturning(Long.valueOf(addBookDTO.ISBN()).toString());
+        verify(bookAuditService, times(1))
+                .logAddBookAfterReturning(staffUsername, isbn);
     }
 
     @Test
     void afterThrowingAddBookAdvice_ShouldCallLogAddBookAfterThrowing() {
+        // Arrange
+        String isbn = "9783161484105";
+        String staffUsername = "staff";
+        Object[] args = new Object[]{
+                isbn,
+                "Effective Java",
+                "Joshua-Bloch",
+                "SCIENCE,TECHNOLOGY",
+                staffUsername,
+                coverImage
+        };
+
+        Throwable ex = new RuntimeException("Something went wrong");
+
+        when(joinPoint.getArgs()).thenReturn(args);
+
         // Act
-        addBookAspect.afterThrowingAddBookAdvice();
+        addBookAspect.afterThrowingAddBookAdvice(joinPoint, ex);
 
         // Assert
         verify(bookAuditService, times(1))
-                .logAddBookAfterThrowing("An error occurred while adding a book");
+                .logAddBookAfterThrowing(
+                        "An error occurred while adding book: Something went wrong",
+                        isbn,           // <-- Correct order
+                        staffUsername   // <-- Correct order
+                );
     }
+
 }

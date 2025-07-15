@@ -1,5 +1,7 @@
 package com.ros.lms.infraestructure.audit_service;
 
+import com.ros.lms.domain.dtos.AddMemberDTO;
+import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.infraestructure.aop.audit_repository.AuditDAO;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
 import com.ros.lms.infraestructure.aop.audit_service.MemberAuditServiceImpl;
@@ -10,11 +12,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class MemberAuditServiceTest{
+class MemberAuditServiceTest{
 
     @Mock
     AuditDAO auditDAO;
@@ -24,42 +28,57 @@ public class MemberAuditServiceTest{
 
     private CustomLog log;
 
+    private AddMemberDTO testMemberDTO;
+
     @BeforeEach
-    void setUp(){
+    void setUp() {
         MockitoAnnotations.openMocks(this);
+        testMemberDTO = new AddMemberDTO(
+                "123456789",
+                "John",
+                "Doe",
+                "5551234567",
+                LocalDate.of(1990, 1, 1),
+                Sex.MALE,
+                "john.doe@example.com",
+                "johndoe",
+                "password123",
+                "adminUser"
+        );
     }
+
 
     @Test
     void testLogAddMemberAfterReturning() {
-        // Arrange
-        String description = "Member A was added";
-
         // Act
-        memberAuditService.logAddMemberAfterReturning(description);
+        memberAuditService.logAddMemberAfterReturning(testMemberDTO);
 
         // Assert
         ArgumentCaptor<CustomLog> logCaptor = ArgumentCaptor.forClass(CustomLog.class);
         verify(auditDAO, times(1)).createLog(logCaptor.capture());
 
         CustomLog capturedLog = logCaptor.getValue();
-        assertEquals("Member A was added", capturedLog.description());
+        assertEquals("adminUser", capturedLog.staffUsername());
+        assertEquals("johndoe", capturedLog.memberUsername());
         assertEquals("NEW MEMBER WAS ADDED", capturedLog.actionType());
     }
 
     @Test
     void testLogAddMemberAfterThrowing() {
         // Arrange
-        String description = "Failed to add Member B";
+        String description = "Failed to add member due to duplicate username";
 
         // Act
-        memberAuditService.logAddMemberAfterThrowing(description);
+        memberAuditService.logAddMemberAfterThrowing(testMemberDTO, description);
 
         // Assert
         ArgumentCaptor<CustomLog> logCaptor = ArgumentCaptor.forClass(CustomLog.class);
         verify(auditDAO, times(1)).createLog(logCaptor.capture());
 
         CustomLog capturedLog = logCaptor.getValue();
-        assertEquals("Failed to add Member B", capturedLog.description());
+        assertEquals(description, capturedLog.description());
+        assertEquals("adminUser", capturedLog.staffUsername());
+        assertEquals("johndoe", capturedLog.memberUsername());
         assertEquals("ERROR", capturedLog.actionType());
     }
 }

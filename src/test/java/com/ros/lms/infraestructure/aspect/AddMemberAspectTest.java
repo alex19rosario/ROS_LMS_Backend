@@ -31,8 +31,7 @@ class AddMemberAspectTest {
     private AddMemberDTO addMemberDTO;
 
     @BeforeEach
-    void setUp(){
-
+    void setUp() {
         addMemberDTO = new AddMemberDTO(
                 "321321321",
                 "John",
@@ -42,30 +41,35 @@ class AddMemberAspectTest {
                 Sex.MALE,
                 "john@example.com",
                 "john",
-                "test123");
+                "test123",
+                "staffUser"
+        );
     }
 
     @Test
     void afterReturningAddMemberAdvice_ShouldCallLogAddMemberAfterReturning() {
         // Arrange
-        Object[] args = new Object[]{addMemberDTO};
-        when(joinPoint.getArgs()).thenReturn(args);
+        when(joinPoint.getArgs()).thenReturn(new Object[]{addMemberDTO});
 
         // Act
         addMemberAspect.afterReturningAddMemberAdvice(joinPoint);
 
         // Assert
-        verify(memberAuditService, times(1)).logAddMemberAfterReturning(addMemberDTO.governmentID());
+        verify(memberAuditService, times(1)).logAddMemberAfterReturning(addMemberDTO);
     }
 
     @Test
     void afterThrowingAddMemberAdvice_ShouldCallLogAddMemberAfterThrowing() {
+        // Arrange
+        when(joinPoint.getArgs()).thenReturn(new Object[]{addMemberDTO});
+        Throwable ex = new RuntimeException("Database connection failure");
+
         // Act
-        addMemberAspect.afterThrowingAddMemberAdvice();
+        addMemberAspect.afterThrowingAddMemberAdvice(joinPoint, ex);
 
         // Assert
         verify(memberAuditService, times(1))
-                .logAddMemberAfterThrowing("An error occurred while adding a member");
+                .logAddMemberAfterThrowing(addMemberDTO, "An error occurred while adding member: Database connection failure");
     }
 
 

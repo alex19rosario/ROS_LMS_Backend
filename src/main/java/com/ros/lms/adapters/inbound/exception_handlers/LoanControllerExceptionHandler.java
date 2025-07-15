@@ -38,14 +38,6 @@ public class LoanControllerExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleStaffNotFoundException(StaffNotFoundException ex, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problemDetail.setTitle("Staff not Found");
-        problemDetail.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
-    }
-
-    @ExceptionHandler
     public ResponseEntity<ProblemDetail> handleMemberHasActiveLoanException(MemberHasActiveLoanException ex, HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setTitle("Member Has Active Loan");

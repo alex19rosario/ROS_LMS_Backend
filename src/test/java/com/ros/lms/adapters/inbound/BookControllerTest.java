@@ -6,6 +6,7 @@ import com.ros.lms.domain.dtos.SearchBookDTO;
 import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
+import com.ros.lms.domain.exceptions.StaffNotFoundException;
 import com.ros.lms.domain.exceptions.StorageException;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
 import com.ros.lms.ports.inbound.service_contracts.BookService;
@@ -65,9 +66,10 @@ class BookControllerTest {
                 "dummy-image-data".getBytes()
         );
         validBookDTO = new AddBookDTO(
-                9783161484105L,
+                "9783161484105",
                 "Effective Java",
                 "Joshua-Bloch",
+                "staff0001",
                 "SCIENCE,TECHNOLOGY",
                 coverImage
         );
@@ -79,9 +81,10 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
+                        .param("staffUsername", validBookDTO.staffUsername())
                         .param("genres", validBookDTO.genres())
         ).andExpect(status().isOk());
 
@@ -97,9 +100,10 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
+                        .param("staffUsername", validBookDTO.staffUsername())
                         .param("genres", validBookDTO.genres())
         ).andExpect(status().isConflict());
 
@@ -113,9 +117,10 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("ISBN", String.valueOf(validBookDTO.ISBN()))
+                        .param("ISBN", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
+                        .param("staffUsername", validBookDTO.staffUsername())
                         .param("genres", validBookDTO.genres())
         ).andExpect(status().isForbidden()); // assuming access is restricted by Spring Security
     }
@@ -129,9 +134,10 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", validBookDTO.authors())
+                        .param("staffUsername", validBookDTO.staffUsername())
                         .param("genres", validBookDTO.genres())
         ).andExpect(status().isBadRequest());
 
@@ -152,9 +158,10 @@ class BookControllerTest {
         mockMvc.perform(
                 multipart("/api/books")
                         .file(coverImage)
-                        .param("isbn", String.valueOf(validBookDTO.ISBN()))
+                        .param("isbn", String.valueOf(validBookDTO.isbn()))
                         .param("title", validBookDTO.title())
                         .param("authors", invalidAuthors) // Invalid format
+                        .param("staffUsername", validBookDTO.staffUsername())
                         .param("genres", validBookDTO.genres())
         ).andExpectAll(
                 status().isBadRequest(),
@@ -169,7 +176,7 @@ class BookControllerTest {
 
     @Test
     @WithMockUser(username = "staff", roles = {"STAFF"})
-    void addBook_ShouldReturnBadRequest_WhenStorageExceptionIsThrown() throws Exception {
+    void saveBook_ShouldReturnBadRequest_WhenStorageExceptionIsThrown() throws Exception {
         // Arrange: simulate a StorageException thrown from BookService
         doThrow(new StorageException("Invalid file storage path"))
                 .when(bookService)
@@ -181,15 +188,37 @@ class BookControllerTest {
                         .param("ISBN", "1234567890")
                         .param("title", "Some Book")
                         .param("authors", "InvalidFormat")
+                        .param("staffUsername", "staff")
                         .param("genres", "Fiction"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser(username = "staff", roles = {"STAFF"})
+    void saveBook_shouldReturnNotFound_whenStaffIsMissing() throws Exception {
+        // Arrange
+        doThrow(new StaffNotFoundException("Staff with username 'missingStaff' not found"))
+                .when(bookService).add(any(AddBookDTO.class));
+
+        // Act & Assert
+        mockMvc.perform(multipart("/api/books")
+                                .file(coverImage)
+                                .param("isbn", String.valueOf(validBookDTO.isbn()))
+                                .param("title", validBookDTO.title())
+                                .param("authors", validBookDTO.authors())
+                                .param("staffUsername", validBookDTO.staffUsername()) // should be the one that causes the exception
+                                .param("genres", validBookDTO.genres()))
+                .andExpect(status().isNotFound());
+
+        verify(bookService).add(any(AddBookDTO.class));
+    }
+
+
+    @Test
     @WithMockUser(username = "member", roles = {"MEMBER"})
     void getAllBooks_shouldReturnOkWithResults() throws Exception {
         List<BookDTO> books = List.of(
-                new BookDTO(1L, 1234567890123L, "Sample Book", Set.of(), Set.of(), true, "/path/image.jpg")
+                new BookDTO(1L, "1234567890123", "Sample Book", Set.of(), Set.of(), true, "/path/image.jpg")
         );
         PageImpl<BookDTO> bookPage = new PageImpl<>(books, PageRequest.of(0, 10), 1);
 

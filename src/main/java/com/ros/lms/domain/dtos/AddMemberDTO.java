@@ -1,5 +1,6 @@
 package com.ros.lms.domain.dtos;
 
+import com.ros.lms.domain.entities.Staff;
 import com.ros.lms.domain.enums.Sex;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
  * @param email
  * @param username
  * @param password
+ * @param staffUsername
  */
 public record AddMemberDTO(String governmentID,
                            String firstName,
@@ -24,5 +26,6 @@ public record AddMemberDTO(String governmentID,
                            Sex sex,
                            String email,
                            String username,
-                           String password) {
+                           String password,
+                           String staffUsername) {
 }

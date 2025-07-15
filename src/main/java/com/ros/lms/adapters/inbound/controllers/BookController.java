@@ -6,6 +6,7 @@ import com.ros.lms.domain.dtos.SearchBookDTO;
 import com.ros.lms.domain.enums.GenreType;
 import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
+import com.ros.lms.domain.exceptions.StaffNotFoundException;
 import com.ros.lms.domain.exceptions.StorageException;
 import com.ros.lms.ports.inbound.service_contracts.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +32,14 @@ public class BookController {
 
     @PostMapping(value = "/books", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addBook(
-            @RequestParam("isbn") long isbn,
+            @RequestParam("isbn") String isbn,
             @RequestParam("title") String title,
             @RequestParam("authors") String authors,
             @RequestParam("genres") String genres,
+            @RequestParam("staffUsername") String staffUsername,
             @RequestParam("coverImage") MultipartFile coverImage
-    ) throws BookAlreadyExistsException, StorageException {
-        AddBookDTO addBookDTO = new AddBookDTO(isbn, title, authors, genres, coverImage);
+    ) throws BookAlreadyExistsException, StorageException, StaffNotFoundException {
+        AddBookDTO addBookDTO = new AddBookDTO(isbn, title, authors, genres, staffUsername, coverImage);
         bookService.add(addBookDTO);
     }
 

@@ -42,7 +42,7 @@ public class BookDAOJpaImplTest {
     @Transactional
     void create_shouldPersistBook() {
         // Arrange
-        Book book = new Book(9783161484100L, "Effective Java", true);
+        Book book = new Book("9783161484100", "Effective Java", true);
 
         // Act
         bookDAO.create(book);
@@ -54,7 +54,7 @@ public class BookDAOJpaImplTest {
         // Assert
         Book persistedBook = entityManager.find(Book.class, generatedId); // Use the primary key (id)
         assertThat(persistedBook).isNotNull();
-        assertThat(persistedBook.getIsbn()).isEqualTo(9783161484100L);
+        assertThat(persistedBook.getIsbn()).isEqualTo("9783161484100");
         assertThat(persistedBook.getTitle()).isEqualTo("Effective Java");
     }
 
@@ -62,11 +62,11 @@ public class BookDAOJpaImplTest {
     @Test
     void findByISBN_shouldReturnBook_whenBookExists() {
         // Arrange
-        Book book = new Book(9783161484100L, "Effective Java", true);
+        Book book = new Book("9783161484100", "Effective Java", true);
         entityManager.persist(book); // Pre-populate the database
 
         // Act
-        Optional<Book> foundBook = bookDAO.findByISBN(9783161484100L);
+        Optional<Book> foundBook = bookDAO.findByISBN("9783161484100");
 
         // Assert
         assertThat(foundBook).isPresent();
@@ -76,7 +76,7 @@ public class BookDAOJpaImplTest {
     @Test
     void findByISBN_shouldReturnEmptyOptional_whenBookDoesNotExist() {
         // Act
-        Optional<Book> foundBook = bookDAO.findByISBN(1234567890123L);
+        Optional<Book> foundBook = bookDAO.findByISBN("1234567890123");
 
         // Assert
         assertThat(foundBook).isEmpty();
@@ -86,8 +86,8 @@ public class BookDAOJpaImplTest {
     @Transactional
     void findAllOrderedByTitle_shouldReturnFilteredBooks_byTitle() {
         // Arrange
-        Book book1 = new Book(111L, "Effective Java", true);
-        Book book2 = new Book(222L, "Clean Code", true);
+        Book book1 = new Book("1113216543214", "Effective Java", true);
+        Book book2 = new Book("2229876543212", "Clean Code", true);
         entityManager.persist(book1);
         entityManager.persist(book2);
 
@@ -108,10 +108,10 @@ public class BookDAOJpaImplTest {
         Genre genreTech = new Genre(GenreType.TECHNOLOGY);
         Genre genreSci = new Genre(GenreType.SCIENCE);
 
-        Book book1 = new Book(111L, "Clean Code", true);
+        Book book1 = new Book("3216549876541", "Clean Code", true);
         book1.addGenre(genreTech);
 
-        Book book2 = new Book(222L, "Physics Fundamentals", true);
+        Book book2 = new Book("6543216549872", "Physics Fundamentals", true);
         book2.addGenre(genreSci);
 
         entityManager.persist(genreTech);
@@ -136,10 +136,10 @@ public class BookDAOJpaImplTest {
         Author author1 = new Author("Joshua", null, "Bloch");
         Author author2 = new Author("Robert", "C.", "Martin");
 
-        Book book1 = new Book(111L, "Effective Java", true);
+        Book book1 = new Book("3216549877", "Effective Java", true);
         book1.addAuthor(author1);
 
-        Book book2 = new Book(222L, "Clean Code", true);
+        Book book2 = new Book("4567891235", "Clean Code", true);
         book2.addAuthor(author2);
 
         entityManager.persist(author1);
@@ -161,8 +161,8 @@ public class BookDAOJpaImplTest {
     @Transactional
     void findAllOrderedByTitle_shouldReturnAllBooks_whenNoFilters() {
         // Arrange
-        Book book1 = new Book(111L, "Book One", true);
-        Book book2 = new Book(222L, "Book Two", true);
+        Book book1 = new Book("6547417895", "Book One", true);
+        Book book2 = new Book("9638527415", "Book Two", true);
         entityManager.persist(book1);
         entityManager.persist(book2);
 
@@ -184,10 +184,10 @@ public class BookDAOJpaImplTest {
         Author author1 = new Author("Joshua", null, "Bloch");
         Author author2 = new Author("Robert", "C.", "Martin");
 
-        Book book1 = new Book(111L, "Effective Java", true);
+        Book book1 = new Book("9638527415", "Effective Java", true);
         book1.addAuthor(author1);
 
-        Book book2 = new Book(222L, "Clean Code", true);
+        Book book2 = new Book("65498774165", "Clean Code", true);
         book2.addAuthor(author2);
 
         entityManager.persist(author1);
@@ -211,8 +211,8 @@ public class BookDAOJpaImplTest {
     @Transactional
     void findAllOrderedByTitle_shouldReturnOnlyAvailableBooks() {
         // Arrange
-        Book availableBook = new Book(123L, "Available Book", true);
-        Book unavailableBook = new Book(456L, "Unavailable Book", false);
+        Book availableBook = new Book("9638527415", "Available Book", true);
+        Book unavailableBook = new Book("5555555556", "Unavailable Book", false);
         entityManager.persist(availableBook);
         entityManager.persist(unavailableBook);
 
@@ -230,8 +230,8 @@ public class BookDAOJpaImplTest {
     @Transactional
     void findAllOrderedByTitle_shouldReturnOnlyUnavailableBooks() {
         // Arrange
-        Book availableBook = new Book(123L, "Available Book", true);
-        Book unavailableBook = new Book(456L, "Unavailable Book", false);
+        Book availableBook = new Book("6547894561", "Available Book", true);
+        Book unavailableBook = new Book("6549873215", "Unavailable Book", false);
         entityManager.persist(availableBook);
         entityManager.persist(unavailableBook);
 
@@ -250,7 +250,7 @@ public class BookDAOJpaImplTest {
     @Transactional
     void findById_shouldReturnBook_whenBookExists() {
         // Arrange
-        Book book = new Book(9783161484100L, "Effective Java", true);
+        Book book = new Book("9783161484100", "Effective Java", true);
         entityManager.persist(book);
         entityManager.flush();
 
@@ -276,13 +276,13 @@ public class BookDAOJpaImplTest {
     @Transactional
     void update_shouldMergeChangesToExistingBook() {
         // Arrange
-        Book book = new Book(9783161484100L, "Effective Java", true);
+        Book book = new Book("9783161484100", "Effective Java", true);
         entityManager.persist(book);
         entityManager.flush();
         entityManager.clear(); // Detach all entities to simulate real update
 
         // Act
-        Book updatedBook = new Book(9783161484100L, "Effective Java - 3rd Edition", true);
+        Book updatedBook = new Book("9783161484100", "Effective Java - 3rd Edition", true);
         updatedBook.setId(book.getId());
         bookDAO.update(updatedBook);
         entityManager.flush();

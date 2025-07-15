@@ -48,7 +48,7 @@ class LoanDAOJpaImplTest {
         entityManager.persist(member);
 
         Book book = new Book();
-        book.setIsbn(1234567890123L);
+        book.setIsbn("1234567890123");
         book.setTitle("Effective Java");
         book.setAvailable(true);
         book.setCoverImagePath("cover.jpg");

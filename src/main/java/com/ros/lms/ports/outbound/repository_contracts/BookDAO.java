@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface BookDAO {
     void create(Book book);
-    Optional<Book> findByISBN(long isbn);
+    Optional<Book> findByISBN(String isbn);
     Page<Book> findAllOrderedByTitle(String title, GenreType genre, String authorFirstName, String authorLastName, Boolean isAvailable, Pageable pageable);
     Optional<Book> findById(long id);
     void update(Book book);

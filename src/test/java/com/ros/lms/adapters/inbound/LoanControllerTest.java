@@ -91,7 +91,7 @@ class LoanControllerTest {
     @Test
     @WithMockUser(username = "staff001", roles = {"STAFF"})
     void issueBook_shouldReturnNotFound_whenStaffNotFound() throws Exception {
-        Mockito.doThrow(new StaffNotFoundException("Staff not found"))
+        Mockito.doThrow(new StaffNotFoundException("Staff not Found"))
                 .when(loanService).add(Mockito.any(AddLoanDTO.class));
 
         mockMvc.perform(post("/api/loans")

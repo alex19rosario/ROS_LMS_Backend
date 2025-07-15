@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BookTest {
     private Book book;
-    private final long testISBN = 9783161484100L;
+    private final String testISBN = "9783161484100";
     private final String testTitle = "Effective Java";
     private final boolean available = true;
     private final String coverImagePath = "upload-dir/test.png";
@@ -33,7 +33,7 @@ class BookTest {
         book.setId(newId);
         assertEquals(newId, book.getId());
 
-        long newISBN = 9780201633610L;
+        String newISBN = "9780201633610";
         book.setIsbn(newISBN);
         assertEquals(newISBN, book.getIsbn());
 

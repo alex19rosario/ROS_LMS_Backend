@@ -34,7 +34,7 @@ class GenreTest {
         assertEquals(GenreType.FANTASY, genre.getDescription());
 
         List<Book> books = new ArrayList<>();
-        books.add(new Book(9783161484100L, "Dune", true));
+        books.add(new Book("9783161484100", "Dune", true));
         genre.setBooks(books);
 
         assertNotNull(genre.getBooks());
@@ -51,8 +51,8 @@ class GenreTest {
 
         // Test full constructor
         List<Book> books = List.of(
-                new Book(9783161484100L, "Dune", true),
-                new Book(9780553103540L, "Game of Thrones", true)
+                new Book("9783161484100", "Dune", true),
+                new Book("9780553103540", "Game of Thrones", true)
         );
         Genre fullGenre = new Genre(testDescription, books);
 
@@ -68,7 +68,7 @@ class GenreTest {
 
         // Test setting books list
         List<Book> books = new ArrayList<>();
-        books.add(new Book(9783161484100L, "Dune", true));
+        books.add(new Book("9783161484100", "Dune", true));
         genre.setBooks(books);
 
         assertNotNull(genre.getBooks());
@@ -76,13 +76,13 @@ class GenreTest {
         assertEquals("Dune", genre.getBooks().getFirst().getTitle());
 
         // Test modifying the books list
-        genre.getBooks().add(new Book(9780553103540L, "Game of Thrones", true));
+        genre.getBooks().add(new Book("9780553103540", "Game of Thrones", true));
         assertEquals(2, genre.getBooks().size());
     }
 
     @Test
     void testSetBooksToNull() {
-        List<Book> books = List.of(new Book(9783161484100L, "Dune", true));
+        List<Book> books = List.of(new Book("9783161484100", "Dune", true));
         genre.setBooks(books);
         assertNotNull(genre.getBooks());
 
@@ -98,7 +98,7 @@ class GenreTest {
         assertTrue(toStringResult.contains("books=null"));
 
         // Test with books
-        List<Book> books = List.of(new Book(9783161484100L, "Dune", true));
+        List<Book> books = List.of(new Book("9783161484100", "Dune", true));
         genre.setBooks(books);
         toStringResult = genre.toString();
         assertTrue(toStringResult.contains("books=" + books.toString()));
