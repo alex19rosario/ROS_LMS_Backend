@@ -1,6 +1,5 @@
 package com.ros.lms.domain.dtos;
 
-import com.ros.lms.domain.entities.Staff;
 import com.ros.lms.domain.enums.Sex;
 
 import java.time.LocalDate;
