@@ -5,6 +5,7 @@ import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
 import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
+import com.ros.lms.domain.exceptions.StaffNotFoundException;
 import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
 import com.ros.lms.infraestructure.aop.audit_service.MemberAuditService;
 import com.ros.lms.ports.inbound.service_contracts.MemberService;
@@ -62,7 +63,8 @@ class MemberControllerTest {
                 Sex.MALE,
                 "test19@gmail.com",
                 "carlos19",
-                "test123"
+                "test123",
+                "staff"
         );
     }
 
@@ -131,7 +133,8 @@ class MemberControllerTest {
                 Sex.MALE,
                 "test.future@gmail.com",
                 "carlos_future",
-                "test123"
+                "test123",
+                "staff"
         );
 
         ConstraintViolation<AddMemberDTO> mockViolation = new ConstraintViolation<AddMemberDTO>() {
@@ -191,6 +194,22 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void saveMember_shouldReturnNotFound_whenStaffIsNotFound() throws Exception {
+        // Arrange
+        Mockito.doThrow(new StaffNotFoundException("Staff not found with username: " + validMemberDTO.staffUsername()))
+                .when(memberService).add(Mockito.any(AddMemberDTO.class));
+
+        // Act & Assert
+        mockMvc.perform(post("/api/members")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validMemberDTO)))
+                .andExpect(status().isNotFound());
+
+        verify(memberService).add(validMemberDTO);
     }
 
 

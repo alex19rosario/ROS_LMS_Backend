@@ -9,9 +9,11 @@ import com.ros.lms.domain.entities.User;
 import com.ros.lms.domain.enums.Roles;
 import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
 import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
+import com.ros.lms.domain.exceptions.StaffNotFoundException;
 import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
 import com.ros.lms.ports.inbound.service_contracts.MemberService;
 import com.ros.lms.ports.outbound.repository_contracts.MemberDAO;
+import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
 import com.ros.lms.ports.outbound.repository_contracts.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,20 +29,26 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberDAO memberDAO;
     private final UserDAO userDAO;
+    private final StaffDAO staffDAO;
     private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public MemberServiceImpl(@Qualifier("memberDAOJpaImpl") MemberDAO memberDAO, @Qualifier("userDAOJpaImpl") UserDAO userDAO, PasswordEncoder passwordEncoder) {
+    public MemberServiceImpl(
+            @Qualifier("memberDAOJpaImpl") MemberDAO memberDAO,
+            @Qualifier("userDAOJpaImpl") UserDAO userDAO,
+            @Qualifier("staffDAOJpaImpl") StaffDAO staffDAO,
+            PasswordEncoder passwordEncoder) {
         this.memberDAO = memberDAO;
         this.userDAO = userDAO;
+        this.staffDAO = staffDAO;
         this.passwordEncoder = passwordEncoder;
     }
 
 
     @Override
     @Transactional
-    public void add(AddMemberDTO dto) throws MemberAlreadyExistsException, UsernameAlreadyExistsException, EmailAlreadyExistsException {
+    public void add(AddMemberDTO dto) throws MemberAlreadyExistsException, UsernameAlreadyExistsException, EmailAlreadyExistsException, StaffNotFoundException {
         if (memberDAO.findByGovernmentID(dto.governmentID()).isPresent()) {
             throw new MemberAlreadyExistsException("Member with government ID " + dto.governmentID() + " already exists");
         }
@@ -50,6 +58,10 @@ public class MemberServiceImpl implements MemberService {
         if (memberDAO.findByEmail(dto.email()).isPresent()) {
             throw new EmailAlreadyExistsException("Email " + dto.email() + " already exists");
         }
+        if (staffDAO.findByUsername(dto.staffUsername()).isEmpty()) {
+            throw new StaffNotFoundException("Staff not found with username: " + dto.staffUsername());
+        }
+
         userDAO.create(userMapper(dto));
         memberDAO.create(memberMapper(dto));
     }

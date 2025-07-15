@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class BookAuditServiceTest {
+class BookAuditServiceTest {
 
     @Mock
     AuditDAO auditDAO;
@@ -32,34 +32,40 @@ public class BookAuditServiceTest {
     @Test
     void testLogAddBookAfterReturning() {
         // Arrange
-        String description = "Book A was added";
+        String staffUsername = "adminUser";
+        String bookIsbn = "9781234567890";
 
         // Act
-        bookAuditService.logAddBookAfterReturning(description);
+        bookAuditService.logAddBookAfterReturning(staffUsername, bookIsbn);
 
         // Assert
         ArgumentCaptor<CustomLog> logCaptor = ArgumentCaptor.forClass(CustomLog.class);
         verify(auditDAO, times(1)).createLog(logCaptor.capture());
 
         CustomLog capturedLog = logCaptor.getValue();
-        assertEquals("Book A was added", capturedLog.description());
-        assertEquals("NEW BOOK WAS ADDED", capturedLog.actionType());
+        assertEquals("adminUser", capturedLog.staffUsername());
+        assertEquals("9781234567890", capturedLog.bookIsbn());
+        assertEquals("A BOOK WAS RETURNED", capturedLog.actionType()); // Make sure this matches your enum's getValue()
     }
 
     @Test
     void testLogAddBookAfterThrowing() {
         // Arrange
-        String description = "Failed to add Book B";
+        String description = "Failed to add Book B due to DB error";
+        String staffUsername = "adminUser";
+        String bookIsbn = "9780987654321";
 
         // Act
-        bookAuditService.logAddBookAfterThrowing(description);
+        bookAuditService.logAddBookAfterThrowing(description, staffUsername, bookIsbn);
 
         // Assert
         ArgumentCaptor<CustomLog> logCaptor = ArgumentCaptor.forClass(CustomLog.class);
         verify(auditDAO, times(1)).createLog(logCaptor.capture());
 
         CustomLog capturedLog = logCaptor.getValue();
-        assertEquals("Failed to add Book B", capturedLog.description());
+        assertEquals(description, capturedLog.description());
+        assertEquals("adminUser", capturedLog.staffUsername());
+        assertEquals("9780987654321", capturedLog.bookIsbn());
         assertEquals("ERROR", capturedLog.actionType());
     }
 }

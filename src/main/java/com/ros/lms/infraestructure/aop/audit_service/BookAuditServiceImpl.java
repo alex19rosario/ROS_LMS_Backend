@@ -1,6 +1,7 @@
 package com.ros.lms.infraestructure.aop.audit_service;
 
 
+import com.ros.lms.domain.enums.ActionType;
 import com.ros.lms.infraestructure.aop.audit_repository.AuditDAO;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,28 @@ public class BookAuditServiceImpl implements BookAuditService {
 
     @Transactional
     @Override
-    public void logAddBookAfterReturning(String description) {
-        CustomLog log = new CustomLog(description, "NEW BOOK WAS ADDED");
+    public void logAddBookAfterReturning(String staffUsername, String bookIsbn) {
+
+        CustomLog log = new CustomLog.Builder()
+                .staffUsername(staffUsername)
+                .actionType(ActionType.A_BOOK_WAS_RETURNED.getValue())
+                .bookIsbn(bookIsbn)
+                .build();
+
         auditDAO.createLog(log);
     }
 
     @Transactional
     @Override
-    public void logAddBookAfterThrowing(String description) {
-        CustomLog log = new CustomLog(description, "ERROR");
+    public void logAddBookAfterThrowing(String description, String staffUsername, String bookIsbn) {
+
+        CustomLog log = new CustomLog.Builder()
+                .description(description)
+                .staffUsername(staffUsername)
+                .actionType(ActionType.ERROR.getValue())
+                .bookIsbn(bookIsbn)
+                .build();
+        
         auditDAO.createLog(log);
     }
 }

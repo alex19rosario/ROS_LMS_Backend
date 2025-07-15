@@ -28,12 +28,14 @@ public class AddMemberAspect {
     @AfterReturning("forAddMemberMethod()")
     public void afterReturningAddMemberAdvice(JoinPoint joinPoint){
         AddMemberDTO memberDTO = (AddMemberDTO) joinPoint.getArgs()[0];
-        memberAuditService.logAddMemberAfterReturning(memberDTO.governmentID());
+        memberAuditService.logAddMemberAfterReturning(memberDTO);
     }
 
-    @AfterThrowing("forAddMemberMethod()")
-    public void afterThrowingAddMemberAdvice(){
-        memberAuditService.logAddMemberAfterThrowing("An error occurred while adding a member");
+    @AfterThrowing(pointcut = "forAddMemberMethod()", throwing = "ex")
+    public void afterThrowingAddMemberAdvice(JoinPoint joinPoint, Throwable ex){
+        AddMemberDTO memberDTO = (AddMemberDTO) joinPoint.getArgs()[0];
+        String description = "An error occurred while adding member: " + ex.getMessage();
+        memberAuditService.logAddMemberAfterThrowing(memberDTO, description);
     }
 
 }

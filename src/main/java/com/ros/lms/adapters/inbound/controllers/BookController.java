@@ -39,7 +39,7 @@ public class BookController {
             @RequestParam("staffUsername") String staffUsername,
             @RequestParam("coverImage") MultipartFile coverImage
     ) throws BookAlreadyExistsException, StorageException, StaffNotFoundException {
-        AddBookDTO addBookDTO = new AddBookDTO(isbn, title, authors, staffUsername, genres, coverImage);
+        AddBookDTO addBookDTO = new AddBookDTO(isbn, title, authors, genres, staffUsername, coverImage);
         bookService.add(addBookDTO);
     }
 
