@@ -1,6 +1,7 @@
 package com.ros.lms.adapters.inbound;
 
 import com.ros.lms.domain.dtos.AddBookDTO;
+import com.ros.lms.domain.dtos.AuthorDTO;
 import com.ros.lms.domain.dtos.BookDTO;
 import com.ros.lms.domain.dtos.SearchBookDTO;
 import com.ros.lms.domain.enums.GenreType;
@@ -28,13 +29,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -279,5 +281,55 @@ class BookControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(result -> assertTrue(result.getResponse().getContentAsString().contains("\"totalElements\":0")));
     }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void getBookByIsbn_shouldReturnBook_whenBookExists() throws Exception {
+        // Given
+        String isbn = "9783161484105";
+        BookDTO existingBookDTO = new BookDTO(
+                1L,
+                isbn,
+                "Effective Java",
+                Set.of(new AuthorDTO("Joshua", "Bloch")),
+                Set.of(GenreType.SCIENCE, GenreType.TECHNOLOGY),
+                true,
+                "/images/cover.jpg"
+        );
+
+        when(bookService.getByIsbn(isbn)).thenReturn(Optional.of(existingBookDTO));
+
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books/{isbn}", isbn))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.isbn").value(isbn))
+                .andExpect(jsonPath("$.title").value("Effective Java"))
+                .andExpect(jsonPath("$.authors[0].firstName").value("Joshua"))
+                .andExpect(jsonPath("$.authors[0].lastName").value("Bloch"))
+                .andExpect(jsonPath("$.genres").isArray())
+                .andExpect(jsonPath("$.genres").value(org.hamcrest.Matchers.containsInAnyOrder("SCIENCE", "TECHNOLOGY")))
+                .andExpect(jsonPath("$.status").value(true))
+                .andExpect(jsonPath("$.imagePath").value("/images/cover.jpg"));
+
+        verify(bookService).getByIsbn(isbn);
+    }
+
+    @Test
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void getBookByIsbn_shouldReturnNotFound_whenBookDoesNotExist() throws Exception {
+        // Given
+        String isbn = "0000000000000";
+        when(bookService.getByIsbn(isbn)).thenReturn(Optional.empty());
+
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books/{isbn}", isbn))
+                .andExpect(status().isNotFound());
+
+        verify(bookService).getByIsbn(isbn);
+    }
+
+
 }
 
