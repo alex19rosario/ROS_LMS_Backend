@@ -4,10 +4,7 @@ import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.domain.dtos.BookDTO;
 import com.ros.lms.domain.dtos.SearchBookDTO;
 import com.ros.lms.domain.enums.GenreType;
-import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
-import com.ros.lms.domain.exceptions.PageOutOfRangeException;
-import com.ros.lms.domain.exceptions.StaffNotFoundException;
-import com.ros.lms.domain.exceptions.StorageException;
+import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.ports.inbound.service_contracts.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +13,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,6 +39,13 @@ public class BookController {
     ) throws BookAlreadyExistsException, StorageException, StaffNotFoundException {
         AddBookDTO addBookDTO = new AddBookDTO(isbn, title, authors, genres, staffUsername, coverImage);
         bookService.add(addBookDTO);
+    }
+
+    @GetMapping("/books/{isbn}")
+    public ResponseEntity<BookDTO> getBookByIsbn(@PathVariable String isbn) throws BookNotFoundException {
+        return bookService.getByIsbn(isbn)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new BookNotFoundException("Book with ISBN '" + isbn + "' was not found."));
     }
 
     @GetMapping("/books")
