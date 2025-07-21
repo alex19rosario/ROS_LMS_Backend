@@ -8,10 +8,7 @@ import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
 import com.ros.lms.domain.entities.Staff;
 import com.ros.lms.domain.enums.GenreType;
-import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
-import com.ros.lms.domain.exceptions.PageOutOfRangeException;
-import com.ros.lms.domain.exceptions.StaffNotFoundException;
-import com.ros.lms.domain.exceptions.StorageException;
+import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.ports.inbound.service_contracts.StorageService;
 import com.ros.lms.ports.outbound.repository_contracts.AuthorDAO;
 import com.ros.lms.ports.outbound.repository_contracts.BookDAO;
@@ -30,6 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -362,5 +360,42 @@ public class BookServiceTest {
         assertEquals("9783161484105", dto.isbn());
         assertTrue(dto.authors().stream().anyMatch(a ->
                 "Joshua".equals(a.firstName()) && "Bloch".equals(a.lastName())));
+    }
+
+    @Test
+    void getByIsbn_shouldReturnMappedDTO_whenBookExists() throws BookNotFoundException {
+        // Arrange
+        String isbn = "9783161484105";
+        Book book = new Book(isbn, "Effective Java", true);
+        book.setId(1L);
+
+        when(bookDAO.findByISBN(isbn)).thenReturn(Optional.of(book));
+
+        // Act
+        Optional<BookDTO> result = bookService.getByIsbn(isbn);
+
+        // Assert
+        assertTrue(result.isPresent());
+        BookDTO dto = result.get();
+
+        assertEquals(1L, dto.id());
+        assertEquals(isbn, dto.isbn());
+        assertEquals("Effective Java", dto.title());
+        assertTrue(dto.status());
+
+        verify(bookDAO).findByISBN(isbn);
+    }
+
+    @Test
+    void getByIsbn_shouldThrowException_whenBookNotFound() {
+        // Arrange
+        String isbn = "0000000000000";
+        when(bookDAO.findByISBN(isbn)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        BookNotFoundException ex = assertThrows(BookNotFoundException.class, () -> bookService.getByIsbn(isbn));
+
+        assertEquals("Book with ISBN '0000000000000' was not found.", ex.getMessage());
+        verify(bookDAO).findByISBN(isbn);
     }
 }

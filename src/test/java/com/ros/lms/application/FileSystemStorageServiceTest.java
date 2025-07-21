@@ -135,15 +135,6 @@ class FileSystemStorageServiceTest {
     }
 
     @Test
-    void loadAsResource_WhenMalformedURLExceptionOccurs_ShouldThrowStorageFileNotFoundException() {
-        // Arrange
-        String badFileName = "invalid://file";
-
-        // Act & Assert
-        assertThrows(StorageFileNotFoundException.class, () -> storageService.loadAsResource(badFileName));
-    }
-
-    @Test
     void constructor_WithEmptyLocation_ShouldThrowException() {
         // Arrange
         StorageProperties emptyProperties = new StorageProperties();

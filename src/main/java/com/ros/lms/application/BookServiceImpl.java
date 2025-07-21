@@ -6,10 +6,7 @@ import com.ros.lms.domain.entities.Book;
 import com.ros.lms.domain.entities.Genre;
 import com.ros.lms.domain.entities.Staff;
 import com.ros.lms.domain.enums.GenreType;
-import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
-import com.ros.lms.domain.exceptions.PageOutOfRangeException;
-import com.ros.lms.domain.exceptions.StaffNotFoundException;
-import com.ros.lms.domain.exceptions.StorageException;
+import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.ports.inbound.service_contracts.BookService;
 import com.ros.lms.ports.inbound.service_contracts.StorageService;
 import com.ros.lms.ports.outbound.repository_contracts.AuthorDAO;
@@ -158,6 +155,14 @@ public class BookServiceImpl implements BookService {
                 pageable);
 
         return bookPage.map(bookDTOMapper);
+    }
+
+    @Cacheable(value = "bookByIsbnCache", key = "#isbn")
+    @Override
+    public Optional<BookDTO> getByIsbn(String isbn) throws BookNotFoundException {
+        return Optional.ofNullable(bookDAO.findByISBN(isbn)
+                .map(bookDTOMapper)
+                .orElseThrow(() -> new BookNotFoundException("Book with ISBN '" + isbn + "' was not found.")));
     }
 
     private final Function<AddBookDTO, Book> addBookMapper = addBookDTO ->
