@@ -54,7 +54,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Transactional
-    @CacheEvict(value = {"booksCache"}, allEntries = true)
+    @CacheEvict(value = "booksCache", allEntries = true)
     @Override
     public void add(AddBookDTO addBookDTO) throws BookAlreadyExistsException, StorageException, StaffNotFoundException {
         // Check if the book exist by ISBN
