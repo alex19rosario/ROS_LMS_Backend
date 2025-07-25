@@ -255,6 +255,13 @@ INSERT INTO STAFFS (
     '321-654-0987', 'M', 'john.admin@example.com', 'staff'
 );
 
+INSERT INTO STAFFS (
+    GOVERNMENT_ID, FIRST_NAME, MIDDLE_NAME, LAST_NAME,
+    PHONE, SEX, EMAIL, USERNAME
+) VALUES (
+    '40200402747', 'Carlos', 'Alexander', 'Rosario Sanchez',
+    '6474256438', 'M', 'alexrosario7130492@gmail.com', 'admin'
+);
 
 -- Insert initial genre data
 INSERT INTO GENRES (DESCRIPTION) VALUES ('MYSTERY');
@@ -335,16 +342,16 @@ INSERT INTO AUTHORS (FIRST_NAME, MIDDLE_NAME, LAST_NAME) VALUES
 
 -- Insert Dummy Books
 INSERT INTO BOOKS (ISBN, TITLE, IS_AVAILABLE, COVER_IMAGE_PATH) VALUES
-('9780000000001', 'The Lost Artifact', 'Y', 'book1.jpg'),
-('9780000000002', 'Echoes of Tomorrow', 'Y', 'book2.jpg'),
-('9780000000003', 'Whispers in the Wind', 'Y', 'book3.jpg'),
-('9780000000004', 'The Final Countdown', 'N', 'book4.jpg'),
-('9780000000005', 'Hearts in Harmony', 'Y', 'book5.jpg'),
-('9780000000006', 'Beyond the Stars', 'Y', 'book6.jpg'),
-('9780000000007', 'Shadows of Deceit', 'N', 'book7.jpg'),
-('9780000000008', 'Chronicles of the Unknown', 'Y', 'book8.jpg'),
-('9780000000009', 'Mystic River', 'Y', 'book9.jpg'),
-('9780000000010', 'Garden of Dreams', 'Y', 'book10.jpg');
+('9780000000001', 'The Lost Artifact', 'Y', NULL),
+('9780000000002', 'Echoes of Tomorrow', 'Y', NULL),
+('9780000000003', 'Whispers in the Wind', 'Y', NULL),
+('9780000000004', 'The Final Countdown', 'N', NULL),
+('9780000000005', 'Hearts in Harmony', 'Y', NULL),
+('9780000000006', 'Beyond the Stars', 'Y', NULL),
+('9780000000007', 'Shadows of Deceit', 'N', NULL),
+('9780000000008', 'Chronicles of the Unknown', 'Y', NULL),
+('9780000000009', 'Mystic River', 'Y', NULL),
+('9780000000010', 'Garden of Dreams', 'Y', NULL);
 
 
 -- Map Books to Authors
