@@ -99,7 +99,7 @@ public class BookServiceImpl implements BookService {
         Set<String> genres = parseGenres(addBookDTO.genres());
         for (String desc : genres) {
             try {
-                GenreType genreType = GenreType.valueOf(desc.toUpperCase());
+                GenreType genreType = GenreType.fromLabel(desc);
                 Optional<Genre> genre = genreDAO.findByDescription(genreType);
                 genre.ifPresent(book::addGenre);
             } catch (IllegalArgumentException e) {

@@ -1,6 +1,7 @@
 package com.ros.lms.infraestructure.aop.aspect;
 
 
+import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -22,22 +23,20 @@ public class AddBookAspect {
         this.bookAuditService = bookAuditService;
     }
 
-    @Pointcut("execution(public void com.ros.lms.adapters.inbound.controllers.BookController.addBook(..))")
+    @Pointcut("execution(public void com.ros.lms.application.BookService.add(..))")
     private void forAddBookMethod(){}
 
     @AfterReturning("forAddBookMethod()")
     public void afterReturningAddBookAdvice(JoinPoint joinPoint){
-        String isbn = (String) joinPoint.getArgs()[0];
-        String staffUsername = (String) joinPoint.getArgs()[4];
-        bookAuditService.logAddBookAfterReturning(staffUsername, isbn);
+        AddBookDTO dto = (AddBookDTO) joinPoint.getArgs()[0];
+        bookAuditService.logAddBookAfterReturning(dto.staffUsername(), dto.isbn());
     }
 
     @AfterThrowing(pointcut = "forAddBookMethod()", throwing = "ex")
     public void afterThrowingAddBookAdvice(JoinPoint joinPoint, Throwable ex){
-        String isbn = (String) joinPoint.getArgs()[0];
-        String staffUsername = (String) joinPoint.getArgs()[4];
+        AddBookDTO dto = (AddBookDTO) joinPoint.getArgs()[0];
         String description = "An error occurred while adding book: " + ex.getMessage();
-        bookAuditService.logAddBookAfterThrowing(description, isbn, staffUsername);
+        bookAuditService.logAddBookAfterThrowing(description, dto.staffUsername(), dto.isbn());
     }
 
 }

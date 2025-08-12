@@ -71,17 +71,17 @@ public class MemberServiceImpl implements MemberService {
         String firstName = nameParts[0];
         String middleName = nameParts.length > 1 ? nameParts[1] : null;
 
-        Member member = new Member();
-        member.setGovernmentID(dto.governmentID());
-        member.setFirstName(firstName);
-        member.setMiddleName(middleName);
-        member.setLastName(dto.lastName());
-        member.setPhone(dto.phone());
-        member.setDateOfBirth(dto.dateOfBirth());
-        member.setSex(dto.sex());
-        member.setEmail(dto.email());
-        member.setUsername(dto.username());
-        return member;
+        return new Member.Builder()
+                .governmentID(dto.governmentID())
+                .firstName(firstName)
+                .middleName(middleName)
+                .lastName(dto.lastName())
+                .phone(dto.phone())
+                .dateOfBirth(dto.dateOfBirth())
+                .sex(dto.sex())
+                .email(dto.email())
+                .username(dto.username())
+                .build();
     }
 
     private User userMapper(AddMemberDTO dto){
