@@ -1,5 +1,6 @@
 package com.ros.lms.infraestructure.aspect;
 
+import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.infraestructure.aop.aspect.AddBookAspect;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
 import org.aspectj.lang.JoinPoint;
@@ -24,23 +25,16 @@ class AddBookAspectTest {
     @InjectMocks
     private AddBookAspect addBookAspect;
 
-    private MockMultipartFile coverImage;
+    private MockMultipartFile coverImage = new MockMultipartFile("file", new byte[0]);
 
     @Test
     void afterReturningAddBookAdvice_ShouldCallLogAddBookAfterReturning() {
         // Arrange
         String isbn = "9783161484105";
         String staffUsername = "staff";
-        Object[] args = new Object[]{
-                isbn, // index 0
-                "Effective Java",
-                "Joshua-Bloch",
-                "SCIENCE,TECHNOLOGY",
-                staffUsername, // index 4
-                coverImage
-        };
+        AddBookDTO dto = new AddBookDTO(isbn, "Effective Java", "Joshua-Bloch", "SCIENCE,TECHNOLOGY", staffUsername, coverImage);
 
-        when(joinPoint.getArgs()).thenReturn(args);
+        when(joinPoint.getArgs()).thenReturn(new Object[]{dto});
 
         // Act
         addBookAspect.afterReturningAddBookAdvice(joinPoint);
@@ -55,18 +49,11 @@ class AddBookAspectTest {
         // Arrange
         String isbn = "9783161484105";
         String staffUsername = "staff";
-        Object[] args = new Object[]{
-                isbn,
-                "Effective Java",
-                "Joshua-Bloch",
-                "SCIENCE,TECHNOLOGY",
-                staffUsername,
-                coverImage
-        };
+        AddBookDTO dto = new AddBookDTO(isbn, "Effective Java", "Joshua-Bloch", "SCIENCE,TECHNOLOGY", staffUsername, coverImage);
 
         Throwable ex = new RuntimeException("Something went wrong");
 
-        when(joinPoint.getArgs()).thenReturn(args);
+        when(joinPoint.getArgs()).thenReturn(new Object[]{dto});
 
         // Act
         addBookAspect.afterThrowingAddBookAdvice(joinPoint, ex);
@@ -75,8 +62,8 @@ class AddBookAspectTest {
         verify(bookAuditService, times(1))
                 .logAddBookAfterThrowing(
                         "An error occurred while adding book: Something went wrong",
-                        isbn,           // <-- Correct order
-                        staffUsername   // <-- Correct order
+                        staffUsername,
+                        isbn
                 );
     }
 

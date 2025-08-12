@@ -15,7 +15,6 @@ public class AuditDAOJdbcImpl implements AuditDAO {
     @Override
     public void createLog(CustomLog log) {
         String procedureCall = "{call GENERATE_LOG(?, ?, ?, ?, ?, ?)}";
-
         jdbcTemplate.update(procedureCall,
                 log.description(),
                 log.actionType(),
