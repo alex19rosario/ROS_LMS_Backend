@@ -12,6 +12,7 @@ import com.ros.lms.domain.enums.Routes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -62,32 +63,49 @@ public class LmsSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain basicFilterChain(HttpSecurity http) throws Exception{
 
-        http.cors(Customizer.withDefaults()) // Enable CORS
-            .authorizeHttpRequests(configurer -> configurer
-            .requestMatchers(HttpMethod.GET, Routes.HEALTH_CHECK.val()).permitAll()
-            .requestMatchers(HttpMethod.POST, Routes.LOGIN.val()).permitAll()
-            .requestMatchers(HttpMethod.GET, Routes.IMAGES.val()).hasRole(Roles.MEMBER.val())
-            .requestMatchers(HttpMethod.GET, Routes.BOOKS.val()).hasRole(Roles.MEMBER.val())
-            .requestMatchers(HttpMethod.POST, Routes.BOOKS.val()).hasRole(Roles.STAFF.val())
-            .requestMatchers(HttpMethod.DELETE, Routes.BOOKS.val()).hasRole(Roles.ADMIN.val())
-            .requestMatchers(HttpMethod.GET, Routes.GENRES.val()).hasRole(Roles.STAFF.val())
-            .requestMatchers(HttpMethod.POST, Routes.MEMBERS.val()).hasRole(Roles.MEMBER.val())
-            .requestMatchers(HttpMethod.POST, Routes.LOANS.val()).hasRole(Roles.STAFF.val()));
+        return http
+                .securityMatcher(Routes.LOGIN.val())
+                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                )
+                .authenticationProvider(authenticationProvider())
+                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .build();
+    }
 
-        http.httpBasic(Customizer.withDefaults());
-        http.authenticationProvider(authenticationProvider());
-        http.oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-        );
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    @Bean
+    @Order(2)
+    public SecurityFilterChain jwtFilterChain(HttpSecurity http) throws Exception{
 
-        // disable Cross Site Request Forgery (CSRF)
-        // In general, not required for stateless REST APIs that use GET, POST, PUT, DELETE and/or PATCH
-        http.csrf(csrf -> csrf.disable());
-
-        return http.build();
+        return http
+                .securityMatcher("/**")
+                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, Routes.HEALTH_CHECK.val()).permitAll()
+                        .requestMatchers(HttpMethod.GET, Routes.IMAGES.val()).hasRole(Roles.MEMBER.val())
+                        .requestMatchers(HttpMethod.GET, Routes.BOOKS.val()).hasRole(Roles.MEMBER.val())
+                        .requestMatchers(HttpMethod.POST, Routes.BOOKS.val()).hasRole(Roles.STAFF.val())
+                        .requestMatchers(HttpMethod.DELETE, Routes.BOOKS.val()).hasRole(Roles.ADMIN.val())
+                        .requestMatchers(HttpMethod.GET, Routes.GENRES.val()).hasRole(Roles.STAFF.val())
+                        .requestMatchers(HttpMethod.POST, Routes.MEMBERS.val()).hasRole(Roles.MEMBER.val())
+                        .requestMatchers(HttpMethod.POST, Routes.LOANS.val()).hasRole(Roles.STAFF.val())
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .build();
     }
 
     @Bean
