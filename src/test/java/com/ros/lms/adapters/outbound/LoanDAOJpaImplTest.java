@@ -82,7 +82,7 @@ class LoanDAOJpaImplTest {
         assertThat(persistedLoan).isNotNull();
         assertThat(persistedLoan.getBook().getTitle()).isEqualTo("Effective Java");
         assertThat(persistedLoan.getMember().getFirstName()).isEqualTo("John");
-        assertThat(persistedLoan.getStatus().getDescription()).isEqualTo(LoanStatuses.LOANED);
+        assertThat(persistedLoan.getStatus().getCode()).isEqualTo(LoanStatuses.LOANED);
         assertThat(persistedLoan.getStaff().getUsername()).isEqualTo("janesmith");
     }
 

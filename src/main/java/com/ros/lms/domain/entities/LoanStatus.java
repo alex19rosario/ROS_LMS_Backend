@@ -13,16 +13,16 @@ public class LoanStatus {
     @Column(name = "STATUS_ID")
     private long id;
 
-    @Column(name = "DESCRIPTION")
-    private LoanStatuses description;
+    @Column(name = "CODE")
+    private LoanStatuses code;
 
     @OneToMany(mappedBy = "status")
     private List<Loan> loans;
 
     public LoanStatus(){}
 
-    public LoanStatus(LoanStatuses description) {
-        this.description = description;
+    public LoanStatus(LoanStatuses code) {
+        this.code = code;
     }
 
     public long getId() {
@@ -33,12 +33,12 @@ public class LoanStatus {
         this.id = id;
     }
 
-    public LoanStatuses getDescription() {
-        return description;
+    public LoanStatuses getCode() {
+        return code;
     }
 
-    public void setDescription(LoanStatuses description) {
-        this.description = description;
+    public void setCode(LoanStatuses code) {
+        this.code = code;
     }
 
     public List<Loan> getLoans() {
@@ -53,7 +53,7 @@ public class LoanStatus {
     public String toString() {
         return "LoanStatus{" +
                 "id=" + id +
-                ", description='" + description.getVal() + '\'' +
+                ", code='" + code.getVal() + '\'' +
                 '}';
     }
 }

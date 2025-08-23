@@ -60,7 +60,7 @@ public class Genre {
     @Override
     public String toString() {
         return "Genre{" +
-                "description='" + label.getVal() + '\'' +
+                "label='" + label.getVal() + '\'' +
                 ", books=" + books +
                 '}';
     }

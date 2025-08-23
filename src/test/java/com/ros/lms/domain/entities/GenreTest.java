@@ -94,7 +94,7 @@ class GenreTest {
     void testToString() {
         // Test with no books
         String toStringResult = genre.toString();
-        assertTrue(toStringResult.contains("description='" + testDescription.getVal() + "'"));
+        assertTrue(toStringResult.contains("label='" + testDescription.getVal() + "'"));
         assertTrue(toStringResult.contains("books=null"));
 
         // Test with books

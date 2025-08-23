@@ -14,7 +14,7 @@ class LoanStatusTest {
         LoanStatus loanStatus = new LoanStatus();
 
         assertThat(loanStatus).isNotNull();
-        assertThat(loanStatus.getDescription()).isNull();
+        assertThat(loanStatus.getCode()).isNull();
         assertThat(loanStatus.getLoans()).isNull(); // default value before set
     }
 
@@ -22,7 +22,7 @@ class LoanStatusTest {
     void testConstructorWithDescription_shouldSetDescription() {
         LoanStatus loanStatus = new LoanStatus(LoanStatuses.LOANED);
 
-        assertThat(loanStatus.getDescription()).isEqualTo(LoanStatuses.LOANED);
+        assertThat(loanStatus.getCode()).isEqualTo(LoanStatuses.LOANED);
     }
 
     @Test
@@ -36,12 +36,12 @@ class LoanStatusTest {
 
         // Act
         loanStatus.setId(1L);
-        loanStatus.setDescription(LoanStatuses.OVERDUE);
+        loanStatus.setCode(LoanStatuses.OVERDUE);
         loanStatus.setLoans(loanList);
 
         // Assert
         assertThat(loanStatus.getId()).isEqualTo(1L);
-        assertThat(loanStatus.getDescription()).isEqualTo(LoanStatuses.OVERDUE);
+        assertThat(loanStatus.getCode()).isEqualTo(LoanStatuses.OVERDUE);
         assertThat(loanStatus.getLoans()).containsExactly(loan1, loan2);
     }
 
@@ -55,6 +55,6 @@ class LoanStatusTest {
         assertThat(result)
                 .contains("LoanStatus{")
                 .contains("id=99")
-                .contains("description='RETURNED'");
+                .contains("code='RETURNED'");
     }
 }

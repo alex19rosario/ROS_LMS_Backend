@@ -22,10 +22,10 @@ public class LoanStatusDAOJpaImpl implements LoanStatusDAO {
 
     @Override
     public Optional<LoanStatus> findLoanStatusByEnum(LoanStatuses status) {
-        String query = "SELECT ls FROM LoanStatus ls WHERE ls.description = :description";
+        String query = "SELECT ls FROM LoanStatus ls WHERE ls.code = :code";
         try {
             LoanStatus loanStatus = entityManager.createQuery(query, LoanStatus.class)
-                    .setParameter("description", status)
+                    .setParameter("code", status)
                     .getSingleResult();
 
             return Optional.ofNullable(loanStatus);
