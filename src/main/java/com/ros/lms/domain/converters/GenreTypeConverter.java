@@ -8,7 +8,7 @@ import jakarta.persistence.Converter;
 public class GenreTypeConverter implements AttributeConverter<GenreType, String> {
     @Override
     public String convertToDatabaseColumn(GenreType genreType) {
-        return genreType != null ? genreType.getLabel() : null;
+        return genreType != null ? genreType.getVal() : null;
     }
 
     @Override

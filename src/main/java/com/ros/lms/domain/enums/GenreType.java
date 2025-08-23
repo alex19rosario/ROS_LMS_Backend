@@ -35,19 +35,19 @@ public enum GenreType {
     THRILLER("THRILLER"),
     TRAVEL("TRAVEL");
 
-    private final String label;
+    private final String val;
 
-    GenreType(String label) {
-        this.label = label;
+    GenreType(String val) {
+        this.val = val;
     }
 
-    public String getLabel() {
-        return label;
+    public String getVal() {
+        return val;
     }
 
     public static GenreType fromLabel(String label) {
         for (GenreType genre : values()) {
-            if (genre.label.equalsIgnoreCase(label)) {
+            if (genre.val.equalsIgnoreCase(label)) {
                 return genre;
             }
         }

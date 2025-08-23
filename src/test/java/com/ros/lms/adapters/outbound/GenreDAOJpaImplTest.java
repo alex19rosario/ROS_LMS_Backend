@@ -33,25 +33,25 @@ public class GenreDAOJpaImplTest {
 
     @Transactional
     @Test
-    void testFindByDescriptionWhenGenreExists() {
+    void testFindByLabelWhenGenreExists() {
         // Arrange
         Genre genre = new Genre();
-        genre.setDescription(GenreType.TECHNOLOGY);
+        genre.setLabel(GenreType.TECHNOLOGY);
         entityManager.persist(genre);
         entityManager.flush();
 
         // Act
-        Optional<Genre> result = genreDAO.findByDescription(GenreType.TECHNOLOGY);
+        Optional<Genre> result = genreDAO.findByLabel(GenreType.TECHNOLOGY);
 
         // Assert
         assertTrue(result.isPresent(), "Genre should be found");
-        assertEquals(GenreType.TECHNOLOGY, result.get().getDescription(), "Description should match");
+        assertEquals(GenreType.TECHNOLOGY, result.get().getLabel(), "Label should match");
     }
 
     @Test
-    void testFindByDescription_noResult() {
+    void testFindByLabel_noResult() {
         // Act
-        Optional<Genre> result = genreDAO.findByDescription(GenreType.ADVENTURE);
+        Optional<Genre> result = genreDAO.findByLabel(GenreType.ADVENTURE);
         // Assert
         assertThat(result).isEmpty();
     }

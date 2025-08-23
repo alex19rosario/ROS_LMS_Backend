@@ -6,15 +6,15 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "GENRES")
+@Table(name = "GENRE_TYPE")
 public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "GENRE_ID")
     private long id;
 
-    @Column(name = "DESCRIPTION")
-    private GenreType description;
+    @Column(name = "LABEL")
+    private GenreType label;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "BOOKS_GENRES",
@@ -24,13 +24,13 @@ public class Genre {
 
     public Genre(){}
 
-    public Genre(GenreType description, List<Book> books) {
-        this.description = description;
+    public Genre(GenreType label, List<Book> books) {
+        this.label = label;
         this.books = books;
     }
 
-    public Genre(GenreType description) {
-        this.description = description;
+    public Genre(GenreType label) {
+        this.label = label;
     }
 
     public long getId() {
@@ -41,12 +41,12 @@ public class Genre {
         this.id = id;
     }
 
-    public GenreType getDescription() {
-        return description;
+    public GenreType getLabel() {
+        return label;
     }
 
-    public void setDescription(GenreType description) {
-        this.description = description;
+    public void setLabel(GenreType label) {
+        this.label = label;
     }
 
     public List<Book> getBooks() {
@@ -60,7 +60,7 @@ public class Genre {
     @Override
     public String toString() {
         return "Genre{" +
-                "description='" + description.getLabel() + '\'' +
+                "description='" + label.getVal() + '\'' +
                 ", books=" + books +
                 '}';
     }
