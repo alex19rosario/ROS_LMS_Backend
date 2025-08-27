@@ -101,10 +101,9 @@ class StaffTest {
                 "middleName='C.'",
                 "lastName='Brown'",
                 "phone='5551234567'",
-                "sex=M"  // This should be the code, not the enum name
+                "sex=M",  // This should be the code, not the enum name
+                "user='" + user.toString() + "'"
         );
-        // The toString shows the user object, not individual email/username
-        assertThat(str).contains("user='" + user.toString() + "'");
     }
 
     @Test
