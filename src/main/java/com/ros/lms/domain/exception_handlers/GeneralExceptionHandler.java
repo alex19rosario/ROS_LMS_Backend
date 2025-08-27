@@ -1,10 +1,11 @@
-package com.ros.lms.adapters.inbound.exception_handlers;
+package com.ros.lms.domain.exception_handlers;
 
-import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
+import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
-import com.ros.lms.domain.exceptions.StaffNotFoundException;
-import com.ros.lms.domain.exceptions.StorageException;
+import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -12,32 +13,43 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
-public class BookControllerExceptionHandler {
+public class GeneralExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleBookAlreadyExistException(BookAlreadyExistsException ex, HttpServletRequest request) {
+    public ResponseEntity<ProblemDetail> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex, HttpServletRequest request){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problemDetail.setTitle("Existing Book Error");
+        problemDetail.setTitle("Existing Username Error");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleStorageException(StorageException ex, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-        problemDetail.setTitle("Storage Error");
+    public ResponseEntity<ProblemDetail> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex, HttpServletRequest request){
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problemDetail.setTitle("Existing Email Error");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleStaffNotFoundException(StaffNotFoundException ex, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problemDetail.setTitle("Staff not Found");
+    public ResponseEntity<ProblemDetail> handleConstraintViolationException(ConstraintViolationException ex, HttpServletRequest request){
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Validation Error");
+        problemDetail.setDetail("Invalid input data.");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
+
+        // Add field-specific validation details
+        Map<String, String> violations = new HashMap<>();
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            violations.put(violation.getPropertyPath().toString(), violation.getMessage());
+        }
+        problemDetail.setProperty("violations", violations);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
     @ExceptionHandler
@@ -55,5 +67,4 @@ public class BookControllerExceptionHandler {
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
-
 }

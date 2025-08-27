@@ -23,6 +23,7 @@ public class Member extends PersonBase {
     public static class Builder {
         // Required parameters
         private long id;
+        private User user;
         private String governmentID;
         private String firstName;
         private String middleName;
@@ -30,11 +31,13 @@ public class Member extends PersonBase {
         private String phone;
         private LocalDate dateOfBirth;
         private Sex sex;
-        private String email;
-        private String username;
 
         public Builder id(long val) {
             id = val;
+            return this;
+        }
+        public Builder user(User val) {
+            user = val;
             return this;
         }
         public Builder governmentID(String val) {
@@ -65,14 +68,6 @@ public class Member extends PersonBase {
             sex = val;
             return this;
         }
-        public Builder email(String val) {
-            email = val;
-            return this;
-        }
-        public Builder username(String val) {
-            username = val;
-            return this;
-        }
         public Member build() {
             return new Member(this);
         }
@@ -80,6 +75,7 @@ public class Member extends PersonBase {
 
     private Member(Builder builder) {
         id = builder.id;
+        super.setUser(builder.user);
         super.setGovernmentID(builder.governmentID);
         super.setFirstName(builder.firstName);
         super.setMiddleName(builder.middleName);
@@ -87,8 +83,6 @@ public class Member extends PersonBase {
         super.setPhone(builder.phone);
         dateOfBirth = builder.dateOfBirth;
         super.setSex(builder.sex);
-        super.setEmail(builder.email);
-        super.setUsername(builder.username);
     }
 
     public long getId() {
@@ -112,6 +106,7 @@ public class Member extends PersonBase {
     public String toString() {
         return "Member{" +
                 "id=" + id +
+                ", user='" + super.getUser() + '\'' +
                 ", governmentID='" + super.getGovernmentID() + '\'' +
                 ", firstName='" + super.getFirstName() + '\'' +
                 ", middleName='" + super.getMiddleName() + '\'' +
@@ -119,8 +114,6 @@ public class Member extends PersonBase {
                 ", phone='" + super.getPhone() + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", sex=" + (super.getSex() != null ? super.getSex().getCode() : "null") +
-                ", email='" + super.getEmail() + '\'' +
-                ", username=" + super.getUsername() +
                 '}';
     }
 }

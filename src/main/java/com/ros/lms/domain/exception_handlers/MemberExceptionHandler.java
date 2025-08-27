@@ -1,4 +1,4 @@
-package com.ros.lms.adapters.inbound.exception_handlers;
+package com.ros.lms.domain.exception_handlers;
 
 import com.ros.lms.domain.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,22 +11,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.net.URI;
 
 @ControllerAdvice
-public class LoanControllerExceptionHandler {
+public class MemberExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleBookNotFoundException(BookNotFoundException ex, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problemDetail.setTitle("Book not Found");
+    public ResponseEntity<ProblemDetail> handleMemberAlreadyExistsException(MemberAlreadyExistsException ex, HttpServletRequest request){
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problemDetail.setTitle("Existing Member Error");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleBookNotAvailableException(BookNotAvailableException ex, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-        problemDetail.setTitle("Book not Available");
-        problemDetail.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 
     @ExceptionHandler

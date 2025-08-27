@@ -16,17 +16,21 @@ public class Staff extends PersonBase{
     public static class Builder{
         // Required parameters
         private long id;
+        private User user;
         private String governmentID;
         private String firstName;
         private String middleName;
         private String lastName;
         private String phone;
         private Sex sex;
-        private String email;
-        private String username;
 
         public Builder id(long val) {
             id = val;
+            return this;
+        }
+
+        public Builder user(User val) {
+            user = val;
             return this;
         }
 
@@ -60,16 +64,6 @@ public class Staff extends PersonBase{
             return this;
         }
 
-        public Builder email(String val) {
-            email = val;
-            return this;
-        }
-
-        public Builder username(String val) {
-            username = val;
-            return this;
-        }
-
         public Staff build() {
             return new Staff(this);
         }
@@ -77,14 +71,13 @@ public class Staff extends PersonBase{
 
     private Staff(Builder builder) {
         id = builder.id;
+        super.setUser(builder.user);
         super.setGovernmentID(builder.governmentID);
         super.setFirstName(builder.firstName);
         super.setMiddleName(builder.middleName);
         super.setLastName(builder.lastName);
         super.setPhone(builder.phone);
         super.setSex(builder.sex);
-        super.setEmail(builder.email);
-        super.setUsername(builder.username);
     }
 
     public long getId() {
@@ -99,14 +92,13 @@ public class Staff extends PersonBase{
     public String toString() {
         return "Staff{" +
                 "id=" + id +
+                ", user='" + super.getUser() + '\'' +
                 ", governmentID='" + super.getGovernmentID() + '\'' +
                 ", firstName='" + super.getFirstName() + '\'' +
                 ", middleName='" + super.getMiddleName() + '\'' +
                 ", lastName='" + super.getLastName() + '\'' +
                 ", phone='" + super.getPhone() + '\'' +
                 ", sex=" + (super.getSex() != null ? super.getSex().getCode() : "null") +
-                ", email='" + super.getEmail() + '\'' +
-                ", username='" + super.getUsername() + '\'' +
                 '}';
     }
 }

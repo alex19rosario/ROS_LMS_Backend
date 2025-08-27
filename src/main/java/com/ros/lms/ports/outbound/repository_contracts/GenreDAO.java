@@ -7,6 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface GenreDAO {
-    Optional<Genre> findByDescription(GenreType description);
+    Optional<Genre> findByLabel(GenreType genreType);
     Set<GenreType> findAll();
 }

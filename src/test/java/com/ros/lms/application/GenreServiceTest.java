@@ -42,9 +42,9 @@ public class GenreServiceTest {
 
         // Assert
         Set<String> expectedLabels = Set.of(
-                GenreType.FICTION.getLabel(),
-                GenreType.NON_FICTION.getLabel(),
-                GenreType.SCIENCE.getLabel()
+                GenreType.FICTION.getVal(),
+                GenreType.NON_FICTION.getVal(),
+                GenreType.SCIENCE.getVal()
         );
 
         assertEquals(expectedLabels, result, "The genres returned should match the expected labels");

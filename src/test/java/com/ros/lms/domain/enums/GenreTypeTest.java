@@ -9,9 +9,9 @@ class GenreTypeTest {
 
     @Test
     void testGetLabel_shouldReturnCorrectLabel() {
-        assertEquals("MYSTERY", GenreType.MYSTERY.getLabel());
-        assertEquals("SCIENCE FICTION", GenreType.SCIENCE_FICTION.getLabel());
-        assertEquals("CHILDREN LITERATURE", GenreType.CHILDREN_LITERATURE.getLabel());
+        assertEquals("MYSTERY", GenreType.MYSTERY.getVal());
+        assertEquals("SCIENCE FICTION", GenreType.SCIENCE_FICTION.getVal());
+        assertEquals("CHILDREN LITERATURE", GenreType.CHILDREN_LITERATURE.getVal());
     }
 
     @Test

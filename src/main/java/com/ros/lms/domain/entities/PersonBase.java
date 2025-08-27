@@ -6,6 +6,10 @@ import jakarta.persistence.*;
 @MappedSuperclass
 public abstract class PersonBase {
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID", nullable = false, unique = true)
+    private User user;
+
     @Column(name = "GOVERNMENT_ID")
     private String governmentID;
 
@@ -24,12 +28,13 @@ public abstract class PersonBase {
     @Column(name = "SEX")
     private Sex sex;
 
-    @Column(name = "EMAIL")
-    private String email;
+    public User getUser() {
+        return user;
+    }
 
-    @Column(name = "USERNAME")
-    private String username;
-
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getGovernmentID() {
         return governmentID;
@@ -77,21 +82,5 @@ public abstract class PersonBase {
 
     public void setSex(Sex sex) {
         this.sex = sex;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }

@@ -1,9 +1,9 @@
 package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.UserDAOJpaImpl;
-import com.ros.lms.domain.entities.Authority;
-import com.ros.lms.domain.entities.AuthorityId;
+import com.ros.lms.domain.entities.AuthorityType;
 import com.ros.lms.domain.entities.User;
+import com.ros.lms.domain.enums.RoleType;
 import com.ros.lms.ports.outbound.repository_contracts.UserDAO;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,21 +36,31 @@ class UserDAOJpaImplTest {
     @Test
     void testCreateUser() {
         // Arrange
-        User user = new User("testUser", "testPassword", true);
-        Set<Authority> authorities = new HashSet<>();
-        Authority authority = new Authority();
-        authority.setUser(user);
-        authority.setId(new AuthorityId(user.getUsername(), "ROLE_MEMBER"));
+        User user = new User();
+        user.setUsername("testUser");
+        user.setEmail("testuser@example.com");
+        user.setPassword("testPassword");
+        user.setEnabled(true);
+
+        Set<AuthorityType> authorities = new HashSet<>();
+        AuthorityType authority = new AuthorityType(RoleType.MEMBER);
+        entityManager.persist(authority); // persist it first!
         authorities.add(authority);
         user.setAuthorities(authorities);
 
         // Act
         userDAO.create(user);
-        User persistedUser = entityManager.find(User.class, "testUser");
+        entityManager.flush();
+
+        User persistedUser = entityManager
+                .createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", "testUser")
+                .getSingleResult();
 
         // Assert
         assertNotNull(persistedUser, "User should be persisted in the database.");
         assertEquals("testUser", persistedUser.getUsername());
+        assertEquals("testuser@example.com", persistedUser.getEmail());
         assertEquals("testPassword", persistedUser.getPassword());
         assertTrue(persistedUser.getEnabled());
         assertNotNull(persistedUser.getAuthorities());
@@ -61,9 +71,15 @@ class UserDAOJpaImplTest {
     @Test
     void testFindByUsername_UserExists() {
         // Arrange
-        User user = new User("existingUser", "password123", true);
+        User user = new User();
+        user.setUsername("existingUser");
+        user.setEmail("existing@example.com");
+        user.setPassword("password123");
+        user.setEnabled(true);
+
         entityManager.persist(user);
         entityManager.flush();
+        entityManager.clear(); // Clear the cache to ensure we read from DB
 
         // Act
         Optional<User> result = userDAO.findByUsername("existingUser");
@@ -71,10 +87,12 @@ class UserDAOJpaImplTest {
         // Assert
         assertTrue(result.isPresent(), "User should be found in the database.");
         assertEquals("existingUser", result.get().getUsername());
+        assertEquals("existing@example.com", result.get().getEmail());
         assertEquals("password123", result.get().getPassword());
         assertTrue(result.get().getEnabled());
     }
 
+    @Transactional
     @Test
     void testFindByUsername_UserDoesNotExist() {
         // Act

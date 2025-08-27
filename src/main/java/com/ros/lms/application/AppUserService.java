@@ -1,6 +1,5 @@
 package com.ros.lms.application;
 
-
 import com.ros.lms.domain.entities.User;
 import com.ros.lms.ports.outbound.repository_contracts.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,27 +26,24 @@ public class AppUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userOptional = userDAO.findByUsername(username);
-        if(userOptional.isPresent()){
-            User user = userOptional.get();
 
-            // Map authorities to the Spring Security format
-            Set<GrantedAuthority> authorities = user.getAuthorities().stream()
-                    .map(authority -> new SimpleGrantedAuthority(authority.getId().getAuthority()))
-                    .collect(Collectors.toSet());
+        User user = userDAO.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " was not found"));
 
-            // Return UserDetails with roles
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username(user.getUsername())
-                    .password(user.getPassword()) // Ensure this matches the password encoder
-                    .authorities(authorities)
-                    .accountExpired(false)
-                    .accountLocked(false)
-                    .credentialsExpired(false)
-                    .disabled(!user.getEnabled())
-                    .build();
-        } else {
-            throw new UsernameNotFoundException("User not found");
-        }
+        // Map authorities to the Spring Security format
+        Set<GrantedAuthority> authorities = user.getAuthorities().stream()
+                .map(authorityType -> new SimpleGrantedAuthority(authorityType.getLabel().str()))
+                .collect(Collectors.toSet());
+
+        // Return UserDetails with roles
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword()) // Ensure this matches the password encoder
+                .authorities(authorities)
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(!user.getEnabled())
+                .build();
     }
 }

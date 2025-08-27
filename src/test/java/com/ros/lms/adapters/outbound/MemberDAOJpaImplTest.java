@@ -2,6 +2,7 @@ package com.ros.lms.adapters.outbound;
 
 import com.ros.lms.adapters.outbound.repositories.MemberDAOJpaImpl;
 import com.ros.lms.domain.entities.Member;
+import com.ros.lms.domain.entities.User;
 import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -33,6 +34,14 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testCreateAndFindByGovernmentID() {
+
+        User user = new User();
+        user.setUsername("johndoe");
+        user.setEmail("john@example.com");
+        user.setPassword("secret");
+        user.setEnabled(true);
+        entityManager.persist(user);
+
         Member member = new Member.Builder()
                 .governmentID("GOV123")
                 .firstName("John")
@@ -40,8 +49,7 @@ class MemberDAOJpaImplTest {
                 .phone("9876543211")
                 .dateOfBirth(LocalDate.of(2000, 9, 15))
                 .sex(Sex.MALE)
-                .email("john@example.com")
-                .username("johndoe")
+                .user(user)
                 .build();
 
         memberDAO.create(member);
@@ -49,7 +57,7 @@ class MemberDAOJpaImplTest {
         Optional<Member> found = memberDAO.findByGovernmentID("GOV123");
 
         assertThat(found).isPresent();
-        assertThat(found.get().getEmail()).isEqualTo("john@example.com");
+        assertThat(found.get().getUser().getEmail()).isEqualTo("john@example.com");
     }
 
     @Test
@@ -64,6 +72,13 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testFindByUsername() {
+        User user = new User();
+        user.setUsername("janesmith");
+        user.setEmail("jane@example.com");
+        user.setPassword("secret");
+        user.setEnabled(true);
+        entityManager.persist(user);
+
         Member member = new Member.Builder()
                 .governmentID("GOV456")
                 .firstName("Jane")
@@ -71,8 +86,7 @@ class MemberDAOJpaImplTest {
                 .phone("987654321")
                 .dateOfBirth(LocalDate.of(2001, 12, 25))
                 .sex(Sex.FEMALE)
-                .email("jane@example.com")
-                .username("janesmith")
+                .user(user)
                 .build();
 
         memberDAO.create(member);
@@ -94,16 +108,23 @@ class MemberDAOJpaImplTest {
     @Test
     @Transactional
     void testFindByEmail() {
+        User user = new User();
+        user.setUsername("peterzeus");
+        user.setEmail("peter@example.com");
+        user.setPassword("secret");
+        user.setEnabled(true);
+        entityManager.persist(user);
+
         Member member = new Member.Builder()
                 .governmentID("GOV789")
                 .firstName("Peter")
                 .lastName("Zeus")
                 .phone("987654999")
                 .dateOfBirth(LocalDate.of(1966, 4, 23))
-                .sex(Sex.FEMALE)
-                .email("peter@example.com")
-                .username("peterzeus")
+                .sex(Sex.MALE) // fixed from FEMALE (typo in your snippet)
+                .user(user)
                 .build();
+
         memberDAO.create(member);
 
         Optional<Member> found = memberDAO.findByEmail("peter@example.com");

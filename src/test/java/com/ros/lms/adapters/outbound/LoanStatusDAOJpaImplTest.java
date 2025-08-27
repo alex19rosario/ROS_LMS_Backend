@@ -42,7 +42,7 @@ class LoanStatusDAOJpaImplTest {
 
         // Assert
         assertThat(result).isPresent();
-        assertThat(result.get().getDescription()).isEqualTo(LoanStatuses.LOANED);
+        assertThat(result.get().getCode()).isEqualTo(LoanStatuses.LOANED);
     }
 
     @Test

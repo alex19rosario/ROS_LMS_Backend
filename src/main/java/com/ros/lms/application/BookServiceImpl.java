@@ -100,7 +100,7 @@ public class BookServiceImpl implements BookService {
         for (String desc : genres) {
             try {
                 GenreType genreType = GenreType.fromLabel(desc);
-                Optional<Genre> genre = genreDAO.findByDescription(genreType);
+                Optional<Genre> genre = genreDAO.findByLabel(genreType);
                 genre.ifPresent(book::addGenre);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Invalid genre provided: " + desc);
@@ -201,7 +201,7 @@ public class BookServiceImpl implements BookService {
         Set<GenreType> genres = Optional.ofNullable(entity.getGenres())
                 .orElse(List.of())
                 .stream()
-                .map(Genre::getDescription)
+                .map(Genre::getLabel)
                 .collect(Collectors.toSet());
 
         return new BookDTO(

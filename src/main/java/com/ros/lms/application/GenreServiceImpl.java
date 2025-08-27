@@ -23,7 +23,7 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public Set<String> getAll() {
         return genreDAO.findAll().stream()
-                .map(GenreType::getLabel)
+                .map(GenreType::getVal)
                 .collect(Collectors.toSet());
     }
 }

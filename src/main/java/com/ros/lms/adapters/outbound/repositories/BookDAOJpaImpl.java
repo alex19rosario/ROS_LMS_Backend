@@ -67,8 +67,8 @@ public class BookDAOJpaImpl implements BookDAO {
 
         // Genre filter
         if (genre != null) {
-            countJpql += " AND g.description = :genre";
-            selectJpql += " AND g.description = :genre";
+            countJpql += " AND g.label = :genre";
+            selectJpql += " AND g.label = :genre";
             params.put("genre", genre); // <-- Use the GenreType enum directly
         }
 

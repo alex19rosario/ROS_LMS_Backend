@@ -23,11 +23,11 @@ public class GenreDAOJpaImpl implements GenreDAO {
     }
 
     @Override
-    public Optional<Genre> findByDescription(GenreType description) {
-        String query = "SELECT g FROM Genre g WHERE g.description = :description";
+    public Optional<Genre> findByLabel(GenreType genreType) {
+        String query = "SELECT g FROM Genre g WHERE g.label = :label";
         try {
             Genre genre = entityManager.createQuery(query, Genre.class)
-                    .setParameter("description", description)
+                    .setParameter("label", genreType)
                     .getSingleResult();
             return Optional.ofNullable(genre);
         } catch (NoResultException e){
@@ -37,7 +37,7 @@ public class GenreDAOJpaImpl implements GenreDAO {
 
     @Override
     public Set<GenreType> findAll() {
-        String query = "SELECT g.description FROM Genre g";
+        String query = "SELECT g.label FROM Genre g";
         return new HashSet<>(entityManager.createQuery(query, GenreType.class).getResultList());
     }
 }

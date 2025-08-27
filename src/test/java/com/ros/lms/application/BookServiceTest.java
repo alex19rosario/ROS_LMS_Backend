@@ -93,7 +93,7 @@ public class BookServiceTest {
         // Arrange
         when(bookDAO.findByISBN(validBookDTO.isbn())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Carlos", "Alexander", "Rosario")).thenReturn(Optional.empty());
-        when(genreDAO.findByDescription(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
+        when(genreDAO.findByLabel(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
         when(staffDAO.findByUsername(validBookDTO.staffUsername())).thenReturn(Optional.of(new Staff()));
         // Act
         bookService.add(validBookDTO);
@@ -101,7 +101,7 @@ public class BookServiceTest {
         // Assert
         verify(bookDAO).findByISBN(validBookDTO.isbn());
         verify(authorDAO).findByFullName("Joshua", null, "Bloch");
-        verify(genreDAO).findByDescription(GenreType.SCIENCE);
+        verify(genreDAO).findByLabel(GenreType.SCIENCE);
         verify(bookDAO).create(any(Book.class));
     }
 
@@ -111,7 +111,7 @@ public class BookServiceTest {
         Author existingAuthor = new Author("Joshua", "", "Bloch");
         when(bookDAO.findByISBN(validBookDTO.isbn())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Joshua", null, "Bloch")).thenReturn(Optional.of(existingAuthor));
-        when(genreDAO.findByDescription(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
+        when(genreDAO.findByLabel(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
         when(staffDAO.findByUsername(validBookDTO.staffUsername())).thenReturn(Optional.of(new Staff()));
 
         // Act
@@ -120,7 +120,7 @@ public class BookServiceTest {
         // Assert
         verify(authorDAO).findByFullName("Joshua", null, "Bloch");
         verify(bookDAO).create(any(Book.class));
-        verify(genreDAO).findByDescription(GenreType.SCIENCE);
+        verify(genreDAO).findByLabel(GenreType.SCIENCE);
     }
 
     @Test
@@ -129,8 +129,8 @@ public class BookServiceTest {
         when(bookDAO.findByISBN(validBookDTO.isbn())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Carlos", "Alexander", "Rosario")).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Joshua", null, "Bloch")).thenReturn(Optional.empty());
-        when(genreDAO.findByDescription(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
-        when(genreDAO.findByDescription(GenreType.TECHNOLOGY)).thenReturn(Optional.of(new Genre(GenreType.TECHNOLOGY)));
+        when(genreDAO.findByLabel(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
+        when(genreDAO.findByLabel(GenreType.TECHNOLOGY)).thenReturn(Optional.of(new Genre(GenreType.TECHNOLOGY)));
         when(staffDAO.findByUsername(validBookDTO.staffUsername())).thenReturn(Optional.of(new Staff()));
 
         // Simulate failure during storage
@@ -182,7 +182,7 @@ public class BookServiceTest {
 
         when(bookDAO.findByISBN(noCoverImageDTO.isbn())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Robert", "C.", "Martin")).thenReturn(Optional.empty());
-        when(genreDAO.findByDescription(GenreType.TECHNOLOGY)).thenReturn(Optional.of(new Genre(GenreType.TECHNOLOGY)));
+        when(genreDAO.findByLabel(GenreType.TECHNOLOGY)).thenReturn(Optional.of(new Genre(GenreType.TECHNOLOGY)));
         when(staffDAO.findByUsername(validBookDTO.staffUsername())).thenReturn(Optional.of(new Staff()));
 
         // Act

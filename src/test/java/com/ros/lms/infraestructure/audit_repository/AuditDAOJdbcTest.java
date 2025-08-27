@@ -1,4 +1,4 @@
-package com.ros.lms.infraestructure;
+package com.ros.lms.infraestructure.audit_repository;
 
 import com.ros.lms.infraestructure.aop.audit_repository.AuditDAOJdbcImpl;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;

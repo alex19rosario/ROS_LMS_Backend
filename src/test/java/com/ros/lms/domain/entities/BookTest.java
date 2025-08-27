@@ -81,12 +81,12 @@ class BookTest {
 
         // Test adding single genre
         Genre genre1 = new Genre();
-        genre1.setDescription(GenreType.TECHNOLOGY);
+        genre1.setLabel(GenreType.TECHNOLOGY);
         book.addGenre(genre1);
 
         assertNotNull(book.getGenres());
         assertEquals(1, book.getGenres().size());
-        assertEquals(GenreType.TECHNOLOGY, book.getGenres().getFirst().getDescription());
+        assertEquals(GenreType.TECHNOLOGY, book.getGenres().getFirst().getLabel());
 
         // Test setting genres list
         List<Genre> genres = new ArrayList<>();
@@ -95,7 +95,7 @@ class BookTest {
         book.setGenres(genres);
 
         assertEquals(2, book.getGenres().size());
-        assertEquals(GenreType.SCIENCE, book.getGenres().getFirst().getDescription());
+        assertEquals(GenreType.SCIENCE, book.getGenres().getFirst().getLabel());
     }
 
     @Test

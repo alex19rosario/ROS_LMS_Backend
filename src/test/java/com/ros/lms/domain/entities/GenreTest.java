@@ -22,7 +22,7 @@ class GenreTest {
     @Test
     void testGettersAndSetters() {
         // Test initial values from constructor
-        assertEquals(testDescription, genre.getDescription());
+        assertEquals(testDescription, genre.getLabel());
         assertNull(genre.getBooks());
 
         // Test setters
@@ -30,8 +30,8 @@ class GenreTest {
         genre.setId(newId);
         assertEquals(newId, genre.getId());
 
-        genre.setDescription(GenreType.FANTASY);
-        assertEquals(GenreType.FANTASY, genre.getDescription());
+        genre.setLabel(GenreType.FANTASY);
+        assertEquals(GenreType.FANTASY, genre.getLabel());
 
         List<Book> books = new ArrayList<>();
         books.add(new Book("9783161484100", "Dune", true));
@@ -46,7 +46,7 @@ class GenreTest {
     void testConstructors() {
         // Test minimal constructor
         Genre minimalGenre = new Genre(testDescription);
-        assertEquals(testDescription, minimalGenre.getDescription());
+        assertEquals(testDescription, minimalGenre.getLabel());
         assertNull(minimalGenre.getBooks());
 
         // Test full constructor
@@ -56,7 +56,7 @@ class GenreTest {
         );
         Genre fullGenre = new Genre(testDescription, books);
 
-        assertEquals(testDescription, fullGenre.getDescription());
+        assertEquals(testDescription, fullGenre.getLabel());
         assertEquals(2, fullGenre.getBooks().size());
         assertEquals("Dune", fullGenre.getBooks().getFirst().getTitle());
     }
@@ -94,7 +94,7 @@ class GenreTest {
     void testToString() {
         // Test with no books
         String toStringResult = genre.toString();
-        assertTrue(toStringResult.contains("description='" + testDescription.getLabel() + "'"));
+        assertTrue(toStringResult.contains("label='" + testDescription.getVal() + "'"));
         assertTrue(toStringResult.contains("books=null"));
 
         // Test with books
