@@ -19,6 +19,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -68,7 +69,9 @@ public class LmsSecurityConfig {
 
         return http
                 .securityMatcher(Routes.LOGIN.val())
-                .csrf(csrf -> csrf.disable())
+                // CSRF is intentionally disabled because these endpoints are stateless
+                // and use HTTP Basic / JWT authentication, which are not vulnerable to CSRF.
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
@@ -87,7 +90,9 @@ public class LmsSecurityConfig {
 
         return http
                 .securityMatcher("/**")
-                .csrf(csrf -> csrf.disable())
+                // CSRF is intentionally disabled because these endpoints are stateless
+                // and use HTTP Basic / JWT authentication, which are not vulnerable to CSRF.
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, Routes.HEALTH_CHECK.val()).permitAll()
