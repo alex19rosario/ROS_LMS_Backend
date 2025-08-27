@@ -20,7 +20,9 @@ public class StaffDAOJpaImpl implements StaffDAO {
 
     @Override
     public Optional<Staff> findByUsername(String username) {
-        String query = "SELECT s FROM Staff s WHERE s.username = :username";
+
+        String query = "SELECT s FROM Staff s WHERE s.user.username = :username";
+
         try{
             Staff staff = entityManager.createQuery(query, Staff.class)
                     .setParameter("username", username)

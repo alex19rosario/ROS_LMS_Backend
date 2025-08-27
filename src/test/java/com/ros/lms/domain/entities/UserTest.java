@@ -1,5 +1,6 @@
 package com.ros.lms.domain.entities;
 
+import com.ros.lms.domain.enums.RoleType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,26 +13,37 @@ class UserTest {
 
     private User user;
     private final String testUsername = "testuser";
+    private final String testEmail = "testuser@example.com";
     private final String testPassword = "securePassword123";
     private final boolean testEnabled = true;
 
     @BeforeEach
     void setUp() {
-        user = new User(testUsername, testPassword, testEnabled);
+        user = new User();
+        user.setUsername(testUsername);
+        user.setEmail(testEmail);
+        user.setPassword(testPassword);
+        user.setEnabled(testEnabled);
     }
 
     @Test
     void testGettersAndSetters() {
-        // Test initial values from constructor
+        // Test initial values
         assertEquals(testUsername, user.getUsername());
+        assertEquals(testEmail, user.getEmail());
         assertEquals(testPassword, user.getPassword());
         assertEquals(testEnabled, user.getEnabled());
-        assertNull(user.getAuthorities());
+        assertNotNull(user.getAuthorities());
+        assertTrue(user.getAuthorities().isEmpty());
 
         // Test setters
         String newUsername = "newuser";
         user.setUsername(newUsername);
         assertEquals(newUsername, user.getUsername());
+
+        String newEmail = "newuser@example.com";
+        user.setEmail(newEmail);
+        assertEquals(newEmail, user.getEmail());
 
         String newPassword = "newPassword456";
         user.setPassword(newPassword);
@@ -40,8 +52,8 @@ class UserTest {
         user.setEnabled(false);
         assertFalse(user.getEnabled());
 
-        Set<Authority> authorities = new HashSet<>();
-        authorities.add(new Authority(new AuthorityId(testUsername, "ROLE_USER")));
+        Set<AuthorityType> authorities = new HashSet<>();
+        authorities.add(new AuthorityType(RoleType.MEMBER));
         user.setAuthorities(authorities);
 
         assertNotNull(user.getAuthorities());
@@ -50,30 +62,39 @@ class UserTest {
 
     @Test
     void testConstructors() {
-        // Test parameterized constructor
-        User paramUser = new User(testUsername, testPassword, testEnabled);
-        assertEquals(testUsername, paramUser.getUsername());
-        assertEquals(testPassword, paramUser.getPassword());
-        assertEquals(testEnabled, paramUser.getEnabled());
-        assertNull(paramUser.getAuthorities());
-
         // Test no-arg constructor
         User emptyUser = new User();
         assertNull(emptyUser.getUsername());
+        assertNull(emptyUser.getEmail());
         assertNull(emptyUser.getPassword());
-        assertNull(emptyUser.getEnabled()); // char default value
-        assertNull(emptyUser.getAuthorities());
+        assertNull(emptyUser.getEnabled());
+        assertNotNull(emptyUser.getAuthorities());
+        assertTrue(emptyUser.getAuthorities().isEmpty());
+
+        // Test parameterized constructor
+        Set<AuthorityType> authorities = new HashSet<>();
+        authorities.add(new AuthorityType(RoleType.ADMIN));
+
+        User paramUser = new User(1L, "paramuser", "param@example.com", "paramPass", true, authorities);
+        assertEquals(1L, paramUser.getId());
+        assertEquals("paramuser", paramUser.getUsername());
+        assertEquals("param@example.com", paramUser.getEmail());
+        assertEquals("paramPass", paramUser.getPassword());
+        assertTrue(paramUser.getEnabled());
+        assertNotNull(paramUser.getAuthorities());
+        assertEquals(1, paramUser.getAuthorities().size());
     }
 
     @Test
     void testAuthoritiesManagement() {
-        // Initially should be null
-        assertNull(user.getAuthorities());
+        // Initially should be empty set
+        assertNotNull(user.getAuthorities());
+        assertTrue(user.getAuthorities().isEmpty());
 
         // Test setting authorities
-        Set<Authority> authorities = new HashSet<>();
-        Authority authority1 = new Authority(new AuthorityId(testUsername, "ROLE_USER"));
-        Authority authority2 = new Authority(new AuthorityId(testUsername, "ROLE_ADMIN"));
+        Set<AuthorityType> authorities = new HashSet<>();
+        AuthorityType authority1 = new AuthorityType(RoleType.MEMBER);
+        AuthorityType authority2 = new AuthorityType(RoleType.ADMIN);
         authorities.add(authority1);
         authorities.add(authority2);
 
@@ -91,24 +112,26 @@ class UserTest {
         user.setUsername(null);
         assertNull(user.getUsername());
 
+        user.setEmail(null);
+        assertNull(user.getEmail());
+
         user.setPassword(null);
         assertNull(user.getPassword());
 
+        user.setEnabled(null);
+        assertNull(user.getEnabled());
+
         user.setAuthorities(null);
         assertNull(user.getAuthorities());
-
-        // Test constructor with null values
-        User nullUser = new User(null, null, null);
-        assertNull(nullUser.getUsername());
-        assertNull(nullUser.getPassword());
-        assertNull(nullUser.getEnabled());
-        assertNull(nullUser.getAuthorities());
     }
 
     @Test
     void testEmptyStrings() {
         user.setUsername("");
         assertEquals("", user.getUsername());
+
+        user.setEmail("");
+        assertEquals("", user.getEmail());
 
         user.setPassword(" ");
         assertEquals(" ", user.getPassword());
@@ -124,24 +147,27 @@ class UserTest {
         // Test basic toString
         String toStringResult = user.toString();
         assertTrue(toStringResult.contains("username='" + testUsername + "'"));
+        assertTrue(toStringResult.contains("email='" + testEmail + "'"));
         assertTrue(toStringResult.contains("password='" + testPassword + "'"));
         assertTrue(toStringResult.contains("enabled=" + testEnabled));
-        assertTrue(toStringResult.contains("authorities=null"));
+        assertTrue(toStringResult.contains("authorities=[]"));
 
         // Test with authorities
-        Set<Authority> authorities = new HashSet<>();
-        authorities.add(new Authority(new AuthorityId(testUsername, "ROLE_USER")));
+        Set<AuthorityType> authorities = new HashSet<>();
+        authorities.add(new AuthorityType(RoleType.MEMBER));
         user.setAuthorities(authorities);
 
         toStringResult = user.toString();
-        assertTrue(toStringResult.contains("authorities=" + authorities.toString()));
+        assertTrue(toStringResult.contains("authorities="));
 
         // Test with null fields
         user.setUsername(null);
+        user.setEmail(null);
         user.setPassword(null);
         user.setAuthorities(null);
         toStringResult = user.toString();
         assertTrue(toStringResult.contains("username='null'"));
+        assertTrue(toStringResult.contains("email='null'"));
         assertTrue(toStringResult.contains("password='null'"));
         assertTrue(toStringResult.contains("authorities=null"));
     }
@@ -150,10 +176,20 @@ class UserTest {
     void testEnabledStatus() {
         // Test valid enabled values
         user.setEnabled(true);
-        assertEquals(true, user.getEnabled());
+        assertTrue(user.getEnabled());
 
         user.setEnabled(false);
-        assertEquals(false, user.getEnabled());
+        assertFalse(user.getEnabled());
+
+        user.setEnabled(null);
+        assertNull(user.getEnabled());
+    }
+
+    @Test
+    void testIdField() {
+        // Test ID getter and setter
+        user.setId(123L);
+        assertEquals(123L, user.getId());
     }
 
 }

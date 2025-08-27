@@ -7,7 +7,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.ros.lms.application.AppUserService;
-import com.ros.lms.domain.enums.Roles;
+import com.ros.lms.domain.enums.RoleType;
 import com.ros.lms.domain.enums.Routes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -91,13 +91,13 @@ public class LmsSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, Routes.HEALTH_CHECK.val()).permitAll()
-                        .requestMatchers(HttpMethod.GET, Routes.IMAGES.val()).hasRole(Roles.MEMBER.val())
-                        .requestMatchers(HttpMethod.GET, Routes.BOOKS.val()).hasRole(Roles.MEMBER.val())
-                        .requestMatchers(HttpMethod.POST, Routes.BOOKS.val()).hasRole(Roles.STAFF.val())
-                        .requestMatchers(HttpMethod.DELETE, Routes.BOOKS.val()).hasRole(Roles.ADMIN.val())
-                        .requestMatchers(HttpMethod.GET, Routes.GENRES.val()).hasRole(Roles.STAFF.val())
-                        .requestMatchers(HttpMethod.POST, Routes.MEMBERS.val()).hasRole(Roles.MEMBER.val())
-                        .requestMatchers(HttpMethod.POST, Routes.LOANS.val()).hasRole(Roles.STAFF.val())
+                        .requestMatchers(HttpMethod.GET, Routes.IMAGES.val()).hasRole(RoleType.MEMBER.val())
+                        .requestMatchers(HttpMethod.GET, Routes.BOOKS.val()).hasRole(RoleType.MEMBER.val())
+                        .requestMatchers(HttpMethod.POST, Routes.BOOKS.val()).hasRole(RoleType.STAFF.val())
+                        .requestMatchers(HttpMethod.DELETE, Routes.BOOKS.val()).hasRole(RoleType.ADMIN.val())
+                        .requestMatchers(HttpMethod.GET, Routes.GENRES.val()).hasRole(RoleType.STAFF.val())
+                        .requestMatchers(HttpMethod.POST, Routes.MEMBERS.val()).hasRole(RoleType.MEMBER.val())
+                        .requestMatchers(HttpMethod.POST, Routes.LOANS.val()).hasRole(RoleType.STAFF.val())
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))

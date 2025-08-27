@@ -18,7 +18,6 @@ public class MemberDAOJpaImpl implements MemberDAO {
         this.entityManager = entityManager;
     }
 
-
     @Override
     public void create(Member member) {
         entityManager.persist(member);
@@ -26,7 +25,9 @@ public class MemberDAOJpaImpl implements MemberDAO {
 
     @Override
     public Optional<Member> findByGovernmentID(String governmentID) {
+
         String query = "SELECT m FROM Member m WHERE m.governmentID = :governmentID";
+
         try{
             Member member = entityManager.createQuery(query, Member.class)
                     .setParameter("governmentID", governmentID)
@@ -40,7 +41,9 @@ public class MemberDAOJpaImpl implements MemberDAO {
 
     @Override
     public Optional<Member> findByUsername(String username) {
-        String query = "SELECT m FROM Member m WHERE m.username = :username";
+
+        String query = "SELECT m FROM Member m WHERE m.user.username = :username";
+
         try{
             Member member = entityManager.createQuery(query, Member.class)
                     .setParameter("username", username)
@@ -54,7 +57,9 @@ public class MemberDAOJpaImpl implements MemberDAO {
 
     @Override
     public Optional<Member> findByEmail(String email) {
-        String query = "SELECT m FROM Member m WHERE m.email = :email";
+
+        String query = "SELECT m FROM Member m WHERE m.user.email = :email";
+
         try{
             Member member = entityManager.createQuery(query, Member.class)
                     .setParameter("email", email)

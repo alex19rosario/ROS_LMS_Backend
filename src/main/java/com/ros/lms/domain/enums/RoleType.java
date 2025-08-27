@@ -1,6 +1,6 @@
 package com.ros.lms.domain.enums;
 
-public enum Roles {
+public enum RoleType {
     ADMIN("ROLE_ADMIN", "ADMIN"),
     STAFF("ROLE_STAFF", "STAFF"),
     MEMBER("ROLE_MEMBER", "MEMBER");
@@ -8,7 +8,7 @@ public enum Roles {
     private final String str;
     private final String val;
 
-    Roles(String str, String val){
+    RoleType(String str, String val){
         this.str = str;
         this.val = val;
     }

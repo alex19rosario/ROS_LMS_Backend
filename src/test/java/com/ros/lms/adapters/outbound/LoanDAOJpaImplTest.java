@@ -34,7 +34,17 @@ class LoanDAOJpaImplTest {
     @Test
     @Transactional
     void create_shouldPersistLoan() {
-        // Arrange: create and persist dependent entities
+
+        // Create User for Member
+        User memberUser = new User();
+        memberUser.setUsername("johndoe");
+        memberUser.setEmail("john.doe@example.com");
+        memberUser.setPassword("secret"); // in real case -> encoded
+        memberUser.setEnabled(true);
+        entityManager.persist(memberUser);
+
+
+        // Create Member
         Member member = new Member();
         member.setGovernmentID("GOV123");
         member.setFirstName("John");
@@ -43,8 +53,7 @@ class LoanDAOJpaImplTest {
         member.setPhone("1234567890");
         member.setDateOfBirth(LocalDate.of(1990, 1, 1));
         member.setSex(Sex.MALE);
-        member.setEmail("john.doe@example.com");
-        member.setUsername("johndoe");
+        member.setUser(memberUser);
         entityManager.persist(member);
 
         Book book = new Book();
@@ -57,6 +66,15 @@ class LoanDAOJpaImplTest {
         LoanStatus status = new LoanStatus(LoanStatuses.LOANED);
         entityManager.persist(status);
 
+        // Create User for Staff
+        User staffUser = new User();
+        staffUser.setUsername("janesmith");
+        staffUser.setEmail("jane.smith@example.com");
+        staffUser.setPassword("secret");
+        staffUser.setEnabled(true);
+        entityManager.persist(staffUser);
+
+        // Create Staff
         Staff staff = new Staff();
         staff.setGovernmentID("STAFF123");
         staff.setFirstName("Jane");
@@ -64,8 +82,7 @@ class LoanDAOJpaImplTest {
         staff.setLastName("Smith");
         staff.setPhone("9876543210");
         staff.setSex(Sex.FEMALE);
-        staff.setEmail("jane.smith@example.com");
-        staff.setUsername("janesmith");
+        staff.setUser(staffUser);
         entityManager.persist(staff);
 
         // Flush to ensure entities get IDs
@@ -83,7 +100,7 @@ class LoanDAOJpaImplTest {
         assertThat(persistedLoan.getBook().getTitle()).isEqualTo("Effective Java");
         assertThat(persistedLoan.getMember().getFirstName()).isEqualTo("John");
         assertThat(persistedLoan.getStatus().getCode()).isEqualTo(LoanStatuses.LOANED);
-        assertThat(persistedLoan.getStaff().getUsername()).isEqualTo("janesmith");
+        assertThat(persistedLoan.getStaff().getUser().getUsername()).isEqualTo("janesmith");
     }
 
 }

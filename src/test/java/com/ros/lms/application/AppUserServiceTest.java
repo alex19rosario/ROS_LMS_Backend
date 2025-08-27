@@ -1,8 +1,8 @@
 package com.ros.lms.application;
 
-import com.ros.lms.domain.entities.Authority;
-import com.ros.lms.domain.entities.AuthorityId;
+import com.ros.lms.domain.entities.AuthorityType;
 import com.ros.lms.domain.entities.User;
+import com.ros.lms.domain.enums.RoleType;
 import com.ros.lms.ports.outbound.repository_contracts.UserDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,18 +31,14 @@ public class AppUserServiceTest {
 
     @BeforeEach
     void setup() {
-        // Initialize a User instance for testing
-        Authority authority = new Authority();
-        AuthorityId authorityId = new AuthorityId();
-        authorityId.setUsername("testUser");
-        authorityId.setAuthority("ROLE_MEMBER");
-        authority.setId(authorityId);
+        // Initialize a User instance for testing with the new AuthorityType structure
+        AuthorityType authorityType = new AuthorityType(RoleType.MEMBER);
 
         user = new User();
         user.setUsername("testUser");
         user.setPassword("encodedPassword");
         user.setEnabled(true);
-        user.setAuthorities(Set.of(authority));
+        user.setAuthorities(Set.of(authorityType));
     }
 
     @Test
@@ -77,7 +73,7 @@ public class AppUserServiceTest {
                 UsernameNotFoundException.class,
                 () -> appUserService.loadUserByUsername("nonExistentUser")
         );
-        assertEquals("User not found", exception.getMessage());
+        assertEquals("User with username: nonExistentUser was not found", exception.getMessage());
         verify(userDAO, times(1)).findByUsername("nonExistentUser");
     }
 
