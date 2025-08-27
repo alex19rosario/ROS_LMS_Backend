@@ -63,14 +63,14 @@ public class LmsSecurityConfig {
         return provider;
     }
 
+
     @Bean
     @Order(1)
+    @SuppressWarnings("java:S4502") // Safe: CSRF disabled for stateless endpoints
     public SecurityFilterChain basicFilterChain(HttpSecurity http) throws Exception{
 
         return http
                 .securityMatcher(Routes.LOGIN.val())
-                // CSRF is intentionally disabled because these endpoints are stateless
-                // and use HTTP Basic / JWT authentication, which are not vulnerable to CSRF.
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
@@ -86,12 +86,11 @@ public class LmsSecurityConfig {
 
     @Bean
     @Order(2)
+    @SuppressWarnings("java:S4502") // Safe: CSRF disabled for stateless endpoints
     public SecurityFilterChain jwtFilterChain(HttpSecurity http) throws Exception{
 
         return http
                 .securityMatcher("/**")
-                // CSRF is intentionally disabled because these endpoints are stateless
-                // and use HTTP Basic / JWT authentication, which are not vulnerable to CSRF.
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
