@@ -4,7 +4,7 @@ import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.*;
 
 @MappedSuperclass
-public abstract class PersonBase {
+public abstract class PersonBase extends Auditable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false, unique = true)
