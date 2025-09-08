@@ -3,6 +3,7 @@ package com.ros.lms.domain.entities;
 import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
+import software.amazon.awssdk.annotations.NotNull;
 
 import java.time.LocalDate;
 
@@ -14,6 +15,7 @@ public class Member extends PersonBase {
     @Column(name = "MEMBER_ID")
     private long id;
 
+    @NotNull
     @Column(name = "DATE_OF_BIRTH")
     @Past(message = "Date of birth must be in the past.")
     private LocalDate dateOfBirth;

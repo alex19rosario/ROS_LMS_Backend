@@ -1,22 +1,30 @@
 package com.ros.lms.domain.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
 @Entity
 @Table(name = "AUTHORS")
 public class Author {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AUTHOR_ID")
     private long id;
+
+    @NotBlank(message = "First name cannot be blank")
     @Column(name = "FIRST_NAME")
     private String firstName;
+
     @Column(name = "MIDDLE_NAME")
     private  String middleName;
+
+    @NotBlank(message = "Last name cannot be blank")
     @Column(name = "LAST_NAME")
     private String lastName;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "BOOKS_AUTHORS",
             joinColumns = @JoinColumn(name = "AUTHOR_ID"),
