@@ -4,7 +4,10 @@ import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 @MappedSuperclass
 public abstract class PersonBase extends Auditable {
 
@@ -21,7 +24,7 @@ public abstract class PersonBase extends Auditable {
     private String firstName;
 
     @Column(name = "MIDDLE_NAME")
-    private String middleName;
+    private @Nullable String middleName;
 
     @NotBlank(message = "Last name cannot be blank")
     @Column(name = "LAST_NAME")
@@ -59,7 +62,7 @@ public abstract class PersonBase extends Auditable {
         this.firstName = firstName;
     }
 
-    public String getMiddleName() {
+    public @Nullable String getMiddleName() {
         return middleName;
     }
 

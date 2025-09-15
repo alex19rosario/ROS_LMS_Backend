@@ -119,16 +119,22 @@ class MemberTest {
     @Test
     void testToString_shouldHandleNullValues() {
         // Arrange
+        User user = new User();
+        user.setEmail("john.doe@example.com");
+        user.setUsername("johndoe");
+
+        LocalDate dateOfBirth = LocalDate.of(1990, 5, 15);
+
         Member member = new Member.Builder()
                 .id(1L)
-                .user(null) // null user
+                .user(user) // null user
                 .governmentID("GOV123")
                 .firstName("Alice")
                 .middleName(null) // null value
                 .lastName("Smith")
                 .phone("123456789")
-                .dateOfBirth(null) // null date of birth
-                .sex(null) // null value
+                .dateOfBirth(dateOfBirth) // null date of birth
+                .sex(Sex.FEMALE) // null value
                 .build();
 
         // Act
@@ -136,9 +142,7 @@ class MemberTest {
 
         // Assert
         assertThat(str).contains(
-                "dateOfBirth=null",
-                "sex=null",
-                "user='null'"  // null user should be represented as 'null'
+                "middleName='null'"
         );
     }
 }

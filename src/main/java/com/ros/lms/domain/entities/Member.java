@@ -3,13 +3,16 @@ package com.ros.lms.domain.entities;
 import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
+import org.jspecify.annotations.NullMarked;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.time.LocalDate;
 
+@NullMarked
 @Entity
 @Table(name = "MEMBERS")
 public class Member extends PersonBase {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MEMBER_ID")
@@ -115,7 +118,7 @@ public class Member extends PersonBase {
                 ", lastName='" + super.getLastName() + '\'' +
                 ", phone='" + super.getPhone() + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", sex=" + (super.getSex() != null ? super.getSex().getCode() : "null") +
+                ", sex=" + super.getSex().getCode() +
                 '}';
     }
 }

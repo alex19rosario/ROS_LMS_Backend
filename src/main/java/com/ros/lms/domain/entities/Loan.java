@@ -1,10 +1,13 @@
 package com.ros.lms.domain.entities;
 
 import jakarta.persistence.*;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
+@NullMarked
 @Entity
 @Table(name="LOANS")
 public class Loan extends Auditable {
@@ -30,7 +33,7 @@ public class Loan extends Auditable {
     private LocalDateTime dueDate;
 
     @Column(name = "RETURN_DATE")
-    private LocalDateTime returnDate;
+    private @Nullable LocalDateTime returnDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "STATUS_ID")
@@ -93,7 +96,7 @@ public class Loan extends Auditable {
         this.dueDate = dueDate;
     }
 
-    public LocalDateTime getReturnDate() {
+    public @Nullable LocalDateTime getReturnDate() {
         return returnDate;
     }
 

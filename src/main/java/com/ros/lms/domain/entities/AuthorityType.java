@@ -3,7 +3,9 @@ package com.ros.lms.domain.entities;
 import com.ros.lms.domain.converters.RoleTypeConverter;
 import com.ros.lms.domain.enums.RoleType;
 import jakarta.persistence.*;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @Entity
 @Table(name = "AUTHORITY_TYPE")
 public class AuthorityType {

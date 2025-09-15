@@ -3,12 +3,15 @@ package com.ros.lms.domain.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+@NullMarked
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Auditable {
@@ -19,7 +22,7 @@ public abstract class Auditable {
 
     @LastModifiedDate
     @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedAt;
+    private @Nullable LocalDateTime updatedAt;
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -29,7 +32,7 @@ public abstract class Auditable {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public @Nullable LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 

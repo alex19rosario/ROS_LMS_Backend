@@ -2,7 +2,9 @@ package com.ros.lms.domain.entities;
 
 import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.*;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @Entity
 @Table(name = "STAFFS")
 public class Staff extends PersonBase{
@@ -98,7 +100,7 @@ public class Staff extends PersonBase{
                 ", middleName='" + super.getMiddleName() + '\'' +
                 ", lastName='" + super.getLastName() + '\'' +
                 ", phone='" + super.getPhone() + '\'' +
-                ", sex=" + (super.getSex() != null ? super.getSex().getCode() : "null") +
+                ", sex=" + super.getSex().getCode() +
                 '}';
     }
 }

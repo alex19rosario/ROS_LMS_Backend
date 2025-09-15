@@ -5,10 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 @Entity
 @Table(name="BOOKS")
 public class Book extends Auditable {
@@ -32,19 +35,19 @@ public class Book extends Auditable {
     private boolean isAvailable;
 
     @Column(name = "COVER_IMAGE_PATH")
-    private String coverImagePath;
+    private @Nullable String coverImagePath;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "BOOKS_AUTHORS",
             joinColumns = @JoinColumn(name = "BOOK_ID"),
             inverseJoinColumns = @JoinColumn(name = "AUTHOR_ID"))
-    private List<Author> authors;
+    private @Nullable List<Author> authors;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "BOOKS_GENRES",
             joinColumns = @JoinColumn(name = "BOOK_ID"),
             inverseJoinColumns = @JoinColumn(name = "GENRE_ID"))
-    private List<Genre> genres;
+    private @Nullable List<Genre> genres;
 
     public Book(){}
 
@@ -95,7 +98,7 @@ public class Book extends Auditable {
         isAvailable = available;
     }
 
-    public String getCoverImagePath() {
+    public @Nullable String getCoverImagePath() {
         return coverImagePath;
     }
 
@@ -103,7 +106,7 @@ public class Book extends Auditable {
         this.coverImagePath = coverImagePath;
     }
 
-    public List<Author> getAuthors() {
+    public @Nullable List<Author> getAuthors() {
         return authors;
     }
 
@@ -111,7 +114,7 @@ public class Book extends Auditable {
         this.authors = authors;
     }
 
-    public List<Genre> getGenres() {
+    public @Nullable List<Genre> getGenres() {
         return genres;
     }
 
