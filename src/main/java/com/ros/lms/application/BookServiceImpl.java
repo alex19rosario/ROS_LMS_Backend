@@ -126,7 +126,9 @@ public class BookServiceImpl implements BookService {
             }
         }
 
-        book.setCoverImagePath(filename);
+        if (filename != null) {
+            book.setCoverImagePath(filename);
+        }
         // Save the book along with any new authors
         bookDAO.create(book);
     }

@@ -2,9 +2,12 @@ package com.ros.lms.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+@NullMarked
 @Entity
 @Table(name = "AUTHORS")
 public class Author {
@@ -19,7 +22,7 @@ public class Author {
     private String firstName;
 
     @Column(name = "MIDDLE_NAME")
-    private  String middleName;
+    private @Nullable String middleName;
 
     @NotBlank(message = "Last name cannot be blank")
     @Column(name = "LAST_NAME")
@@ -33,14 +36,14 @@ public class Author {
 
     public Author(){}
 
-    public Author(String firstName, String middleName, String lastName, List<Book> books) {
+    public Author(String firstName, @Nullable String middleName, String lastName, List<Book> books) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.books = books;
     }
 
-    public Author(String firstName, String middleName, String lastName) {
+    public Author(String firstName, @Nullable String middleName, String lastName) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -63,7 +66,7 @@ public class Author {
         this.firstName = firstName;
     }
 
-    public String getMiddleName() {
+    public @Nullable String getMiddleName() {
         return middleName;
     }
 

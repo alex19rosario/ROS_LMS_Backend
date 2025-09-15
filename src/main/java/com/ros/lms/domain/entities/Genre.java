@@ -3,12 +3,15 @@ package com.ros.lms.domain.entities;
 import com.ros.lms.domain.enums.GenreType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
+@NullMarked
 @Entity
 @Table(name = "GENRE_TYPE")
 public class Genre {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "GENRE_ID")

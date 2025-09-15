@@ -2,10 +2,13 @@ package com.ros.lms.domain.entities;
 
 import com.ros.lms.domain.enums.LoanStatuses;
 import jakarta.persistence.*;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.util.List;
 
+@NullMarked
 @Entity
 @Table(name = "LOAN_STATUSES")
 public class LoanStatus {
@@ -19,7 +22,7 @@ public class LoanStatus {
     private LoanStatuses code;
 
     @OneToMany(mappedBy = "status")
-    private List<Loan> loans;
+    private @Nullable List<Loan> loans;
 
     public LoanStatus(){}
 
@@ -43,7 +46,7 @@ public class LoanStatus {
         this.code = code;
     }
 
-    public List<Loan> getLoans() {
+    public @Nullable List<Loan> getLoans() {
         return loans;
     }
 

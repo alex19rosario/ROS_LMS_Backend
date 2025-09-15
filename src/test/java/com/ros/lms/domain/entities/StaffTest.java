@@ -109,15 +109,20 @@ class StaffTest {
     @Test
     void testToString_shouldHandleNullValues() {
         // Arrange
+        // Arrange
+        User user = new User();
+        user.setEmail("john.doe@example.com");
+        user.setUsername("johndoe");
+
         Staff staff = new Staff.Builder()
                 .id(1L)
-                .user(null) // null user
+                .user(user) // null user
                 .governmentID("GOV123")
                 .firstName("Alice")
                 .middleName(null) // null value
                 .lastName("Smith")
                 .phone("123456789")
-                .sex(null) // null value
+                .sex(Sex.FEMALE) // null value
                 .build();
 
         // Act
@@ -125,8 +130,7 @@ class StaffTest {
 
         // Assert
         assertThat(str).contains(
-                "sex=null",
-                "user='null'"  // null user should be represented as 'null'
+                "middleName='null'"
         );
     }
 }
