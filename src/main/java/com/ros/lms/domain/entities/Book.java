@@ -2,6 +2,8 @@ package com.ros.lms.domain.entities;
 
 import com.ros.lms.domain.converters.CharToBooleanConverter;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -10,15 +12,18 @@ import java.util.List;
 @Entity
 @Table(name="BOOKS")
 public class Book extends Auditable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BOOK_ID")
     private long id;
 
+    @NotNull
     @Size(min = 10, max = 13, message = "ISBN must be between 10 and 13 characters long")
     @Column(name = "ISBN")
     private String isbn;
 
+    @NotBlank(message = "Title is required")
     @Column(name = "TITLE")
     private String title;
 
@@ -42,6 +47,7 @@ public class Book extends Auditable {
     private List<Genre> genres;
 
     public Book(){}
+
     public Book(String isbn, String title, boolean isAvailable, String coverImagePath, List<Author> authors, List<Genre> genres) {
         this.isbn = isbn;
         this.title = title;
@@ -56,7 +62,6 @@ public class Book extends Auditable {
         this.title = title;
         this.isAvailable = isAvailable;
     }
-
 
     public long getId() {
         return id;

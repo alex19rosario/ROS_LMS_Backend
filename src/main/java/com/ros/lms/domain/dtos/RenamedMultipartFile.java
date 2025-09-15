@@ -1,12 +1,19 @@
 package com.ros.lms.domain.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public record RenamedMultipartFile(MultipartFile file, String newFilename) implements MultipartFile {
+public record RenamedMultipartFile(
+        @NotNull
+        MultipartFile file,
+        @NotBlank(message = "Filename cannot be blank")
+        String newFilename
+) implements MultipartFile {
     @Override
     public String getName() {
         return file.getName();

@@ -1,6 +1,7 @@
 package com.ros.lms.domain.entities;
 
 import jakarta.persistence.*;
+import software.amazon.awssdk.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +13,12 @@ public class Loan extends Auditable {
     @Column(name = "LOAN_ID")
     private long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MEMBER_ID", nullable = false)
     private Member member;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "BOOK_ID", nullable = false)
     private Book book;
@@ -33,6 +36,7 @@ public class Loan extends Auditable {
     @JoinColumn(name = "STATUS_ID")
     private LoanStatus status;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "STAFF_ID", nullable = false)
     private Staff staff;

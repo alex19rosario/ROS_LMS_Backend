@@ -1,6 +1,7 @@
 package com.ros.lms.domain.dtos;
 
 import com.ros.lms.domain.enums.GenreType;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * DTO for searching books using pagination and optional filters.
@@ -14,7 +15,9 @@ import com.ros.lms.domain.enums.GenreType;
  * @param isAvailable     (Optional) Filter by availability
  */
 public record SearchBookDTO(
+        @NotNull
         int page,
+        @NotNull
         int size,
         String title,
         GenreType genre,

@@ -2,6 +2,7 @@ package com.ros.lms.domain.entities;
 
 import com.ros.lms.domain.enums.LoanStatuses;
 import jakarta.persistence.*;
+import software.amazon.awssdk.annotations.NotNull;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class LoanStatus {
     @Column(name = "STATUS_ID")
     private long id;
 
+    @NotNull
     @Column(name = "CODE")
     private LoanStatuses code;
 

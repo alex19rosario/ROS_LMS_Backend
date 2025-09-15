@@ -2,6 +2,10 @@ package com.ros.lms.domain.entities;
 
 import com.ros.lms.domain.converters.CharToBooleanConverter;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,15 +19,21 @@ public class User {
     @Column(name = "USER_ID")
     private long id;
 
+    @NotBlank(message = "Username cannot be blank")
     @Column(name = "USERNAME")
     private String username;
 
+    @NotNull
+    @Email
     @Column(name = "EMAIL")
     private String email;
 
+    @NotNull
+    @Size(min = 5, message = "Password must be at least 5 characters long")
     @Column(name = "PASSWORD")
     private String password;
 
+    @NotNull
     @Column(name = "ENABLED", nullable = false)
     @Convert(converter = CharToBooleanConverter.class)
     private Boolean enabled;
