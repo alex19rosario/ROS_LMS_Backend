@@ -2,7 +2,6 @@ package com.ros.lms.domain.entities;
 
 import com.ros.lms.domain.enums.GenreType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
