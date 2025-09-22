@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthorTest {
@@ -26,7 +27,7 @@ class AuthorTest {
         assertEquals(testFirstName, author.getFirstName());
         assertEquals(testMiddleName, author.getMiddleName());
         assertEquals(testLastName, author.getLastName());
-        assertNull(author.getBooks());
+        assertThat(author.getBooks()).isEmpty();
 
         // Test setters
         long newId = 1L;
@@ -61,7 +62,7 @@ class AuthorTest {
         assertEquals(testFirstName, minimalAuthor.getFirstName());
         assertEquals(testMiddleName, minimalAuthor.getMiddleName());
         assertEquals(testLastName, minimalAuthor.getLastName());
-        assertNull(minimalAuthor.getBooks());
+        assertThat(minimalAuthor.getBooks()).isEmpty();
 
         // Test full constructor
         List<Book> books = List.of(
@@ -80,7 +81,7 @@ class AuthorTest {
     @Test
     void testBooksManagement() {
         // Initially should be null
-        assertNull(author.getBooks());
+        assertThat(author.getBooks()).isEmpty();
 
         // Test setting books list
         List<Book> books = new ArrayList<>();

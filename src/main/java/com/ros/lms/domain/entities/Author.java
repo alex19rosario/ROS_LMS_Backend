@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NullMarked
@@ -32,7 +33,7 @@ public class Author {
     @JoinTable(name = "BOOKS_AUTHORS",
             joinColumns = @JoinColumn(name = "AUTHOR_ID"),
             inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
-    private List<Book> books;
+    private List<Book> books = new ArrayList<>();
 
     public Author(){}
 

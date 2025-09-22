@@ -4,6 +4,7 @@ import com.ros.lms.domain.converters.RoleTypeConverter;
 import com.ros.lms.domain.enums.RoleType;
 import jakarta.persistence.*;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 @Entity
@@ -13,7 +14,7 @@ public class AuthorityType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AUTHORITY_TYPE_ID")
-    private Integer id;
+    private @Nullable Integer id;
 
     @Column(name = "LABEL", length = 128, nullable = false, unique = true)
     @Convert(converter = RoleTypeConverter.class)

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GenreTest {
@@ -23,7 +24,7 @@ class GenreTest {
     void testGettersAndSetters() {
         // Test initial values from constructor
         assertEquals(testDescription, genre.getLabel());
-        assertNull(genre.getBooks());
+        assertThat(genre.getBooks()).isEmpty();
 
         // Test setters
         long newId = 1L;
@@ -47,7 +48,7 @@ class GenreTest {
         // Test minimal constructor
         Genre minimalGenre = new Genre(testDescription);
         assertEquals(testDescription, minimalGenre.getLabel());
-        assertNull(minimalGenre.getBooks());
+        assertThat(minimalGenre.getBooks()).isEmpty();
 
         // Test full constructor
         List<Book> books = List.of(
@@ -64,7 +65,7 @@ class GenreTest {
     @Test
     void testBooksManagement() {
         // Initially should be null
-        assertNull(genre.getBooks());
+        assertThat(genre.getBooks()).isEmpty();
 
         // Test setting books list
         List<Book> books = new ArrayList<>();
@@ -95,7 +96,7 @@ class GenreTest {
         // Test with no books
         String toStringResult = genre.toString();
         assertTrue(toStringResult.contains("label='" + testDescription.getVal() + "'"));
-        assertTrue(toStringResult.contains("books=null"));
+        assertTrue(toStringResult.contains("books=[]"));
 
         // Test with books
         List<Book> books = List.of(new Book("9783161484100", "Dune", true));

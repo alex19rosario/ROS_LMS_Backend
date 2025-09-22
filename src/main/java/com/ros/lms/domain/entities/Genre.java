@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.jspecify.annotations.NullMarked;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NullMarked
@@ -25,7 +26,7 @@ public class Genre {
     @JoinTable(name = "BOOKS_GENRES",
             joinColumns = @JoinColumn(name = "GENRE_ID"),
             inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
-    private List<Book> books;
+    private List<Book> books = new ArrayList<>();
 
     public Genre(){}
 
