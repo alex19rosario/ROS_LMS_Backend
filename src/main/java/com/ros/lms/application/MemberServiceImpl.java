@@ -14,6 +14,7 @@ import com.ros.lms.ports.outbound.repository_contracts.AuthorityTypeDAO;
 import com.ros.lms.ports.outbound.repository_contracts.MemberDAO;
 import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
 import com.ros.lms.ports.outbound.repository_contracts.UserDAO;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -76,16 +77,20 @@ public class MemberServiceImpl implements MemberService {
         String firstName = nameParts[0];
         String middleName = nameParts.length > 1 ? nameParts[1] : null;
 
-        return new Member.Builder()
+        Member member = new Member.Builder()
                 .governmentID(dto.governmentID())
                 .user(user)
                 .firstName(firstName)
-                .middleName(middleName)
                 .lastName(dto.lastName())
                 .phone(dto.phone())
                 .dateOfBirth(dto.dateOfBirth())
                 .sex(dto.sex())
                 .build();
+
+        if(middleName != null)
+            member.setMiddleName(middleName);
+
+        return member;
     }
 
     private User userMapper(AddMemberDTO dto, AuthorityType authorityType){
