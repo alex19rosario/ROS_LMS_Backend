@@ -70,31 +70,32 @@ public class BookServiceImpl implements BookService {
         Book book = addBookMapper.apply(addBookDTO);
         Set<AuthorDTO> authors = parseAuthors(addBookDTO.authors());
         // Iterate over authors to check if they exist
-        for (AuthorDTO authorDTO : authors) {
-            // Split the firstName into first and middle names, if available
-            String[] nameParts = authorDTO.firstName().split(" ", 2);
-            String firstName = nameParts[0];
-            String middleName = nameParts.length > 1 ? nameParts[1] : null;
-
-            Optional<Author> existingAuthor = authorDAO.findByFullName(
-                    firstName,
-                    middleName,
-                    authorDTO.lastName()
-            );
-
-            if (existingAuthor.isPresent()) {
-                // Associate existing author with the book
-                book.addAuthor(existingAuthor.get());
-            } else {
-                // Create a new author and associate it with the book
-                Author newAuthor = new Author(
-                        firstName,
-                        middleName,
-                        authorDTO.lastName()
-                );
-                book.addAuthor(newAuthor);
-            }
-        }
+//        for (AuthorDTO authorDTO : authors) {
+//            // Split the firstName into first and middle names, if available
+//            String[] nameParts = authorDTO.firstName().split(" ", 2);
+//            String firstName = nameParts[0];
+//            String middleName = nameParts.length > 1 ? nameParts[1] : null;
+//
+//            Optional<Author> existingAuthor = authorDAO.findByFullName(
+//                    firstName,
+//                    middleName,
+//                    authorDTO.lastName()
+//            );
+//
+//            if (existingAuthor.isPresent()) {
+//                // Associate existing author with the book
+//                book.addAuthor(existingAuthor.get());
+//            } else {
+//                // Create a new author and associate it with the book
+//                Author newAuthor = new Author(
+//                        firstName,
+//                        middleName,
+//                        authorDTO.lastName()
+//                );
+//                book.addAuthor(newAuthor);
+//            }
+//        }
+        associateAuthorsWithBook(authors, book);
 
         Set<String> genres = parseGenres(addBookDTO.genres());
         for (String desc : genres) {
@@ -216,4 +217,33 @@ public class BookServiceImpl implements BookService {
                 entity.getCoverImagePath()
                 );
     };
+
+    private void associateAuthorsWithBook(Set<AuthorDTO> authors, Book book) {
+        for (AuthorDTO authorDTO : authors) {
+            // Split the firstName into first and middle names, if available
+            String[] nameParts = authorDTO.firstName().split(" ", 2);
+            String firstName = nameParts[0];
+            String middleName = nameParts.length > 1 ? nameParts[1] : null;
+
+            Optional<Author> existingAuthor = authorDAO.findByFullName(
+                    firstName,
+                    middleName,
+                    authorDTO.lastName()
+            );
+
+            if (existingAuthor.isPresent()) {
+                // Associate existing author with the book
+                book.addAuthor(existingAuthor.get());
+            } else {
+                // Create a new author and associate it with the book
+                Author newAuthor = new Author(
+                        firstName,
+                        middleName,
+                        authorDTO.lastName()
+                );
+                book.addAuthor(newAuthor);
+            }
+        }
+    }
+
 }
