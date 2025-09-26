@@ -32,8 +32,14 @@ pipeline {
                 echo 'Testing and building Spring Boot application with Maven Wrapper...'
                 // Set execute permissions for mvnw
                 sh 'chmod +x mvnw'
-                // Run the build
-                sh './mvnw clean verify' // Fails build if thresholds (80%) not met
+
+                // Run tests with Java 21 for compatibility with Mockito + AWS SDK
+                withEnv([
+                    'JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64',
+                    'PATH=/usr/lib/jvm/java-21-openjdk-amd64/bin:$PATH'
+                ]) {
+                    sh './mvnw clean verify'
+                }
 
                 recordCoverage(
                     tools: [[parser: 'JACOCO']],
