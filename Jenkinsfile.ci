@@ -1,5 +1,9 @@
 pipeline {
     agent any
+
+    tools {
+        jdk 'jdk-25'
+    }
     
     stages {
         // Stage 1: Checkout code from GitHub
