@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+    tools {
+        jdk 'jdk-25'
+    }
+
     environment {
         AWS_DEFAULT_REGION = "us-east-1"
         APPLICATION_NAME = "Ros-lms-backend"

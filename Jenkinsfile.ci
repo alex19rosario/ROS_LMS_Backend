@@ -1,5 +1,9 @@
 pipeline {
     agent any
+
+    tools {
+        jdk 'jdk-25'
+    }
     
     stages {
         // Stage 1: Checkout code from GitHub
@@ -28,8 +32,14 @@ pipeline {
                 echo 'Testing and building Spring Boot application with Maven Wrapper...'
                 // Set execute permissions for mvnw
                 sh 'chmod +x mvnw'
-                // Run the build
-                sh './mvnw clean verify' // Fails build if thresholds (80%) not met
+
+                // Run tests with Java 21 for compatibility with Mockito + AWS SDK
+                withEnv([
+                    'JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64',
+                    'PATH+EXTRA=/usr/lib/jvm/java-21-openjdk-amd64/bin'
+                ]) {
+                    sh './mvnw clean verify'
+                }
 
                 recordCoverage(
                     tools: [[parser: 'JACOCO']],
