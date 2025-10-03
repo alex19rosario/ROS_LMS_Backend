@@ -57,8 +57,7 @@ public class LmsSecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(appUserService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(appUserService);
         provider.setPasswordEncoder(this.passwordEncoder());
         return provider;
     }
