@@ -30,13 +30,13 @@ pipeline {
         stage('Test and Build') {
             steps {
                 echo 'Testing and building Spring Boot application with Maven Wrapper...'
-                // Set execute permissions for mvnw
                 sh 'chmod +x mvnw'
 
-                // Run tests with Java 21 for compatibility with Mockito + AWS SDK
+                // Use the JDK 25 tool defined in "tools"
+                tool name: 'jdk-25', type: 'jdk'
                 withEnv([
-                    'JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64',
-                    'PATH+EXTRA=/usr/lib/jvm/java-21-openjdk-amd64/bin'
+                    "JAVA_HOME=${tool('jdk-25')}",
+                    "PATH+JAVA=${tool('jdk-25')}/bin"
                 ]) {
                     sh './mvnw clean verify'
                 }
@@ -54,6 +54,7 @@ pipeline {
                 )
             }
         }
+
         // Stage 3: SonarQube Scanning
         stage('SonarQube Scanning') {
             steps {
