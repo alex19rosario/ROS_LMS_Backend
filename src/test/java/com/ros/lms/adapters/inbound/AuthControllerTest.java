@@ -4,7 +4,6 @@ import com.ros.lms.adapters.inbound.controllers.AuthController;
 import com.ros.lms.application.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
