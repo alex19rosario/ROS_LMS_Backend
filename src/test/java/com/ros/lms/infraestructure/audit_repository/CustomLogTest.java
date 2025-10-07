@@ -18,12 +18,15 @@ class CustomLogTest {
                 .loanId(42L)
                 .build();
 
-        assertEquals("Issued a book", log.description());
-        assertEquals("staff1", log.staffUsername());
-        assertEquals("ISSUE", log.actionType());
-        assertEquals("member1", log.memberUsername());
-        assertEquals("1234567890123", log.bookIsbn());
-        assertEquals(42L, log.loanId());
+        assertNotNull(log.getLogId(), "logId should be auto-generated");
+        assertNotNull(log.getTimeStamp(), "timeStamp should be auto-generated");
+
+        assertEquals("Issued a book", log.getDescription());
+        assertEquals("staff1", log.getStaffUsername());
+        assertEquals("ISSUE", log.getActionType());
+        assertEquals("member1", log.getMemberUsername());
+        assertEquals("1234567890123", log.getBookIsbn());
+        assertEquals(42L, log.getLoanId());
     }
 
     @Test
@@ -32,22 +35,24 @@ class CustomLogTest {
                 .description("Partial log")
                 .build();
 
-        assertEquals("Partial log", log.description());
-        assertNull(log.staffUsername());
-        assertNull(log.actionType());
-        assertNull(log.memberUsername());
-        assertNull(log.bookIsbn());
-        assertNull(log.loanId());
+        assertNotNull(log.getLogId());
+        assertNotNull(log.getTimeStamp());
+
+        assertEquals("Partial log", log.getDescription());
+        assertNull(log.getStaffUsername());
+        assertNull(log.getActionType());
+        assertNull(log.getMemberUsername());
+        assertNull(log.getBookIsbn());
+        assertNull(log.getLoanId());
     }
 
     @Test
-    void record_isImmutable() {
-        CustomLog log = new CustomLog.Builder()
-                .description("Immutable log")
-                .build();
+    void builder_generatesUniqueIdsAndTimestamps() {
+        CustomLog log1 = new CustomLog.Builder().description("A").build();
+        CustomLog log2 = new CustomLog.Builder().description("B").build();
 
-        // There's no way to change fields after build
-        assertEquals("Immutable log", log.description());
+        assertNotEquals(log1.getLogId(), log2.getLogId(), "Each log should have a unique logId");
+        assertNotEquals(log1.getTimeStamp(), log2.getTimeStamp(), "Each log should have a unique timestamp");
     }
 
     @Test
@@ -56,12 +61,18 @@ class CustomLogTest {
                 .description("Same log")
                 .staffUsername("staffX")
                 .actionType("DELETE")
+                .memberUsername("member1")
+                .bookIsbn("1111")
+                .loanId(1L)
                 .build();
 
         CustomLog log2 = new CustomLog.Builder()
                 .description("Same log")
                 .staffUsername("staffX")
                 .actionType("DELETE")
+                .memberUsername("member1")
+                .bookIsbn("1111")
+                .loanId(1L)
                 .build();
 
         assertEquals(log1, log2);
@@ -73,10 +84,15 @@ class CustomLogTest {
         CustomLog log = new CustomLog.Builder()
                 .description("Check toString")
                 .staffUsername("staffZ")
+                .actionType("UPDATE")
                 .build();
 
         String logString = log.toString();
+
         assertTrue(logString.contains("Check toString"));
         assertTrue(logString.contains("staffZ"));
+        assertTrue(logString.contains("UPDATE"));
+        assertTrue(logString.contains("logId"));
+        assertTrue(logString.contains("timeStamp"));
     }
 }

@@ -1,7 +1,7 @@
 package com.ros.lms.infraestructure.audit_service;
 
 import com.ros.lms.domain.enums.ActionType;
-import com.ros.lms.infraestructure.aop.audit_repository.AuditDAO;
+import com.ros.lms.infraestructure.aop.audit_repository.AuditDao;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
 import com.ros.lms.infraestructure.aop.audit_service.BookAuditServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 class BookAuditServiceTest {
 
     @Mock
-    AuditDAO auditDAO;
+    AuditDao auditDAO;
 
     @InjectMocks
     BookAuditServiceImpl bookAuditService;
@@ -44,9 +44,9 @@ class BookAuditServiceTest {
         verify(auditDAO, times(1)).createLog(logCaptor.capture());
 
         CustomLog capturedLog = logCaptor.getValue();
-        assertEquals("adminUser", capturedLog.staffUsername());
-        assertEquals("9781234567890", capturedLog.bookIsbn());
-        assertEquals(ActionType.NEW_BOOK_WAS_ADDED.getValue(), capturedLog.actionType()); // Make sure this matches your enum's getValue()
+        assertEquals("adminUser", capturedLog.getStaffUsername());
+        assertEquals("9781234567890", capturedLog.getBookIsbn());
+        assertEquals(ActionType.NEW_BOOK_WAS_ADDED.getValue(), capturedLog.getActionType()); // Make sure this matches your enum's getValue()
     }
 
     @Test
@@ -64,9 +64,9 @@ class BookAuditServiceTest {
         verify(auditDAO, times(1)).createLog(logCaptor.capture());
 
         CustomLog capturedLog = logCaptor.getValue();
-        assertEquals(description, capturedLog.description());
-        assertEquals("adminUser", capturedLog.staffUsername());
-        assertEquals("9780987654321", capturedLog.bookIsbn());
-        assertEquals("ERROR", capturedLog.actionType());
+        assertEquals(description, capturedLog.getDescription());
+        assertEquals("adminUser", capturedLog.getStaffUsername());
+        assertEquals("9780987654321", capturedLog.getBookIsbn());
+        assertEquals("ERROR", capturedLog.getActionType());
     }
 }
