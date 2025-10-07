@@ -2,7 +2,7 @@ package com.ros.lms.infraestructure.aop.audit_service;
 
 import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.domain.enums.ActionType;
-import com.ros.lms.infraestructure.aop.audit_repository.AuditDAO;
+import com.ros.lms.infraestructure.aop.audit_repository.AuditDao;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class MemberAuditServiceImpl implements MemberAuditService {
 
-    private final AuditDAO auditDAO;
+    private final AuditDao auditDAO;
 
     @Autowired
-    public MemberAuditServiceImpl(@Qualifier("auditDAOJdbcImpl") AuditDAO auditDAO){
+    public MemberAuditServiceImpl(@Qualifier("auditDaoDynamoDbImpl") AuditDao auditDAO){
         this.auditDAO = auditDAO;
     }
 
