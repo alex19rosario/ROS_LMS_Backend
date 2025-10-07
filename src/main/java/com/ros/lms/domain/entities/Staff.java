@@ -7,7 +7,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 @Entity
 @Table(name = "STAFFS")
-public class Staff extends PersonBase{
+public final class Staff extends PersonBase{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "STAFF_ID")

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NullMarked
 @Entity
 @Table(name = "MEMBERS")
-public class Member extends PersonBase {
+public final class Member extends PersonBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

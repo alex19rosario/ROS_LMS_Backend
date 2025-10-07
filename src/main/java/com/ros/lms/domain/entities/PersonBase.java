@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 @NullMarked
 @MappedSuperclass
-public abstract class PersonBase extends Auditable {
+public sealed abstract class PersonBase extends Auditable permits Staff, Member {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false, unique = true)
