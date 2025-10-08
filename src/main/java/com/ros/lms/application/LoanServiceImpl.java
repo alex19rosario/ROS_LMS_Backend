@@ -1,6 +1,7 @@
 package com.ros.lms.application;
 
 import com.ros.lms.domain.dtos.AddLoanDTO;
+import com.ros.lms.domain.dtos.ReturnBookDTO;
 import com.ros.lms.domain.entities.*;
 import com.ros.lms.domain.enums.LoanStatuses;
 import com.ros.lms.domain.enums.MemberStatuses;
@@ -12,6 +13,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class LoanServiceImpl implements LoanService {
@@ -76,5 +80,59 @@ public class LoanServiceImpl implements LoanService {
                 bookDAO.update(book);
             }
         }
+    }
+
+    @Transactional
+    @CacheEvict(value = "booksCache", allEntries = true)
+    @Override
+    public Loan returnBook(ReturnBookDTO returnBookDTO) throws BookNotRegisteredException, BookAlreadyInStockException, InvalidStaffException {
+
+        //Check if the book is registered in the system, and if a member actually has it checked out
+        Book book = bookDAO.findByISBN(returnBookDTO.isbn())
+                .orElseThrow(() -> new BookNotRegisteredException(
+                        "No book found with ISBN (" + returnBookDTO.isbn() + "). It may not belong to this library."
+                ));
+
+        if (book.isAvailable()) {
+            throw new BookAlreadyInStockException(
+                    "The book with ISBN (" + returnBookDTO.isbn() + ") is already available in stock; no member currently has it checked out."
+            );
+        }
+        // Validate staff member
+        Staff staff = staffDAO.findByUsername(returnBookDTO.staffUsername())
+                .orElseThrow(() -> new InvalidStaffException(
+                        "No valid staff member found with username (" + returnBookDTO.staffUsername() + ")."
+                ));
+
+        // Find the active loan
+        Loan loan = loanDAO.findActiveLoanByBook(book)
+                .orElseThrow(() -> new IllegalStateException(
+                        "No active loan found for the book with ISBN (" + returnBookDTO.isbn() + ")."
+                ));
+
+        // Update loan: set return date and status
+        LocalDateTime now = LocalDateTime.now();
+        loan.setReturnDate(now);
+
+        LoanStatuses newStatus = loan.getDueDate().isBefore(now)
+                ? LoanStatuses.RETURNED_LATE
+                : LoanStatuses.RETURNED;
+
+        // Assuming you have a method to fetch LoanStatus by code
+        LoanStatus status = loanStatusDAO.findLoanStatusByEnum(newStatus)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Loan status (" + newStatus + ") not found in database."
+                ));
+
+        loan.setStatus(status);
+
+        // Update book availability
+        book.setAvailable(true);
+
+        // Persist changes
+        bookDAO.update(book);
+        loanDAO.update(loan);
+
+        return loan ;
     }
 }

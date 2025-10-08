@@ -101,6 +101,7 @@ public class LmsSecurityConfig {
                         .requestMatchers(HttpMethod.GET, Routes.GENRES.val()).hasRole(RoleType.STAFF.val())
                         .requestMatchers(HttpMethod.POST, Routes.MEMBERS.val()).hasRole(RoleType.MEMBER.val())
                         .requestMatchers(HttpMethod.POST, Routes.LOANS.val()).hasRole(RoleType.STAFF.val())
+                        .requestMatchers(HttpMethod.PUT, Routes.LOANS.val()).hasRole(RoleType.STAFF.val())
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
