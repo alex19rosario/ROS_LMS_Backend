@@ -2,7 +2,7 @@ package com.ros.lms.infraestructure.aop.aspect;
 
 
 import com.ros.lms.domain.dtos.AddBookDTO;
-import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
+import com.ros.lms.infraestructure.aop.audit_service.contracts.BookAuditService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -23,7 +23,7 @@ public class AddBookAspect {
         this.bookAuditService = bookAuditService;
     }
 
-    @Pointcut("execution(public void com.ros.lms.application.BookService.add(..))")
+    @Pointcut("execution(public void com.ros.lms.ports.inbound.service_contracts.BookService.add(..))")
     private void forAddBookMethod(){}
 
     @AfterReturning("forAddBookMethod()")

@@ -2,6 +2,7 @@ package com.ros.lms.adapters.inbound;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ros.lms.domain.dtos.AddLoanDTO;
+import com.ros.lms.domain.dtos.ReturnBookDTO;
 import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.ports.inbound.service_contracts.LoanService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +17,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,10 +38,12 @@ class LoanControllerTest {
     private ObjectMapper objectMapper;
 
     private AddLoanDTO validLoanDTO;
+    private ReturnBookDTO validReturnBookDTO;
 
     @BeforeEach
     void setup() {
-        validLoanDTO = new AddLoanDTO(1L, "member001", "staff001");
+        validLoanDTO = new AddLoanDTO("9780000000001", "member001", "staff001");
+        validReturnBookDTO = new ReturnBookDTO("9780000000001", "staff001");
     }
 
     @Test
@@ -55,7 +60,7 @@ class LoanControllerTest {
     @Test
     @WithMockUser(username = "staff001", roles = {"STAFF"})
     void issueBook_shouldReturnNotFound_whenBookNotFound() throws Exception {
-        Mockito.doThrow(new BookNotFoundException("Book not found"))
+        doThrow(new BookNotFoundException("Book not found"))
                 .when(loanService).add(Mockito.any(AddLoanDTO.class));
 
         mockMvc.perform(post("/api/loans")
@@ -67,7 +72,7 @@ class LoanControllerTest {
     @Test
     @WithMockUser(username = "staff001", roles = {"STAFF"})
     void issueBook_shouldReturnBadRequest_whenBookNotAvailable() throws Exception {
-        Mockito.doThrow(new BookNotAvailableException("Book not available"))
+        doThrow(new BookNotAvailableException("Book not available"))
                 .when(loanService).add(Mockito.any(AddLoanDTO.class));
 
         mockMvc.perform(post("/api/loans")
@@ -79,7 +84,7 @@ class LoanControllerTest {
     @Test
     @WithMockUser(username = "staff001", roles = {"STAFF"})
     void issueBook_shouldReturnNotFound_whenMemberNotFound() throws Exception {
-        Mockito.doThrow(new MemberNotFoundException("Member not found"))
+        doThrow(new MemberNotFoundException("Member not found"))
                 .when(loanService).add(Mockito.any(AddLoanDTO.class));
 
         mockMvc.perform(post("/api/loans")
@@ -91,7 +96,7 @@ class LoanControllerTest {
     @Test
     @WithMockUser(username = "staff001", roles = {"STAFF"})
     void issueBook_shouldReturnNotFound_whenStaffNotFound() throws Exception {
-        Mockito.doThrow(new StaffNotFoundException("Staff not Found"))
+        doThrow(new StaffNotFoundException("Staff not Found"))
                 .when(loanService).add(Mockito.any(AddLoanDTO.class));
 
         mockMvc.perform(post("/api/loans")
@@ -103,7 +108,7 @@ class LoanControllerTest {
     @Test
     @WithMockUser(username = "staff001", roles = {"STAFF"})
     void issueBook_shouldReturnBadRequest_whenMemberHasActiveLoan() throws Exception {
-        Mockito.doThrow(new MemberHasActiveLoanException("Member has active loan"))
+        doThrow(new MemberHasActiveLoanException("Member has active loan"))
                 .when(loanService).add(Mockito.any(AddLoanDTO.class));
 
         mockMvc.perform(post("/api/loans")
@@ -115,7 +120,7 @@ class LoanControllerTest {
     @Test
     @WithMockUser(username = "staff001", roles = {"STAFF"})
     void issueBook_shouldReturnBadRequest_whenMemberHasOverdueLoan() throws Exception {
-        Mockito.doThrow(new MemberHasOverdueLoanException("Member has overdue loan"))
+        doThrow(new MemberHasOverdueLoanException("Member has overdue loan"))
                 .when(loanService).add(Mockito.any(AddLoanDTO.class));
 
         mockMvc.perform(post("/api/loans")
@@ -131,6 +136,62 @@ class LoanControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validLoanDTO)))
                 .andExpect(status().isForbidden()); // Spring Security blocks this
+    }
+
+    @Test
+    @WithMockUser(username = "staff001", roles = {"STAFF"})
+    void returnBook_shouldReturnOk_whenReturnIsSuccessful() throws Exception {
+        mockMvc.perform(put("/api/loans")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validReturnBookDTO)))
+                .andExpect(status().isOk());
+
+        verify(loanService).returnBook(validReturnBookDTO);
+    }
+
+    @Test
+    @WithMockUser(username = "staff001", roles = {"STAFF"})
+    void returnBook_shouldReturnBadRequest_whenBookNotRegistered() throws Exception {
+        doThrow(new BookNotRegisteredException("Book not registered"))
+                .when(loanService).returnBook(Mockito.any(ReturnBookDTO.class));
+
+        mockMvc.perform(put("/api/loans")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validReturnBookDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "staff001", roles = {"STAFF"})
+    void returnBook_shouldReturnBadRequest_whenBookAlreadyInStock() throws Exception {
+        doThrow(new BookAlreadyInStockException("Book already in stock"))
+                .when(loanService).returnBook(Mockito.any(ReturnBookDTO.class));
+
+        mockMvc.perform(put("/api/loans")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validReturnBookDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "staff001", roles = {"STAFF"})
+    void returnBook_shouldReturnUnauthorized_whenInvalidStaff() throws Exception {
+        doThrow(new InvalidStaffException("Invalid staff"))
+                .when(loanService).returnBook(Mockito.any(ReturnBookDTO.class));
+
+        mockMvc.perform(put("/api/loans")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validReturnBookDTO)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "member001", roles = {"MEMBER"})
+    void returnBook_shouldReturnForbidden_whenUserIsNotStaff() throws Exception {
+        mockMvc.perform(put("/api/loans")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validReturnBookDTO)))
+                .andExpect(status().isForbidden());
     }
 
 

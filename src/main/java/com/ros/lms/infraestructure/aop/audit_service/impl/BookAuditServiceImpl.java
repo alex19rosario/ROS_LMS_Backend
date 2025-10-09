@@ -1,9 +1,10 @@
-package com.ros.lms.infraestructure.aop.audit_service;
+package com.ros.lms.infraestructure.aop.audit_service.impl;
 
 
 import com.ros.lms.domain.enums.ActionType;
 import com.ros.lms.infraestructure.aop.audit_repository.AuditDao;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
+import com.ros.lms.infraestructure.aop.audit_service.contracts.BookAuditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

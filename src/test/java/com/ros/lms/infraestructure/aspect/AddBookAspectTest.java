@@ -2,7 +2,7 @@ package com.ros.lms.infraestructure.aspect;
 
 import com.ros.lms.domain.dtos.AddBookDTO;
 import com.ros.lms.infraestructure.aop.aspect.AddBookAspect;
-import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
+import com.ros.lms.infraestructure.aop.audit_service.contracts.BookAuditService;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package com.ros.lms.infraestructure.aop.audit_service;
+package com.ros.lms.infraestructure.aop.audit_service.contracts;
 
 import com.ros.lms.domain.dtos.AddMemberDTO;
 

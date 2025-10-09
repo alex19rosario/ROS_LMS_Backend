@@ -1,14 +1,12 @@
 package com.ros.lms.adapters.inbound.controllers;
 
 import com.ros.lms.domain.dtos.AddLoanDTO;
+import com.ros.lms.domain.dtos.ReturnBookDTO;
 import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.ports.inbound.service_contracts.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -31,5 +29,14 @@ public class LoanController {
             MemberHasOverdueLoanException
     {
         loanService.add(addLoanDTO);
+    }
+
+    @PutMapping("/loans")
+    public void returnBook(@RequestBody ReturnBookDTO returnBookDTO) throws
+            BookNotRegisteredException,
+            BookAlreadyInStockException,
+            InvalidStaffException
+    {
+        loanService.returnBook(returnBookDTO);
     }
 }

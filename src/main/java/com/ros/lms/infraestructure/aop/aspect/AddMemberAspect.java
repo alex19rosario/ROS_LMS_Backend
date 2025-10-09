@@ -1,7 +1,7 @@
 package com.ros.lms.infraestructure.aop.aspect;
 
 import com.ros.lms.domain.dtos.AddMemberDTO;
-import com.ros.lms.infraestructure.aop.audit_service.MemberAuditService;
+import com.ros.lms.infraestructure.aop.audit_service.contracts.MemberAuditService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -22,7 +22,7 @@ public class AddMemberAspect {
         this.memberAuditService = memberAuditService;
     }
 
-    @Pointcut("execution(public void com.ros.lms.adapters.inbound.controllers.MemberController.addMember(..))")
+    @Pointcut("execution(public void com.ros.lms.ports.inbound.service_contracts.MemberService.add(..))")
     private void forAddMemberMethod(){}
 
     @AfterReturning("forAddMemberMethod()")

@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
-
 @DynamoDbBean
 public class CustomLog {
 
@@ -28,7 +27,7 @@ public class CustomLog {
         private final String logID;
         private final String timeStamp;
 
-        //Optional parameters
+        // Optional parameters
         private String description;
         private String staffUsername;
         private String actionType;

@@ -3,7 +3,7 @@ package com.ros.lms.infraestructure.aspect;
 import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.infraestructure.aop.aspect.AddMemberAspect;
-import com.ros.lms.infraestructure.aop.audit_service.MemberAuditService;
+import com.ros.lms.infraestructure.aop.audit_service.contracts.MemberAuditService;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
