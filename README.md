@@ -37,7 +37,7 @@ Run the following commands in the `infrastructure/src/main/resources/certs` dire
 
 ### Configure Keys
 
-Add the following properties to `application.properties`:
+Add the following properties to `application-dev.properties`:
 
 ```properties
 rsa.private-key=classpath:certs/private.pem
