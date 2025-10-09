@@ -3,7 +3,7 @@ package com.ros.lms.infraestructure.audit_service;
 import com.ros.lms.domain.enums.ActionType;
 import com.ros.lms.infraestructure.aop.audit_repository.AuditDao;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
-import com.ros.lms.infraestructure.aop.audit_service.BookAuditServiceImpl;
+import com.ros.lms.infraestructure.aop.audit_service.impl.BookAuditServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

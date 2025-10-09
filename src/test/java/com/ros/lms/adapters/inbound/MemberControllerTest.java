@@ -7,7 +7,7 @@ import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
 import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
 import com.ros.lms.domain.exceptions.StaffNotFoundException;
 import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
-import com.ros.lms.infraestructure.aop.audit_service.MemberAuditService;
+import com.ros.lms.infraestructure.aop.audit_service.contracts.MemberAuditService;
 import com.ros.lms.ports.inbound.service_contracts.MemberService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

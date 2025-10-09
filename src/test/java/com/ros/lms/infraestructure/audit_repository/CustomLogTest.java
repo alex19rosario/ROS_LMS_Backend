@@ -95,4 +95,91 @@ class CustomLogTest {
         assertTrue(logString.contains("logId"));
         assertTrue(logString.contains("timeStamp"));
     }
+
+    @Test
+    void setters_shouldUpdateFieldsCorrectly() {
+        // Arrange
+        CustomLog log = new CustomLog();
+
+        // Act
+        log.setLogId("log123");
+        log.setTimeStamp("2025-10-09T12:00:00Z");
+        log.setDescription("Book returned");
+        log.setStaffUsername("staffUser");
+        log.setActionType("RETURN");
+        log.setMemberUsername("memberUser");
+        log.setBookIsbn("9783161484105");
+        log.setLoanId(99L);
+
+        // Assert
+        assertEquals("log123", log.getLogId());
+        assertEquals("2025-10-09T12:00:00Z", log.getTimeStamp());
+        assertEquals("Book returned", log.getDescription());
+        assertEquals("staffUser", log.getStaffUsername());
+        assertEquals("RETURN", log.getActionType());
+        assertEquals("memberUser", log.getMemberUsername());
+        assertEquals("9783161484105", log.getBookIsbn());
+        assertEquals(99L, log.getLoanId());
+    }
+
+    @Test
+    void setters_canOverrideBuilderValues() {
+        // Arrange
+        CustomLog log = new CustomLog.Builder()
+                .description("Initial description")
+                .staffUsername("staffA")
+                .actionType("ISSUE")
+                .memberUsername("memberA")
+                .bookIsbn("123")
+                .loanId(1L)
+                .build();
+
+        // Act (override all)
+        log.setDescription("Updated description");
+        log.setStaffUsername("staffB");
+        log.setActionType("RETURN");
+        log.setMemberUsername("memberB");
+        log.setBookIsbn("456");
+        log.setLoanId(2L);
+
+        // Assert (confirm updates)
+        assertEquals("Updated description", log.getDescription());
+        assertEquals("staffB", log.getStaffUsername());
+        assertEquals("RETURN", log.getActionType());
+        assertEquals("memberB", log.getMemberUsername());
+        assertEquals("456", log.getBookIsbn());
+        assertEquals(2L, log.getLoanId());
+    }
+
+    @Test
+    void setters_shouldAllowNullAssignments() {
+        // Arrange
+        CustomLog log = new CustomLog();
+
+        // Act
+        log.setDescription(null);
+        log.setStaffUsername(null);
+        log.setActionType(null);
+        log.setMemberUsername(null);
+        log.setBookIsbn(null);
+        log.setLoanId(null);
+
+        // Assert
+        assertNull(log.getDescription());
+        assertNull(log.getStaffUsername());
+        assertNull(log.getActionType());
+        assertNull(log.getMemberUsername());
+        assertNull(log.getBookIsbn());
+        assertNull(log.getLoanId());
+    }
+
+    @Test
+    void equals_shouldReturnFalseForDifferentValues() {
+        CustomLog log1 = new CustomLog.Builder().description("A").build();
+        CustomLog log2 = new CustomLog.Builder().description("B").build();
+
+        assertNotEquals(log1, log2);
+    }
+
+
 }

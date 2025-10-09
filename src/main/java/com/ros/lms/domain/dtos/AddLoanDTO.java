@@ -1,17 +1,18 @@
 package com.ros.lms.domain.dtos;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * @description DTO for issuing a book
- * @param bookId
+ * @param bookIsbn
  * @param memberUsername
  * @param staffUsername
  */
 public record AddLoanDTO(
-        @NotNull
-        Long bookId,
+        @NotBlank(message = "ISBN is required")
+        @Size(min = 10, max = 13, message = "ISBN must be between 10 and 13 characters long")
+        String bookIsbn,
 
         @NotBlank(message = "Member username is required")
         String memberUsername,

@@ -103,4 +103,188 @@ class LoanDAOJpaImplTest {
         assertThat(persistedLoan.getStaff().getUser().getUsername()).isEqualTo("janesmith");
     }
 
+    @Test
+    @Transactional
+    void findActiveLoanByBook_shouldReturnActiveLoan_whenExists() {
+        // Arrange
+        // Reuse helper method to create test data (same pattern as your create test)
+        User memberUser = new User();
+        memberUser.setUsername("activeUser");
+        memberUser.setEmail("active@example.com");
+        memberUser.setPassword("pass123");
+        memberUser.setEnabled(true);
+        entityManager.persist(memberUser);
+
+        Member member = new Member();
+        member.setGovernmentID("GOV999");
+        member.setFirstName("Active");
+        member.setMiddleName("A");
+        member.setLastName("User");
+        member.setPhone("123123123");
+        member.setDateOfBirth(LocalDate.of(1995, 5, 15));
+        member.setSex(Sex.MALE);
+        member.setUser(memberUser);
+        entityManager.persist(member);
+
+        Book book = new Book();
+        book.setIsbn("9999999999999");
+        book.setTitle("Clean Code");
+        book.setAvailable(false);
+        book.setCoverImagePath("cover2.jpg");
+        entityManager.persist(book);
+
+        LoanStatus activeStatus = new LoanStatus(LoanStatuses.LOANED);
+        entityManager.persist(activeStatus);
+
+        User staffUser = new User();
+        staffUser.setUsername("staffUser");
+        staffUser.setEmail("staff@example.com");
+        staffUser.setPassword("secret");
+        staffUser.setEnabled(true);
+        entityManager.persist(staffUser);
+
+        Staff staff = new Staff();
+        staff.setGovernmentID("STAFF999");
+        staff.setFirstName("Jane");
+        staff.setLastName("Doe");
+        staff.setPhone("5555555555");
+        staff.setSex(Sex.FEMALE);
+        staff.setUser(staffUser);
+        entityManager.persist(staff);
+
+        entityManager.flush();
+
+        // Create loan with active status
+        Loan loan = new Loan(member, book, activeStatus, staff);
+        entityManager.persist(loan);
+        entityManager.flush();
+
+        // Act
+        var result = loanDAO.findActiveLoanByBook(book);
+
+        // Assert
+        assertThat(result).isPresent();
+        assertThat(result.get().getBook().getTitle()).isEqualTo("Clean Code");
+        assertThat(result.get().getStatus().getCode()).isEqualTo(LoanStatuses.LOANED);
+    }
+
+    @Test
+    @Transactional
+    void findActiveLoanByBook_shouldReturnEmpty_whenNoActiveLoanExists() {
+        // Arrange
+        Book book = new Book();
+        book.setIsbn("1111111111111");
+        book.setTitle("Non Active Book");
+        entityManager.persist(book);
+
+        LoanStatus returnedStatus = new LoanStatus(LoanStatuses.RETURNED);
+        entityManager.persist(returnedStatus);
+
+        User memberUser = new User();
+        memberUser.setUsername("nonactive");
+        memberUser.setEmail("nonactive@example.com");
+        memberUser.setPassword("pass123");
+        memberUser.setEnabled(true);
+        entityManager.persist(memberUser);
+
+        Member member = new Member();
+        member.setGovernmentID("GOV000");
+        member.setFirstName("Non");
+        member.setLastName("Active");
+        member.setPhone("0000000000");
+        member.setUser(memberUser);
+        member.setSex(Sex.MALE);
+        entityManager.persist(member);
+
+        User staffUser = new User();
+        staffUser.setUsername("staffInactive");
+        staffUser.setEmail("inactive@example.com");
+        staffUser.setPassword("secret");
+        staffUser.setEnabled(true);
+        entityManager.persist(staffUser);
+
+        Staff staff = new Staff();
+        staff.setGovernmentID("STAFF000");
+        staff.setFirstName("In");
+        staff.setLastName("Active");
+        staff.setPhone("9999999999");
+        staff.setSex(Sex.FEMALE);
+        staff.setUser(staffUser);
+        entityManager.persist(staff);
+
+        Loan loan = new Loan(member, book, returnedStatus, staff);
+        entityManager.persist(loan);
+        entityManager.flush();
+
+        // Act
+        var result = loanDAO.findActiveLoanByBook(book);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    void update_shouldMergeLoan() {
+        // Arrange
+        User memberUser = new User();
+        memberUser.setUsername("updateUser");
+        memberUser.setEmail("update@example.com");
+        memberUser.setPassword("pass123");
+        memberUser.setEnabled(true);
+        entityManager.persist(memberUser);
+
+        Member member = new Member();
+        member.setGovernmentID("GOVUPDATE");
+        member.setFirstName("Update");
+        member.setLastName("User");
+        member.setPhone("222333444");
+        member.setUser(memberUser);
+        member.setSex(Sex.MALE);
+        entityManager.persist(member);
+
+        Book book = new Book();
+        book.setIsbn("2222222222222");
+        book.setTitle("Domain-Driven Design");
+        entityManager.persist(book);
+
+        LoanStatus status = new LoanStatus(LoanStatuses.LOANED);
+        entityManager.persist(status);
+
+        User staffUser = new User();
+        staffUser.setUsername("staffUpdate");
+        staffUser.setEmail("staffupdate@example.com");
+        staffUser.setPassword("secret");
+        staffUser.setEnabled(true);
+        entityManager.persist(staffUser);
+
+        Staff staff = new Staff();
+        staff.setGovernmentID("STAFFUPDATE");
+        staff.setFirstName("Staff");
+        staff.setLastName("Update");
+        staff.setPhone("9999998888");
+        staff.setSex(Sex.FEMALE);
+        staff.setUser(staffUser);
+        entityManager.persist(staff);
+
+        entityManager.flush();
+
+        Loan loan = new Loan(member, book, status, staff);
+        entityManager.persist(loan);
+        entityManager.flush();
+
+        // Act: update the status to RETURNED
+        LoanStatus newStatus = new LoanStatus(LoanStatuses.RETURNED);
+        entityManager.persist(newStatus);
+        loan.setStatus(newStatus);
+
+        loanDAO.update(loan);
+        entityManager.flush();
+
+        // Assert
+        Loan updatedLoan = entityManager.find(Loan.class, loan.getId());
+        assertThat(updatedLoan).isNotNull();
+        assertThat(updatedLoan.getStatus().getCode()).isEqualTo(LoanStatuses.RETURNED);
+    }
+
 }

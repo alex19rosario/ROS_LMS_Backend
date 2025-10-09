@@ -9,7 +9,7 @@ import com.ros.lms.domain.exceptions.BookAlreadyExistsException;
 import com.ros.lms.domain.exceptions.PageOutOfRangeException;
 import com.ros.lms.domain.exceptions.StaffNotFoundException;
 import com.ros.lms.domain.exceptions.StorageException;
-import com.ros.lms.infraestructure.aop.audit_service.BookAuditService;
+import com.ros.lms.infraestructure.aop.audit_service.contracts.BookAuditService;
 import com.ros.lms.ports.inbound.service_contracts.BookService;
 import com.ros.lms.ports.inbound.service_contracts.StorageService;
 import org.junit.jupiter.api.BeforeEach;

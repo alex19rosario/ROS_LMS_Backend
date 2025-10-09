@@ -4,7 +4,7 @@ import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.domain.enums.Sex;
 import com.ros.lms.infraestructure.aop.audit_repository.AuditDao;
 import com.ros.lms.infraestructure.aop.audit_repository.CustomLog;
-import com.ros.lms.infraestructure.aop.audit_service.MemberAuditServiceImpl;
+import com.ros.lms.infraestructure.aop.audit_service.impl.MemberAuditServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

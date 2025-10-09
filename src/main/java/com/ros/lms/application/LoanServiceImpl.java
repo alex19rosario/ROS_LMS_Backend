@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class LoanServiceImpl implements LoanService {
@@ -46,14 +45,14 @@ public class LoanServiceImpl implements LoanService {
     @Transactional
     @CacheEvict(value = "booksCache", allEntries = true)
     @Override
-    public void add(AddLoanDTO addLoanDTO) throws BookNotFoundException, BookNotAvailableException, MemberNotFoundException, StaffNotFoundException, MemberHasActiveLoanException, MemberHasOverdueLoanException {
+    public Loan add(AddLoanDTO addLoanDTO) throws BookNotFoundException, BookNotAvailableException, MemberNotFoundException, StaffNotFoundException, MemberHasActiveLoanException, MemberHasOverdueLoanException {
 
         //Check if book exists
-        Book book = bookDAO.findById(addLoanDTO.bookId())
-                .orElseThrow(() -> new BookNotFoundException("Book with ID " + addLoanDTO.bookId() + " not found."));
+        Book book = bookDAO.findByISBN(addLoanDTO.bookIsbn())
+                .orElseThrow(() -> new BookNotFoundException("Book with ISBN " + addLoanDTO.bookIsbn() + " not found."));
 
         //Check if book is available
-        if (!book.isAvailable()) throw new BookNotAvailableException("Book with ID " + addLoanDTO.bookId() + " not available.");
+        if (!book.isAvailable()) throw new BookNotAvailableException("Book with ISBN " + addLoanDTO.bookIsbn() + " not available.");
 
         //Check if member exists
         Member member = memberDAO.findByUsername(addLoanDTO.memberUsername())
@@ -67,6 +66,9 @@ public class LoanServiceImpl implements LoanService {
         MemberStatuses memberStatus = memberStatusDAO.findStatusByMemberId(member.getId())
                 .orElseThrow(() -> new IllegalStateException("Could not determine member status for member ID " + member.getId()));
 
+        // The loan object must be created outside the switch in order to be returned
+        Loan loan = new Loan();
+
         switch (memberStatus) {
             case OVERDUE -> throw new MemberHasOverdueLoanException("Member has an overdue loan.");
             case HAS_LOAN -> throw new MemberHasActiveLoanException("Member already has an active loan.");
@@ -75,11 +77,13 @@ public class LoanServiceImpl implements LoanService {
                 LoanStatus loanStatus = loanStatusDAO.findLoanStatusByEnum(LoanStatuses.LOANED)
                         .orElseThrow(() -> new IllegalStateException("Could not determine loan status for member ID " + member.getId()));
                 book.setAvailable(false);
-                Loan loan = new Loan(member, book, loanStatus, staff);
+                loan = new Loan(member, book, loanStatus, staff);
                 loanDAO.create(loan);
                 bookDAO.update(book);
             }
         }
+
+        return loan;
     }
 
     @Transactional
