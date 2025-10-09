@@ -103,7 +103,7 @@ public class LoanServiceImpl implements LoanService {
             );
         }
         // Validate staff member
-        Staff staff = staffDAO.findByUsername(returnBookDTO.staffUsername())
+        staffDAO.findByUsername(returnBookDTO.staffUsername())
                 .orElseThrow(() -> new InvalidStaffException(
                         "No valid staff member found with username (" + returnBookDTO.staffUsername() + ")."
                 ));
