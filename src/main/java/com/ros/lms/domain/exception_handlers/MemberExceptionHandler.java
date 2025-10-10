@@ -14,9 +14,9 @@ import java.net.URI;
 public class MemberExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> handleMemberAlreadyExistsException(MemberAlreadyExistsException ex, HttpServletRequest request){
+    public ResponseEntity<ProblemDetail> handleMemberValidationException(MemberValidationException ex, HttpServletRequest request){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problemDetail.setTitle("Existing Member Error");
+        problemDetail.setTitle("Member Validation Exception");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }

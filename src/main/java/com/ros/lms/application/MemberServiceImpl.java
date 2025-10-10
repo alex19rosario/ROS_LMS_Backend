@@ -3,11 +3,9 @@ package com.ros.lms.application;
 import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.domain.entities.AuthorityType;
 import com.ros.lms.domain.entities.User;
+import com.ros.lms.domain.enums.MemberValidationStatus;
 import com.ros.lms.domain.enums.RoleType;
-import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
-import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
-import com.ros.lms.domain.exceptions.StaffNotFoundException;
-import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
+import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.ports.inbound.service_contracts.MemberService;
 import com.ros.lms.ports.outbound.repository_contracts.AuthorityTypeDAO;
 import com.ros.lms.ports.outbound.repository_contracts.MemberDAO;
@@ -19,6 +17,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -50,16 +50,16 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void add(AddMemberDTO dto) throws MemberAlreadyExistsException, UsernameAlreadyExistsException, EmailAlreadyExistsException, StaffNotFoundException {
-        if (memberDAO.findByGovernmentID(dto.governmentID()).isPresent()) {
-            throw new MemberAlreadyExistsException("Member with government ID " + dto.governmentID() + " already exists");
+    public void add(AddMemberDTO dto) throws MemberValidationException, StaffNotFoundException {
+
+        Set<MemberValidationStatus> conflicts = memberDAO.validateMemberUniqueness(dto.governmentID(), dto.username(), dto.email());
+
+        if (!conflicts.isEmpty()) {
+            StringBuilder message = getErrorMessage(dto, conflicts);
+
+            throw new MemberValidationException(message.toString().trim());
         }
-        if (memberDAO.findByUsername(dto.username()).isPresent()) {
-            throw new UsernameAlreadyExistsException("Username " + dto.username() + " already exists");
-        }
-        if (memberDAO.findByEmail(dto.email()).isPresent()) {
-            throw new EmailAlreadyExistsException("Email " + dto.email() + " already exists");
-        }
+
         if (staffDAO.findByUsername(dto.staffUsername()).isEmpty()) {
             throw new StaffNotFoundException("Staff not found with username: " + dto.staffUsername());
         }
@@ -70,5 +70,20 @@ public class MemberServiceImpl implements MemberService {
         User user = mapper.addMemberDtoToUser(dto, memberRole, passwordEncoder);
         userDAO.create(user);
         memberDAO.create(mapper.addMemberDtoToMember(dto, user));
+    }
+
+    private static StringBuilder getErrorMessage(AddMemberDTO dto, Set<MemberValidationStatus> conflicts) {
+        StringBuilder message = new StringBuilder("Validation failed due to the following conflicts: ");
+
+        if (conflicts.contains(MemberValidationStatus.GOVERNMENT_ID_EXISTS)) {
+            message.append("[Government ID " + dto.governmentID() + " already exists] ");
+        }
+        if (conflicts.contains(MemberValidationStatus.USERNAME_EXISTS)) {
+            message.append("[Username " + dto.username() + " already exists] ");
+        }
+        if (conflicts.contains(MemberValidationStatus.EMAIL_EXISTS)) {
+            message.append("[Email " + dto.email() + " already exists] ");
+        }
+        return message;
     }
 }
