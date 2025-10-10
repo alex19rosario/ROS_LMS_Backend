@@ -14,6 +14,7 @@ import com.ros.lms.ports.outbound.repository_contracts.AuthorityTypeDAO;
 import com.ros.lms.ports.outbound.repository_contracts.MemberDAO;
 import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
 import com.ros.lms.ports.outbound.repository_contracts.UserDAO;
+import com.ros.lms.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +31,7 @@ public class MemberServiceImpl implements MemberService {
     private final StaffDAO staffDAO;
     private final AuthorityTypeDAO authorityTypeDAO;
     private final PasswordEncoder passwordEncoder;
+    private final Mapper mapper;
 
     @Autowired
     public MemberServiceImpl(
@@ -37,13 +39,15 @@ public class MemberServiceImpl implements MemberService {
             @Qualifier("userDAOJpaImpl") UserDAO userDAO,
             @Qualifier("staffDAOJpaImpl") StaffDAO staffDAO,
             @Qualifier("authorityTypeDAOJpaImpl") AuthorityTypeDAO authorityTypeDAO,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            Mapper mapper
     ) {
         this.memberDAO = memberDAO;
         this.userDAO = userDAO;
         this.staffDAO = staffDAO;
         this.authorityTypeDAO = authorityTypeDAO;
         this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
     }
 
 
@@ -66,41 +70,8 @@ public class MemberServiceImpl implements MemberService {
         AuthorityType memberRole = authorityTypeDAO.findByLabel(RoleType.MEMBER)
                 .orElseThrow(() -> new IllegalStateException("Role MEMBER not found in DB"));
 
-        User user = userMapper(dto, memberRole);
+        User user = mapper.AddMemberDtoToUser(dto, memberRole, passwordEncoder);
         userDAO.create(user);
-        memberDAO.create(memberMapper(dto, user));
-    }
-
-    private Member memberMapper(AddMemberDTO dto, User user){
-        String[] nameParts = dto.firstName().split(" ", 2);
-        String firstName = nameParts[0];
-        String middleName = nameParts.length > 1 ? nameParts[1] : null;
-
-        Member member = new Member.Builder()
-                .governmentID(dto.governmentID())
-                .user(user)
-                .firstName(firstName)
-                .lastName(dto.lastName())
-                .phone(dto.phone())
-                .dateOfBirth(dto.dateOfBirth())
-                .sex(dto.sex())
-                .build();
-
-        if(middleName != null)
-            member.setMiddleName(middleName);
-
-        return member;
-    }
-
-    private User userMapper(AddMemberDTO dto, AuthorityType authorityType){
-        User user = new User();
-        user.setUsername(dto.username());
-        user.setEmail(dto.email());
-        String hashedPassword = passwordEncoder.encode(dto.password());
-        user.setPassword(hashedPassword);
-        user.setEnabled(true);
-        Set<AuthorityType> authorities = Set.of(authorityType);
-        user.setAuthorities(authorities);
-        return user;
+        memberDAO.create(mapper.AddMemberDtoToMember(dto, user));
     }
 }

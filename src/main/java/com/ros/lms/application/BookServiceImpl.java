@@ -13,6 +13,7 @@ import com.ros.lms.ports.outbound.repository_contracts.AuthorDAO;
 import com.ros.lms.ports.outbound.repository_contracts.BookDAO;
 import com.ros.lms.ports.outbound.repository_contracts.GenreDAO;
 import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
+import com.ros.lms.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +36,7 @@ public class BookServiceImpl implements BookService {
     private final GenreDAO genreDAO;
     private final StaffDAO staffDAO;
     private final StorageService storageService;
+    private final Mapper mapper;
     private static final int MAX_PAGE_SIZE = 100;
 
     @Autowired
@@ -44,13 +45,15 @@ public class BookServiceImpl implements BookService {
             @Qualifier("authorDAOJpaImpl") AuthorDAO authorDAO,
             @Qualifier("genreDAOJpaImpl") GenreDAO genreDAO,
             @Qualifier("staffDAOJpaImpl") StaffDAO staffDAO,
-            StorageService storageService
+            StorageService storageService,
+            Mapper mapper
     ){
         this.bookDAO = bookDAO;
         this.authorDAO = authorDAO;
         this.genreDAO = genreDAO;
         this.staffDAO = staffDAO;
         this.storageService = storageService;
+        this.mapper = mapper;
     }
 
     @Transactional
@@ -67,7 +70,7 @@ public class BookServiceImpl implements BookService {
             throw new StaffNotFoundException("Staff not found with username: " + addBookDTO.staffUsername());
 
         // Map the DTO to a Book entity
-        Book book = addBookMapper.apply(addBookDTO);
+        Book book = mapper.addBookDtoToBook.apply(addBookDTO);
         Set<AuthorDTO> authors = parseAuthors(addBookDTO.authors());
 
         associateAuthorsWithBook(authors, book);
@@ -132,19 +135,16 @@ public class BookServiceImpl implements BookService {
                 searchBookDTO.isAvailable(),
                 pageable);
 
-        return bookPage.map(bookDTOMapper);
+        return bookPage.map(mapper.bookToBookDto);
     }
 
     @Cacheable(value = "bookByIsbnCache", key = "#isbn")
     @Override
     public Optional<BookDTO> getByIsbn(String isbn) throws BookNotFoundException {
         return Optional.ofNullable(bookDAO.findByISBN(isbn)
-                .map(bookDTOMapper)
+                .map(mapper.bookToBookDto)
                 .orElseThrow(() -> new BookNotFoundException("Book with ISBN '" + isbn + "' was not found.")));
     }
-
-    private final Function<AddBookDTO, Book> addBookMapper = addBookDTO ->
-            new Book(addBookDTO.isbn(), addBookDTO.title(), true);
 
     private Set<AuthorDTO> parseAuthors(String authorsString) {
         return Arrays.stream(authorsString.split(","))
@@ -163,35 +163,6 @@ public class BookServiceImpl implements BookService {
                 .map(String::trim)
                 .collect(Collectors.toSet());
     }
-
-    private final Function<Author, AuthorDTO> authorDTOMapper =
-            entity -> new AuthorDTO(entity.getFirstName(), entity.getLastName());
-
-    private final Function<Book, BookDTO> bookDTOMapper = entity -> {
-
-        Set<AuthorDTO> authors = Optional.ofNullable(entity.getAuthors())
-                .orElse(List.of())
-                .stream()
-                .map(authorDTOMapper)
-                .collect(Collectors.toSet());
-
-
-        Set<GenreType> genres = Optional.ofNullable(entity.getGenres())
-                .orElse(List.of())
-                .stream()
-                .map(Genre::getLabel)
-                .collect(Collectors.toSet());
-
-        return new BookDTO(
-                entity.getId(),
-                entity.getIsbn(),
-                entity.getTitle(),
-                authors,
-                genres,
-                entity.isAvailable(),
-                entity.getCoverImagePath()
-                );
-    };
 
     private void associateAuthorsWithBook(Set<AuthorDTO> authors, Book book) {
         for (AuthorDTO authorDTO : authors) {
