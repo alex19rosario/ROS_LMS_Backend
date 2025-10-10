@@ -50,7 +50,7 @@ public class Mapper {
         );
     };
 
-    public Member AddMemberDtoToMember(AddMemberDTO dto, User user){
+    public Member addMemberDtoToMember(AddMemberDTO dto, User user){
         String[] nameParts = dto.firstName().split(" ", 2);
         String firstName = nameParts[0];
         String middleName = nameParts.length > 1 ? nameParts[1] : null;
@@ -71,7 +71,7 @@ public class Mapper {
         return member;
     }
 
-    public User AddMemberDtoToUser(AddMemberDTO dto, AuthorityType authorityType, PasswordEncoder passwordEncoder){
+    public User addMemberDtoToUser(AddMemberDTO dto, AuthorityType authorityType, PasswordEncoder passwordEncoder){
         User user = new User();
         user.setUsername(dto.username());
         user.setEmail(dto.email());

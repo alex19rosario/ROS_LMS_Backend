@@ -2,7 +2,6 @@ package com.ros.lms.application;
 
 import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.domain.entities.AuthorityType;
-import com.ros.lms.domain.entities.Member;
 import com.ros.lms.domain.entities.User;
 import com.ros.lms.domain.enums.RoleType;
 import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
@@ -20,8 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Set;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -70,8 +67,8 @@ public class MemberServiceImpl implements MemberService {
         AuthorityType memberRole = authorityTypeDAO.findByLabel(RoleType.MEMBER)
                 .orElseThrow(() -> new IllegalStateException("Role MEMBER not found in DB"));
 
-        User user = mapper.AddMemberDtoToUser(dto, memberRole, passwordEncoder);
+        User user = mapper.addMemberDtoToUser(dto, memberRole, passwordEncoder);
         userDAO.create(user);
-        memberDAO.create(mapper.AddMemberDtoToMember(dto, user));
+        memberDAO.create(mapper.addMemberDtoToMember(dto, user));
     }
 }
