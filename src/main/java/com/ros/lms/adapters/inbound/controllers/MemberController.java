@@ -1,10 +1,7 @@
 package com.ros.lms.adapters.inbound.controllers;
 
 import com.ros.lms.domain.dtos.AddMemberDTO;
-import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
-import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
-import com.ros.lms.domain.exceptions.StaffNotFoundException;
-import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
+import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.ports.inbound.service_contracts.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,12 +22,7 @@ public class MemberController {
     }
 
     @PostMapping("members")
-    public void addMember(@RequestBody AddMemberDTO addMemberDTO) throws
-            MemberAlreadyExistsException,
-            UsernameAlreadyExistsException,
-            EmailAlreadyExistsException,
-            StaffNotFoundException {
+    public void addMember(@RequestBody AddMemberDTO addMemberDTO) throws StaffNotFoundException, MemberValidationException {
         memberService.add(addMemberDTO);
     }
-
 }

@@ -3,10 +3,7 @@ package com.ros.lms.adapters.inbound;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ros.lms.domain.dtos.AddMemberDTO;
 import com.ros.lms.domain.enums.Sex;
-import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
-import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
-import com.ros.lms.domain.exceptions.StaffNotFoundException;
-import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
+import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.infraestructure.aop.audit_service.contracts.MemberAuditService;
 import com.ros.lms.ports.inbound.service_contracts.MemberService;
 import jakarta.validation.ConstraintViolation;
@@ -82,7 +79,7 @@ class MemberControllerTest {
     @Test
     @WithMockUser(username = "member", roles={"MEMBER"})
     void saveMember_shouldReturnConflict_whenMemberAlreadyExists() throws Exception{
-        Mockito.doThrow(new MemberAlreadyExistsException("Member already exists in the database"))
+        Mockito.doThrow(new MemberValidationException("Member already exists in the database"))
                 .when(memberService).add(Mockito.any(AddMemberDTO.class));
 
         mockMvc.perform(post("/api/members")
@@ -96,7 +93,7 @@ class MemberControllerTest {
     @Test
     @WithMockUser(username = "member", roles={"MEMBER"})
     void saveMember_shouldReturnConflict_whenUsernameAlreadyExists() throws Exception{
-        Mockito.doThrow(new UsernameAlreadyExistsException("Username already exists in the database"))
+        Mockito.doThrow(new MemberValidationException("Username already exists in the database"))
                 .when(memberService).add(Mockito.any(AddMemberDTO.class));
 
         mockMvc.perform(post("/api/members")
@@ -110,7 +107,7 @@ class MemberControllerTest {
     @Test
     @WithMockUser(username = "member", roles={"MEMBER"})
     void saveMember_shouldReturnConflict_whenEmailAlreadyExists() throws Exception{
-        Mockito.doThrow(new EmailAlreadyExistsException("Email already exists in the database"))
+        Mockito.doThrow(new MemberValidationException("Email already exists in the database"))
                 .when(memberService).add(Mockito.any(AddMemberDTO.class));
 
         mockMvc.perform(post("/api/members")
@@ -211,7 +208,4 @@ class MemberControllerTest {
 
         verify(memberService).add(validMemberDTO);
     }
-
-
-
 }

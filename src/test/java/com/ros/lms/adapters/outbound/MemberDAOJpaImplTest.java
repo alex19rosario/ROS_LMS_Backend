@@ -3,6 +3,7 @@ package com.ros.lms.adapters.outbound;
 import com.ros.lms.adapters.outbound.repositories.MemberDAOJpaImpl;
 import com.ros.lms.domain.entities.Member;
 import com.ros.lms.domain.entities.User;
+import com.ros.lms.domain.enums.MemberValidationStatus;
 import com.ros.lms.domain.enums.Sex;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -138,5 +140,170 @@ class MemberDAOJpaImplTest {
     void testFindByEmailNotFound() {
         Optional<Member> found = memberDAO.findByEmail("not@found.com");
         assertThat(found).isNotPresent();
+    }
+
+    @Test
+    @Transactional
+    void validateMemberUniqueness_whenNoConflicts_shouldReturnEmptySet() {
+        // given
+        User user = new User();
+        user.setUsername("uniqueuser");
+        user.setEmail("unique@example.com");
+        user.setPassword("secret");
+        user.setEnabled(true);
+        entityManager.persist(user);
+
+        Member member = new Member.Builder()
+                .governmentID("UNIQUE_GOV")
+                .firstName("Unique")
+                .lastName("User")
+                .phone("9876543210")
+                .dateOfBirth(LocalDate.of(1995, 5, 5))
+                .sex(Sex.MALE)
+                .user(user)
+                .build();
+
+        entityManager.persist(member);
+        entityManager.flush();
+
+        // when
+        Set<MemberValidationStatus> result =
+                memberDAO.validateMemberUniqueness("DIFFERENT_GOV", "differentuser", "different@example.com");
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    void validateMemberUniqueness_whenGovernmentIDExists_shouldReturnGovernmentIdConflict() {
+        // given
+        User user = new User();
+        user.setUsername("user1");
+        user.setEmail("user1@example.com");
+        user.setPassword("secret");
+        user.setEnabled(true);
+        entityManager.persist(user);
+
+        Member member = new Member.Builder()
+                .governmentID("GOV001")
+                .firstName("User")
+                .lastName("One")
+                .phone("123456789")
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .sex(Sex.MALE)
+                .user(user)
+                .build();
+
+        entityManager.persist(member);
+        entityManager.flush();
+
+        // when
+        Set<MemberValidationStatus> result =
+                memberDAO.validateMemberUniqueness("GOV001", "newuser", "new@example.com");
+
+        // then
+        assertThat(result).containsExactly(MemberValidationStatus.GOVERNMENT_ID_EXISTS);
+    }
+
+    @Test
+    @Transactional
+    void validateMemberUniqueness_whenUsernameExists_shouldReturnUsernameConflict() {
+        // given
+        User user = new User();
+        user.setUsername("conflictuser");
+        user.setEmail("conflict@example.com");
+        user.setPassword("secret");
+        user.setEnabled(true);
+        entityManager.persist(user);
+
+        Member member = new Member.Builder()
+                .governmentID("GOV002")
+                .firstName("Conflict")
+                .lastName("User")
+                .phone("987654321")
+                .dateOfBirth(LocalDate.of(1990, 2, 2))
+                .sex(Sex.MALE)
+                .user(user)
+                .build();
+
+        entityManager.persist(member);
+        entityManager.flush();
+
+        // when
+        Set<MemberValidationStatus> result =
+                memberDAO.validateMemberUniqueness("DIFFERENT_GOV", "conflictuser", "another@example.com");
+
+        // then
+        assertThat(result).containsExactly(MemberValidationStatus.USERNAME_EXISTS);
+    }
+
+    @Test
+    @Transactional
+    void validateMemberUniqueness_whenEmailExists_shouldReturnEmailConflict() {
+        // given
+        User user = new User();
+        user.setUsername("emailuser");
+        user.setEmail("email@exists.com");
+        user.setPassword("secret");
+        user.setEnabled(true);
+        entityManager.persist(user);
+
+        Member member = new Member.Builder()
+                .governmentID("GOV003")
+                .firstName("Email")
+                .lastName("User")
+                .phone("111222333")
+                .dateOfBirth(LocalDate.of(1992, 3, 3))
+                .sex(Sex.MALE)
+                .user(user)
+                .build();
+
+        entityManager.persist(member);
+        entityManager.flush();
+
+        // when
+        Set<MemberValidationStatus> result =
+                memberDAO.validateMemberUniqueness("DIFFERENT_GOV", "differentuser", "email@exists.com");
+
+        // then
+        assertThat(result).containsExactly(MemberValidationStatus.EMAIL_EXISTS);
+    }
+
+    @Test
+    @Transactional
+    void validateMemberUniqueness_whenMultipleConflicts_shouldReturnAllRelevantStatuses() {
+        // given
+        User user = new User();
+        user.setUsername("multiuser");
+        user.setEmail("multi@example.com");
+        user.setPassword("secret");
+        user.setEnabled(true);
+        entityManager.persist(user);
+
+        Member member = new Member.Builder()
+                .governmentID("GOV_MULTI")
+                .firstName("Multi")
+                .lastName("Conflict")
+                .phone("444555666")
+                .dateOfBirth(LocalDate.of(1993, 4, 4))
+                .sex(Sex.MALE)
+                .user(user)
+                .build();
+
+        entityManager.persist(member);
+        entityManager.flush();
+
+        // when
+        Set<MemberValidationStatus> result =
+                memberDAO.validateMemberUniqueness("GOV_MULTI", "multiuser", "multi@example.com");
+
+        // then
+        assertThat(result)
+                .containsExactlyInAnyOrder(
+                        MemberValidationStatus.GOVERNMENT_ID_EXISTS,
+                        MemberValidationStatus.USERNAME_EXISTS,
+                        MemberValidationStatus.EMAIL_EXISTS
+                );
     }
 }

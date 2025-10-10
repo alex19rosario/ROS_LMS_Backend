@@ -5,12 +5,10 @@ import com.ros.lms.domain.entities.AuthorityType;
 import com.ros.lms.domain.entities.Member;
 import com.ros.lms.domain.entities.Staff;
 import com.ros.lms.domain.entities.User;
+import com.ros.lms.domain.enums.MemberValidationStatus;
 import com.ros.lms.domain.enums.RoleType;
 import com.ros.lms.domain.enums.Sex;
-import com.ros.lms.domain.exceptions.EmailAlreadyExistsException;
-import com.ros.lms.domain.exceptions.MemberAlreadyExistsException;
-import com.ros.lms.domain.exceptions.StaffNotFoundException;
-import com.ros.lms.domain.exceptions.UsernameAlreadyExistsException;
+import com.ros.lms.domain.exceptions.*;
 import com.ros.lms.ports.outbound.repository_contracts.AuthorityTypeDAO;
 import com.ros.lms.ports.outbound.repository_contracts.MemberDAO;
 import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
@@ -24,9 +22,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class MemberServiceTest {
@@ -87,125 +88,94 @@ public class MemberServiceTest {
     }
 
     @Test
-    void add_Success() throws Exception {
-        when(memberDAO.findByGovernmentID(validMemberDTO.governmentID())).thenReturn(Optional.empty());
-        when(memberDAO.findByUsername(validMemberDTO.username())).thenReturn(Optional.empty());
-        when(memberDAO.findByEmail(validMemberDTO.email())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(validMemberDTO.password())).thenReturn("hashedPassword");
+    void add_ShouldCreateMember_WhenNoConflicts() throws MemberValidationException, StaffNotFoundException {
+        when(memberDAO.validateMemberUniqueness(any(), any(), any())).thenReturn(Set.of());
         when(staffDAO.findByUsername(validMemberDTO.staffUsername())).thenReturn(Optional.of(new Staff()));
         when(authorityTypeDAO.findByLabel(RoleType.MEMBER))
                 .thenReturn(Optional.of(new AuthorityType(RoleType.MEMBER)));
 
         memberService.add(validMemberDTO);
 
-        verify(memberDAO).findByGovernmentID(validMemberDTO.governmentID());
-        verify(memberDAO).findByUsername(validMemberDTO.username());
-        verify(memberDAO).findByEmail(validMemberDTO.email());
-        verify(staffDAO).findByUsername(validMemberDTO.staffUsername());
-        verify(authorityTypeDAO).findByLabel(RoleType.MEMBER);
+        verify(memberDAO).validateMemberUniqueness("123123987", "peter27", "test18@gmail.com");
         verify(userDAO).create(any(User.class));
         verify(memberDAO).create(any(Member.class));
     }
 
     @Test
-    void add_Success_memberWithMiddleName() throws Exception {
-        when(memberDAO.findByGovernmentID(validMemberDtoWithMiddleName.governmentID())).thenReturn(Optional.empty());
-        when(memberDAO.findByUsername(validMemberDtoWithMiddleName.username())).thenReturn(Optional.empty());
-        when(memberDAO.findByEmail(validMemberDtoWithMiddleName.email())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(validMemberDtoWithMiddleName.password())).thenReturn("hashedPassword");
-        when(staffDAO.findByUsername(validMemberDtoWithMiddleName.staffUsername())).thenReturn(Optional.of(new Staff()));
-        when(authorityTypeDAO.findByLabel(RoleType.MEMBER))
-                .thenReturn(Optional.of(new AuthorityType(RoleType.MEMBER)));
+    void add_ShouldThrow_WhenGovernmentIdExists() {
+        when(memberDAO.validateMemberUniqueness(any(), any(), any()))
+                .thenReturn(EnumSet.of(MemberValidationStatus.GOVERNMENT_ID_EXISTS));
 
-        memberService.add(validMemberDtoWithMiddleName);
+        MemberValidationException ex = assertThrows(MemberValidationException.class,
+                () -> memberService.add(validMemberDTO));
 
-        verify(memberDAO).findByGovernmentID(validMemberDtoWithMiddleName.governmentID());
-        verify(memberDAO).findByUsername(validMemberDtoWithMiddleName.username());
-        verify(memberDAO).findByEmail(validMemberDtoWithMiddleName.email());
-        verify(staffDAO).findByUsername(validMemberDtoWithMiddleName.staffUsername());
-        verify(authorityTypeDAO).findByLabel(RoleType.MEMBER);
-        verify(userDAO).create(any(User.class));
-        verify(memberDAO).create(any(Member.class));
-    }
-
-
-    @Test
-    void add_ThrowsMemberAlreadyExistsException() {
-        when(memberDAO.findByGovernmentID(validMemberDtoWithMiddleName.governmentID())).thenReturn(Optional.of(new Member()));
-
-        assertThrows(MemberAlreadyExistsException.class, () -> memberService.add(validMemberDtoWithMiddleName));
-
-        verify(memberDAO).findByGovernmentID(validMemberDtoWithMiddleName.governmentID());
-        verify(memberDAO, never()).findByUsername(anyString());
-        verify(memberDAO, never()).findByEmail(anyString());
+        assertTrue(ex.getMessage().contains("Government ID"));
         verify(userDAO, never()).create(any());
         verify(memberDAO, never()).create(any());
     }
 
     @Test
-    void add_ThrowsUsernameAlreadyExistsException() {
-        when(memberDAO.findByGovernmentID(validMemberDTO.governmentID())).thenReturn(Optional.empty());
-        when(memberDAO.findByUsername(validMemberDTO.username())).thenReturn(Optional.of(new Member()));
+    void add_ShouldThrow_WhenUsernameExists() {
+        when(memberDAO.validateMemberUniqueness(any(), any(), any()))
+                .thenReturn(EnumSet.of(MemberValidationStatus.USERNAME_EXISTS));
 
-        assertThrows(UsernameAlreadyExistsException.class, () -> memberService.add(validMemberDTO));
+        MemberValidationException ex = assertThrows(MemberValidationException.class,
+                () -> memberService.add(validMemberDTO));
 
-        verify(memberDAO).findByGovernmentID(validMemberDTO.governmentID());
-        verify(memberDAO).findByUsername(validMemberDTO.username());
-        verify(memberDAO, never()).findByEmail(anyString());
+        assertTrue(ex.getMessage().contains("Username"));
         verify(userDAO, never()).create(any());
         verify(memberDAO, never()).create(any());
     }
 
     @Test
-    void add_ThrowsEmailAlreadyExistsException() {
-        when(memberDAO.findByGovernmentID(validMemberDtoWithMiddleName.governmentID())).thenReturn(Optional.empty());
-        when(memberDAO.findByUsername(validMemberDtoWithMiddleName.username())).thenReturn(Optional.empty());
-        when(memberDAO.findByEmail(validMemberDtoWithMiddleName.email())).thenReturn(Optional.of(new Member()));
+    void add_ShouldThrow_WhenEmailExists() {
+        when(memberDAO.validateMemberUniqueness(any(), any(), any()))
+                .thenReturn(EnumSet.of(MemberValidationStatus.EMAIL_EXISTS));
 
-        assertThrows(EmailAlreadyExistsException.class, () -> memberService.add(validMemberDtoWithMiddleName));
+        MemberValidationException ex = assertThrows(MemberValidationException.class,
+                () -> memberService.add(validMemberDTO));
 
-        verify(memberDAO).findByGovernmentID(validMemberDtoWithMiddleName.governmentID());
-        verify(memberDAO).findByUsername(validMemberDtoWithMiddleName.username());
-        verify(memberDAO).findByEmail(validMemberDtoWithMiddleName.email());
+        assertTrue(ex.getMessage().contains("Email"));
         verify(userDAO, never()).create(any());
         verify(memberDAO, never()).create(any());
     }
 
     @Test
-    void add_ThrowsStaffNotFoundException() {
-        when(memberDAO.findByGovernmentID(validMemberDTO.governmentID())).thenReturn(Optional.empty());
-        when(memberDAO.findByUsername(validMemberDTO.username())).thenReturn(Optional.empty());
-        when(memberDAO.findByEmail(validMemberDTO.email())).thenReturn(Optional.empty());
-        when(staffDAO.findByUsername(validMemberDTO.staffUsername())).thenReturn(Optional.empty()); // staff not found
+    void add_ShouldThrow_WhenMultipleConflictsExist() {
+        when(memberDAO.validateMemberUniqueness(any(), any(), any()))
+                .thenReturn(EnumSet.of(
+                        MemberValidationStatus.GOVERNMENT_ID_EXISTS,
+                        MemberValidationStatus.USERNAME_EXISTS,
+                        MemberValidationStatus.EMAIL_EXISTS));
+
+        MemberValidationException ex = assertThrows(MemberValidationException.class,
+                () -> memberService.add(validMemberDTO));
+
+        assertTrue(ex.getMessage().contains("Government ID"));
+        assertTrue(ex.getMessage().contains("Username"));
+        assertTrue(ex.getMessage().contains("Email"));
+        verify(userDAO, never()).create(any());
+        verify(memberDAO, never()).create(any());
+    }
+
+    @Test
+    void add_ShouldThrow_WhenStaffNotFound() {
+        when(memberDAO.validateMemberUniqueness(any(), any(), any())).thenReturn(Set.of());
+        when(staffDAO.findByUsername("staff")).thenReturn(Optional.empty());
 
         assertThrows(StaffNotFoundException.class, () -> memberService.add(validMemberDTO));
 
-        verify(memberDAO).findByGovernmentID(validMemberDTO.governmentID());
-        verify(memberDAO).findByUsername(validMemberDTO.username());
-        verify(memberDAO).findByEmail(validMemberDTO.email());
-        verify(staffDAO).findByUsername(validMemberDTO.staffUsername());
         verify(userDAO, never()).create(any());
         verify(memberDAO, never()).create(any());
     }
 
     @Test
-    void add_ThrowsIllegalStateException_whenMemberRoleNotFound() {
-        // Arrange
-        when(memberDAO.findByGovernmentID(validMemberDTO.governmentID())).thenReturn(Optional.empty());
-        when(memberDAO.findByUsername(validMemberDTO.username())).thenReturn(Optional.empty());
-        when(memberDAO.findByEmail(validMemberDTO.email())).thenReturn(Optional.empty());
+    void add_ShouldThrow_WhenRoleNotFound() {
+        when(memberDAO.validateMemberUniqueness(any(), any(), any())).thenReturn(Set.of());
         when(staffDAO.findByUsername(validMemberDTO.staffUsername())).thenReturn(Optional.of(new Staff()));
-        when(authorityTypeDAO.findByLabel(RoleType.MEMBER)).thenReturn(Optional.empty()); // <--- simulate role missing
+        when(authorityTypeDAO.findByLabel(RoleType.MEMBER)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(IllegalStateException.class, () -> memberService.add(validMemberDTO));
-
-        // Verify interactions stop before persisting
-        verify(memberDAO).findByGovernmentID(validMemberDTO.governmentID());
-        verify(memberDAO).findByUsername(validMemberDTO.username());
-        verify(memberDAO).findByEmail(validMemberDTO.email());
-        verify(staffDAO).findByUsername(validMemberDTO.staffUsername());
-        verify(authorityTypeDAO).findByLabel(RoleType.MEMBER);
 
         verify(userDAO, never()).create(any());
         verify(memberDAO, never()).create(any());
