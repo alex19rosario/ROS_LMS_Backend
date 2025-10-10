@@ -76,14 +76,15 @@ public class MemberServiceImpl implements MemberService {
         StringBuilder message = new StringBuilder("Validation failed due to the following conflicts: ");
 
         if (conflicts.contains(MemberValidationStatus.GOVERNMENT_ID_EXISTS)) {
-            message.append("[Government ID " + dto.governmentID() + " already exists] ");
+            message.append("[Government ID " + dto.governmentID() + " is already registered] ");
         }
         if (conflicts.contains(MemberValidationStatus.USERNAME_EXISTS)) {
             message.append("[Username " + dto.username() + " already exists] ");
         }
         if (conflicts.contains(MemberValidationStatus.EMAIL_EXISTS)) {
-            message.append("[Email " + dto.email() + " already exists] ");
+            message.append("[Email " + dto.email() + " is already in the system] ");
         }
         return message;
     }
+
 }

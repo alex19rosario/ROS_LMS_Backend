@@ -13,6 +13,8 @@ import jakarta.validation.metadata.ConstraintDescriptor;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -76,40 +78,19 @@ class MemberControllerTest {
         verify(memberService).add(validMemberDTO);
     }
 
-    @Test
-    @WithMockUser(username = "member", roles={"MEMBER"})
-    void saveMember_shouldReturnConflict_whenMemberAlreadyExists() throws Exception{
-        Mockito.doThrow(new MemberValidationException("Member already exists in the database"))
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Member already exists in the database",
+            "Username already exists in the database",
+            "Email already exists in the database"
+    })
+    @WithMockUser(username = "member", roles = {"MEMBER"})
+    void saveMember_shouldReturnConflict_whenValidationExceptionOccurs(String exceptionMessage) throws Exception {
+        // given
+        Mockito.doThrow(new MemberValidationException(exceptionMessage))
                 .when(memberService).add(Mockito.any(AddMemberDTO.class));
 
-        mockMvc.perform(post("/api/members")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validMemberDTO)))
-                .andExpect(status().isConflict());
-
-        verify(memberService).add(validMemberDTO);
-    }
-
-    @Test
-    @WithMockUser(username = "member", roles={"MEMBER"})
-    void saveMember_shouldReturnConflict_whenUsernameAlreadyExists() throws Exception{
-        Mockito.doThrow(new MemberValidationException("Username already exists in the database"))
-                .when(memberService).add(Mockito.any(AddMemberDTO.class));
-
-        mockMvc.perform(post("/api/members")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validMemberDTO)))
-                .andExpect(status().isConflict());
-
-        verify(memberService).add(validMemberDTO);
-    }
-
-    @Test
-    @WithMockUser(username = "member", roles={"MEMBER"})
-    void saveMember_shouldReturnConflict_whenEmailAlreadyExists() throws Exception{
-        Mockito.doThrow(new MemberValidationException("Email already exists in the database"))
-                .when(memberService).add(Mockito.any(AddMemberDTO.class));
-
+        // when / then
         mockMvc.perform(post("/api/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validMemberDTO)))
