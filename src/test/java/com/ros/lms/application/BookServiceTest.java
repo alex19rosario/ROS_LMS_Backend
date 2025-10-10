@@ -14,6 +14,7 @@ import com.ros.lms.ports.outbound.repository_contracts.AuthorDAO;
 import com.ros.lms.ports.outbound.repository_contracts.BookDAO;
 import com.ros.lms.ports.outbound.repository_contracts.GenreDAO;
 import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
+import com.ros.lms.util.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -58,6 +59,9 @@ public class BookServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        Mapper mapper = new Mapper();
+        bookService = new BookServiceImpl(bookDAO, authorDAO, genreDAO, staffDAO, storageService, mapper);
+
         coverImage = new MockMultipartFile(
                 "coverImage",
                 "cover.jpg",

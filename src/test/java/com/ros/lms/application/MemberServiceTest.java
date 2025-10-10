@@ -15,6 +15,7 @@ import com.ros.lms.ports.outbound.repository_contracts.AuthorityTypeDAO;
 import com.ros.lms.ports.outbound.repository_contracts.MemberDAO;
 import com.ros.lms.ports.outbound.repository_contracts.StaffDAO;
 import com.ros.lms.ports.outbound.repository_contracts.UserDAO;
+import com.ros.lms.util.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -54,6 +55,8 @@ public class MemberServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        Mapper mapper = new Mapper();
+        memberService = new MemberServiceImpl(memberDAO, userDAO, staffDAO, authorityTypeDAO, passwordEncoder, mapper);
 
         // Create a sample AddMemberDTO
         validMemberDtoWithMiddleName = new AddMemberDTO(
