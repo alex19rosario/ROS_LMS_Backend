@@ -51,27 +51,12 @@ public class MemberServiceTest {
     private MemberServiceImpl memberService;
 
     private AddMemberDTO validMemberDTO;
-    private AddMemberDTO validMemberDtoWithMiddleName;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         Mapper mapper = new Mapper();
         memberService = new MemberServiceImpl(memberDAO, userDAO, staffDAO, authorityTypeDAO, passwordEncoder, mapper);
-
-        // Create a sample AddMemberDTO
-        validMemberDtoWithMiddleName = new AddMemberDTO(
-                "123123123",
-                "carlos alexander",
-                "rosario sanchez",
-                "6474256438",
-                LocalDate.of(1985, 9, 15),
-                Sex.MALE,
-                "test19@gmail.com",
-                "carlos19",
-                "test123",
-                "staff"
-        );
 
         validMemberDTO = new AddMemberDTO(
                 "123123987",
