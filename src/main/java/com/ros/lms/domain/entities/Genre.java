@@ -28,6 +28,7 @@ public class Genre {
             inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
     private List<Book> books = new ArrayList<>();
 
+
     public Genre(){}
 
     public Genre(GenreType label, List<Book> books) {

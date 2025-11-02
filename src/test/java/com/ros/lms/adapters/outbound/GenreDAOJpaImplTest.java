@@ -76,4 +76,65 @@ public class GenreDAOJpaImplTest {
         assertThat(result).contains(GenreType.TECHNOLOGY, GenreType.SCIENCE, GenreType.ADVENTURE);
     }
 
+    @Transactional
+    @Test
+    void testFindByLabels_shouldReturnMatchingGenres() {
+        // Arrange
+        Genre genre1 = new Genre(GenreType.SCIENCE);
+        Genre genre2 = new Genre(GenreType.TECHNOLOGY);
+        Genre genre3 = new Genre(GenreType.ADVENTURE);
+
+        entityManager.persist(genre1);
+        entityManager.persist(genre2);
+        entityManager.persist(genre3);
+        entityManager.flush();
+
+        Set<GenreType> labels = Set.of(GenreType.SCIENCE, GenreType.TECHNOLOGY);
+
+        // Act
+        Set<Genre> result = genreDAO.findByLabels(labels);
+
+        // Assert
+        assertThat(result)
+                .hasSize(2)
+                .extracting(Genre::getLabel)
+                .containsExactlyInAnyOrder(GenreType.SCIENCE, GenreType.TECHNOLOGY);
+    }
+
+    @Transactional
+    @Test
+    void testFindByLabels_shouldReturnEmptySetWhenNoMatches() {
+        // Arrange
+        Genre genre1 = new Genre(GenreType.ADVENTURE);
+        entityManager.persist(genre1);
+        entityManager.flush();
+
+        Set<GenreType> labels = Set.of(GenreType.SCIENCE, GenreType.TECHNOLOGY);
+
+        // Act
+        Set<Genre> result = genreDAO.findByLabels(labels);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testFindByLabels_shouldReturnEmptySetWhenInputIsEmpty() {
+        // Act
+        Set<Genre> result = genreDAO.findByLabels(Set.of());
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testFindByLabels_shouldReturnEmptySetWhenInputIsNull() {
+        // Act
+        Set<Genre> result = genreDAO.findByLabels(null);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+
 }

@@ -8,5 +8,6 @@ import java.util.Set;
 
 public interface GenreDAO {
     Optional<Genre> findByLabel(GenreType genreType);
+    Set<Genre> findByLabels(Set<GenreType> labels);
     Set<GenreType> findAll();
 }

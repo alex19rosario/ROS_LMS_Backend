@@ -28,6 +28,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -97,15 +98,19 @@ public class BookServiceTest {
         // Arrange
         when(bookDAO.findByISBN(validBookDTO.isbn())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Carlos", "Alexander", "Rosario")).thenReturn(Optional.empty());
-        when(genreDAO.findByLabel(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
         when(staffDAO.findByUsername(validBookDTO.staffUsername())).thenReturn(Optional.of(new Staff()));
+
+        Set<GenreType> genreTypes = Set.of(GenreType.SCIENCE, GenreType.TECHNOLOGY);
+        Set<Genre> genres = Set.of(new Genre(GenreType.SCIENCE), new Genre(GenreType.TECHNOLOGY));
+        when(genreDAO.findByLabels(genreTypes)).thenReturn(genres);
+
         // Act
         bookService.add(validBookDTO);
 
         // Assert
         verify(bookDAO).findByISBN(validBookDTO.isbn());
         verify(authorDAO).findByFullName("Joshua", null, "Bloch");
-        verify(genreDAO).findByLabel(GenreType.SCIENCE);
+        verify(genreDAO).findByLabels(genreTypes);
         verify(bookDAO).create(any(Book.class));
     }
 
@@ -115,17 +120,21 @@ public class BookServiceTest {
         Author existingAuthor = new Author("Joshua", "", "Bloch");
         when(bookDAO.findByISBN(validBookDTO.isbn())).thenReturn(Optional.empty());
         when(authorDAO.findByFullName("Joshua", null, "Bloch")).thenReturn(Optional.of(existingAuthor));
-        when(genreDAO.findByLabel(GenreType.SCIENCE)).thenReturn(Optional.of(new Genre(GenreType.SCIENCE)));
         when(staffDAO.findByUsername(validBookDTO.staffUsername())).thenReturn(Optional.of(new Staff()));
+
+        Set<GenreType> genreTypes = Set.of(GenreType.SCIENCE, GenreType.TECHNOLOGY);
+        Set<Genre> genres = Set.of(new Genre(GenreType.SCIENCE), new Genre(GenreType.TECHNOLOGY));
+        when(genreDAO.findByLabels(genreTypes)).thenReturn(genres);
 
         // Act
         bookService.add(validBookDTO);
 
         // Assert
         verify(authorDAO).findByFullName("Joshua", null, "Bloch");
+        verify(genreDAO).findByLabels(genreTypes);
         verify(bookDAO).create(any(Book.class));
-        verify(genreDAO).findByLabel(GenreType.SCIENCE);
     }
+
 
     @Test
     void save_shouldThrowStorageException_whenCoverImageStorageFails() throws StorageException {
@@ -226,7 +235,7 @@ public class BookServiceTest {
                 "9783161484110",
                 "Domain-Driven Design",
                 "Eric-Evans",
-                "INVALID_GENRE", // Invalid genre
+                "INVALID_GENRE",
                 "staff",
                 null
         );
@@ -239,11 +248,12 @@ public class BookServiceTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> bookService.add(invalidGenreDTO));
 
-        assertThat(exception.getMessage()).isEqualTo("Invalid genre provided: INVALID_GENRE");
+        assertThat(exception.getMessage()).isEqualTo("Unknown genre label: INVALID_GENRE");
 
         verify(bookDAO).findByISBN(invalidGenreDTO.isbn());
         verify(authorDAO).findByFullName("Eric", null, "Evans");
-        verifyNoInteractions(genreDAO, storageService); // These should still not be called
+        verify(genreDAO, never()).findByLabels(anySet());
+        verifyNoInteractions(storageService);
     }
 
     @Test
