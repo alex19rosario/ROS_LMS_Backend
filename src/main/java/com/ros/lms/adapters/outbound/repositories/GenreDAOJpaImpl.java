@@ -36,6 +36,20 @@ public class GenreDAOJpaImpl implements GenreDAO {
     }
 
     @Override
+    public Set<Genre> findByLabels(Set<GenreType> labels) {
+        if (labels == null || labels.isEmpty()) {
+            return Set.of();
+        }
+
+        String query = "SELECT g FROM Genre g WHERE g.label IN :labels";
+        return new HashSet<>(
+                entityManager.createQuery(query, Genre.class)
+                        .setParameter("labels", labels)
+                        .getResultList()
+        );
+    }
+
+    @Override
     public Set<GenreType> findAll() {
         String query = "SELECT g.label FROM Genre g";
         return new HashSet<>(entityManager.createQuery(query, GenreType.class).getResultList());

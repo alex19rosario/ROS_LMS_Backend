@@ -75,16 +75,9 @@ public class BookServiceImpl implements BookService {
 
         associateAuthorsWithBook(authors, book);
 
-        Set<String> genres = parseGenres(addBookDTO.genres());
-        for (String desc : genres) {
-            try {
-                GenreType genreType = GenreType.fromLabel(desc);
-                Optional<Genre> genre = genreDAO.findByLabel(genreType);
-                genre.ifPresent(book::addGenre);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid genre provided: " + desc);
-            }
-        }
+        Set<GenreType> labels = parseGenres(addBookDTO.genres());
+        Set<Genre> foundGenres = genreDAO.findByLabels(labels);
+        foundGenres.forEach(book::addGenre);
 
         // Handle file upload
         String filename = null;
@@ -158,9 +151,10 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toSet());
     }
 
-    private Set<String> parseGenres(String genresString) {
+    private Set<GenreType> parseGenres(String genresString) {
         return Arrays.stream(genresString.split(","))
                 .map(String::trim)
+                .map(GenreType::fromLabel)
                 .collect(Collectors.toSet());
     }
 
