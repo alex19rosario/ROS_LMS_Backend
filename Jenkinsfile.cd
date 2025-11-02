@@ -8,7 +8,7 @@ pipeline {
     environment {
         AWS_DEFAULT_REGION = "us-east-1"
         APPLICATION_NAME = "Ros-lms-backend"
-        ENVIRONMENT_NAME = "Ros-lms-backend-env"
+        ENVIRONMENT_NAME = "Ros-lms-backend-env-1"
         S3_BUCKET = "ros-lms-backend-deployments"
         JAR_FILE = "target/lms-0.0.1-SNAPSHOT.jar"
     }
